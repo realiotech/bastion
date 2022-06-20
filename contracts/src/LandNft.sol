@@ -17,6 +17,7 @@ error NotAuthorised();
 error ComissionOutOfAllowedRange();
 error InsufficientBalance();
 error InvalidToken();
+error NonExistentTokenURI();
 
 /// @title The Realioverse Land NFT
 /// @author Samuel Dare (samuel@realio.fund)
@@ -53,12 +54,21 @@ contract LandNFT is ERC721, Ownable, Pausable, ReentrancyGuard {
     event LandNFTTileSold(address seller, uint256 tokenId);
     event LandNFTTileWithdrawn(address beneficiary, uint256 amount);
     event LandNFTTileDeposited(address beneficiary, uint256 amount);
-    event AdminChanged(address newAdmin, address oldAdmin);
-    event DevFundChanged(address newDevFund, address oldDevFund);
-    event CommissionRateChanged(uint256 newCommission, uint256 oldCommission);
-    event LandBankChanged(address newLandBank, address oldLandBank);
-    event ContractPaused(bool paused);
-    event ContractUnpaused(bool paused);
+    event AdminChanged(address indexed newAdmin, address indexed oldAdmin);
+    event DevFundChanged(
+        address indexed newDevFund,
+        address indexed oldDevFund
+    );
+    event CommissionRateChanged(
+        uint256 indexed newCommission,
+        uint256 indexed oldCommission
+    );
+    event LandBankChanged(
+        address indexed newLandBank,
+        address indexed oldLandBank
+    );
+    event ContractPaused(bool indexed paused);
+    event ContractUnpaused(bool indexed paused);
 
     //check if the region belongs to somebody.
     modifier notOwned(uint256[] memory region) {
@@ -79,16 +89,19 @@ contract LandNFT is ERC721, Ownable, Pausable, ReentrancyGuard {
     }
 
     constructor(address _swapLibAddr) ERC721("RealioVerse", "RVRS") {
-        require(_swapLibAddr != address(0), "can't set zero address");
-        devFund = msg.sender;
-        // to prevent error we have to set the landbank address to msg.sender
-        landBank = msg.sender;
-        admin = msg.sender;
-        commissionRate = 10;
-        price = 5 * 10**20;
-        swapToken = _swapLibAddr;
-        // we don't need this
-        baseURI = "Realio";
+        if (_swapLibAddr == address(0)) {
+            revert CannotSetAddressZero();
+        } else {
+            devFund = msg.sender;
+            // to prevent error we have to set the landbank address to msg.sender
+            landBank = msg.sender;
+            admin = msg.sender;
+            commissionRate = 10;
+            price = 5 * 10**20;
+            swapToken = _swapLibAddr;
+            // we don't need this
+            baseURI = "Realio";
+        }
     }
 
     // we need this function when only test
@@ -195,11 +208,11 @@ contract LandNFT is ERC721, Ownable, Pausable, ReentrancyGuard {
     function safeMint(
         address to,
         uint256[] memory region,
-        address token,
+        // address token,
         uint256 rioAmount
     ) external payable notOwned(region) whenNotPaused {
         // uint256 gas = gasleft();
-        if (token == RIO_TOKEN) {
+        if (rioAmount > 0) {
             if (rioAmount < price * region.length) {
                 revert InsufficientBalance();
             } else {
@@ -255,24 +268,33 @@ contract LandNFT is ERC721, Ownable, Pausable, ReentrancyGuard {
 
     /// View Functions
 
+    /// @notice Returns the number of tiles selects
+    /// @param index the index of the tile selected
     function getLength(uint256 index) external view returns (uint256 len) {
         len = regionNumbers[index].length;
     }
 
+    /// @notice Returns the price the tile in ETH
+    /// @param _price the price of the token in RIO
     function getETHPrice(uint256 _price) external view returns (uint256) {
         return ISwapToken(swapToken).getAmountOutMin(RIO_TOKEN, WETH, _price);
     }
 
+    /// @notice Returns a token URI
+    /// @param tokenId the id of the token
     function tokenURI(uint256 tokenId)
         public
         view
+        virtual
         override
         returns (string memory)
     {
-        // require(ownerOf[tokenId] == address(0), "Token does not exist");
+        if (ownerOf(tokenId) == address(0)) {
+            revert NonExistentTokenURI();
+        }
         return
             bytes(baseURI).length > 0
-                ? string(abi.encodePacked(baseURI, tokenId.toString(), ".json"))
+                ? string(abi.encodePacked(baseURI, tokenId.toString()))
                 : "";
     }
 }
