@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.10;
 
-import "ds-test/test.sol";
+// import "ds-test/test.sol";
 import "forge-std/Test.sol";
-import "forge-std/Vm.sol";
+// import "forge-std/Vm.sol";
 import "../LandNFT.sol";
 import "../SwapToken.sol";
 
@@ -86,8 +86,9 @@ contract LandNFTTest is Test {
     function testSafeMintWithRio() public {
         vm.prank(owner);
         uint256[] memory regions = new uint256[](3);
-        console2.log(regions);
-        // uint balance[] = [1, 2, 3];
+        regions[0] = 1;
+        regions[1] = 2;
+        regions[2] = 3;
         uint256 rioAmount = 5 * 10**20;
         landNFT.safeMint(rioWhale, regions, rioAmount);
     }

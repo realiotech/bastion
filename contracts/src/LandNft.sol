@@ -82,7 +82,7 @@ contract LandNFT is ERC721, Ownable, Pausable, ReentrancyGuard {
                 break;
             }
         }
-        if (!ownerStatus) {
+        if (ownerStatus) {
             revert RegionAlreadyOwned();
         }
         _;
