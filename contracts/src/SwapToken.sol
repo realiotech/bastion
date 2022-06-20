@@ -5,67 +5,20 @@ pragma solidity >=0.8.10;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./interfaces/ISwapToken.sol";
+import "./interfaces/IUniswapV2Router.sol";
+import "./interfaces/IUniswapV2Pair.sol";
+import "./interfaces/IUniswapV2Factory.sol";
 
-//import the uniswap router
-//the contract needs to use swapExactTokensForTokens
-//this will allow us to import swapExactTokensForTokens into our contract
-
-interface IUniswapV2Router {
-    function getAmountsOut(uint256 amountIn, address[] memory path)
-        external
-        view
-        returns (uint256[] memory amounts);
-
-    function swapExactETHForTokens(
-        //the minimum amount of tokens we want out of the trade
-        uint256 amountOutMin,
-        //list of token addresses we are going to trade in.  this is necessary to calculate amounts
-        address[] calldata path,
-        //this is the address we are going to send the output tokens to
-        address to,
-        //the last time that the trade is valid for
-        uint256 deadline
-    ) external payable returns (uint256[] memory amounts);
-
-    function swapExactTokensForETH(
-        //amount of tokens we are sending in
-        uint256 amountIn,
-        //the minimum amount of tokens we want out of the trade
-        uint256 amountOutMin,
-        //list of token addresses we are going to trade in.  this is necessary to calculate amounts
-        address[] calldata path,
-        //this is the address we are going to send the output tokens to
-        address to,
-        //the last time that the trade is valid for
-        uint256 deadline
-    ) external;
-}
-
-interface IUniswapV2Pair {
-    function token0() external view returns (address);
-
-    function token1() external view returns (address);
-
-    function swap(
-        uint256 amount0Out,
-        uint256 amount1Out,
-        address to,
-        bytes calldata data
-    ) external;
-}
-
-interface IUniswapV2Factory {
-    function getPair(address token0, address token1) external returns (address);
-}
-
+/// @title The Realioverse Swap Contract
+/// @author Samuel Dare (samuel@realio.fund)
+/// @notice This contract implements the logic for swapping ETH for Realio tokens.
+/// @dev This implement UniswapV2 swap functionality
 contract SwapToken {
     //address of the uniswap v2 router
     address private constant UNISWAP_V2_ROUTER =
         0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;
 
-    //address of WETH token.  This is needed because some times it is better to trade through WETH.
-    //you might get a better price using WETH.
-    //example trading from token A to WETH then WETH to token B might result in a better price
+    //WETH Address
     address private constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
 
     //this swap function is used to trade from one token to another
