@@ -9,6 +9,7 @@ import {Pausable} from "@openzeppelin/contracts/security/Pausable.sol";
 import {ReentrancyGuard} from "@rari-capital/solmate/src/utils/ReentrancyGuard.sol";
 import {SafeTransferLib} from "@rari-capital/solmate/src/utils/SafeTransferLib.sol";
 import {ISwapToken} from "./interfaces/ISwapToken.sol";
+import "forge-std/Test.sol";
 
 error CannotSetAddressZero();
 error NoTilesSelected();
@@ -204,14 +205,13 @@ contract LandNFT is ERC721, Ownable, Pausable, ReentrancyGuard {
     /// @param to The beneficiary address
     /// @param region The tiles selected
     /// @param rioAmount The amount of RIO to be transferred
-    // TODO: add guard to prevent
+
     function safeMint(
         address to,
         uint256[] memory region,
         // address token,
         uint256 rioAmount
     ) external payable notOwned(region) whenNotPaused {
-        // uint256 gas = gasleft();
         if (rioAmount > 0) {
             if (rioAmount < price * region.length) {
                 revert InsufficientBalance();

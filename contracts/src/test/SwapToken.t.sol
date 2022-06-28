@@ -10,5 +10,10 @@ import "../SwapToken.sol";
 // import "forge-std/console2.sol";
 
 contract SwapTokenTest is Test {
-    
+    address public swapToken;
+    SwapToken swap;
+
+    function setUp() public {
+        swap = new SwapToken();
+    }
 }

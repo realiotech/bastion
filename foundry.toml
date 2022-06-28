@@ -6,6 +6,8 @@ remappings = [
     'forge-std/=lib/forge-std/src/',
     '@openzeppelin/=lib/openzeppelin-contracts/',
     '@rari-capital/solmate/=lib/solmate/',
+    '@uniswap/v2-core/=lib/v2-core/',
+    '@uniswap/v2-periphery/=lib/v2-periphery/',
 ]
 solc_version = "0.8.10"
 gas_reports = ["*"]

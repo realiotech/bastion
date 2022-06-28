@@ -1,3 +1,4 @@
+pragma solidity ^0.8.10;
 
 interface IUniswapV2Router {
     function getAmountsOut(uint256 amountIn, address[] memory path)

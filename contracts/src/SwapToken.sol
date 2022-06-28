@@ -8,6 +8,9 @@ import "./interfaces/ISwapToken.sol";
 import "./interfaces/IUniswapV2Router.sol";
 import "./interfaces/IUniswapV2Pair.sol";
 import "./interfaces/IUniswapV2Factory.sol";
+import "./interfaces/IUniswapV2Router02.sol";
+
+// https://soliditydeveloper.com/uniswap3
 
 /// @title The Realioverse Swap Contract
 /// @author Samuel Dare (samuel@realio.fund)

@@ -84,12 +84,15 @@ contract LandNFTTest is Test {
     }
 
     function testSafeMintWithRio() public {
-        vm.prank(owner);
+        vm.prank(rioWhale);
         uint256[] memory regions = new uint256[](3);
         regions[0] = 1;
         regions[1] = 2;
         regions[2] = 3;
-        uint256 rioAmount = 5 * 10**20;
+        uint256 rioAmount = 3 * 5 * 10**20;
+        console.log("msg.sender", msg.sender);
+        console.log("owner", owner);
+        // vm.prank(rioWhale);
         landNFT.safeMint(rioWhale, regions, rioAmount);
     }
 
