@@ -216,6 +216,7 @@ contract LandNFT is ERC721, Ownable, Pausable, ReentrancyGuard {
             if (rioAmount < price * region.length) {
                 revert InsufficientBalance();
             } else {
+                IERC20(RIO_TOKEN).approve(address(this), rioAmount);
                 IERC20(RIO_TOKEN).transferFrom(
                     msg.sender,
                     address(this),
@@ -243,7 +244,6 @@ contract LandNFT is ERC721, Ownable, Pausable, ReentrancyGuard {
                 msg.value
             );
             require(minAmount >= price * region.length, "low value");
-            // require(false, "here");
             ISwapToken(swapToken).swap{value: (msg.value * 80) / 100}(
                 WETH,
                 RIO_TOKEN,
