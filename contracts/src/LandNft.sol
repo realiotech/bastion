@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.8.10;
+pragma solidity >=0.8.15;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {ERC721} from "@rari-capital/solmate/src/tokens/ERC721.sol";
+import {ERC721A} from "ERC721A/contracts/ERC721A.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Pausable} from "@openzeppelin/contracts/security/Pausable.sol";
 import {ReentrancyGuard} from "@rari-capital/solmate/src/utils/ReentrancyGuard.sol";
 import {SafeTransferLib} from "@rari-capital/solmate/src/utils/SafeTransferLib.sol";
-import {ISwapToken} from "./interfaces/ISwapToken.sol";
-import "forge-std/Test.sol";
+
+import "./interfaces/IUniswapV2Router.sol";
 
 error CannotSetAddressZero();
 error NoTilesSelected();
@@ -19,12 +19,14 @@ error ComissionOutOfAllowedRange();
 error InsufficientBalance();
 error InvalidToken();
 error NonExistentTokenURI();
+error TransferFailed();
+error MaxTilesReached();
 
 /// @title The Realioverse Land NFT
 /// @author Samuel Dare (samuel@realio.fund)
 /// @notice This contract implements the logic for the Realioverse Land NFT
 /// @dev This contract is based on the Realioverse Land NFT contract
-contract LandNFT is ERC721, Ownable, Pausable, ReentrancyGuard {
+contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
     using Strings for uint256;
 
     address swapToken;
@@ -32,29 +34,25 @@ contract LandNFT is ERC721, Ownable, Pausable, ReentrancyGuard {
     address private constant RIO_TOKEN =
         0xf21661D0D1d76d3ECb8e1B9F1c923DBfffAe4097;
     address public constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+    address private constant UNISWAP_V2_ROUTER =
+        0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;
     // admin : can set all parameters
     address public admin;
     // store all funds by ETH
     address public devFund;
     // store some fund by EIO
     address public landBank;
-    uint64 public totalTileNum;
     string public baseURI;
     uint256 public nextId;
     uint256 public commissionRate;
-    uint256 public constant maxTileNum = 10**10; // we have to set the correct max tile number
+    uint256 public constant MAX_TILE_NUM = 10**10; // we have to set the correct max tile number
     uint256 public price; // each tile costs 500 RIO
+    uint256 public tilesBought; // total supply of tiles
 
     mapping(uint256 => bool) public isOwned;
-    mapping(uint256 => uint256[]) public regionNumbers;
+    // mapping(uint256 => uint256[]) public regionNumbers;
     mapping(uint256 => address) public firstOwners;
 
-    event LandNFTCreated(address landNft, address landBank, address swapToken);
-    event LandNFTDestroyed(address landNft);
-    event LandNFTTileBought(address buyer, uint256 tokenId);
-    event LandNFTTileSold(address seller, uint256 tokenId);
-    event LandNFTTileWithdrawn(address beneficiary, uint256 amount);
-    event LandNFTTileDeposited(address beneficiary, uint256 amount);
     event AdminChanged(address indexed newAdmin, address indexed oldAdmin);
     event DevFundChanged(
         address indexed newDevFund,
@@ -70,15 +68,17 @@ contract LandNFT is ERC721, Ownable, Pausable, ReentrancyGuard {
     );
     event ContractPaused(bool indexed paused);
     event ContractUnpaused(bool indexed paused);
+    event LandSold(address indexed buyer, uint256[] indexed region);
 
     //check if the region belongs to somebody.
+    // TODO: Check this doesnt make much sense
     modifier notOwned(uint256[] memory region) {
         if (region.length == 0) {
             revert NoTilesSelected();
         }
         bool ownerStatus;
         for (uint256 i = 0; i < region.length; i++) {
-            if (isOwned[region[i]] == true) {
+            if (isOwned[region[i]]) {
                 ownerStatus = true;
                 break;
             }
@@ -89,29 +89,30 @@ contract LandNFT is ERC721, Ownable, Pausable, ReentrancyGuard {
         _;
     }
 
-    constructor(address _swapLibAddr) ERC721("RealioVerse", "RVRS") {
-        if (_swapLibAddr == address(0)) {
+    constructor(
+        address _swapLibAddr,
+        address _devFund,
+        address _landBank
+    ) ERC721A("RealioVerse", "RVRS") {
+        if (
+            _swapLibAddr == address(0) ||
+            _devFund == address(0) ||
+            _landBank == address(0)
+        ) {
             revert CannotSetAddressZero();
-        } else {
-            devFund = msg.sender;
-            // to prevent error we have to set the landbank address to msg.sender
-            landBank = msg.sender;
-            admin = msg.sender;
-            commissionRate = 10;
-            price = 5 * 10**20;
-            swapToken = _swapLibAddr;
-            // we don't need this
-            baseURI = "Realio";
         }
+        // TODO: Update these for prod. If these contracts are not deployed before this ,
+        // it might make sense not to add them to the constructor.
+        devFund = _devFund;
+        // to prevent error we have to set the landbank address to msg.sender
+        landBank = _landBank;
+        admin = msg.sender;
+        commissionRate = 10;
+        price = 5 * 10**20;
+        swapToken = _swapLibAddr;
+        // we don't need this
+        baseURI = "Realio";
     }
-
-    // we need this function when only test
-    // function initializeSwapParams(address _rioToken, address _router) public {
-    //     require(msg.sender == admin, "Only admin can initialize");
-    //     RIO_TOKEN = _rioToken;
-    //     router = _router; // set uniswap router
-    //     // pool = _pool; // set uniswap RIO/ETH pool
-    // }
 
     /// State Changing Functions
 
@@ -202,83 +203,94 @@ contract LandNFT is ERC721, Ownable, Pausable, ReentrancyGuard {
     }
 
     /// @notice Mints a new NFT according the the tiles selected
-    /// @param to The beneficiary address
     /// @param region The tiles selected
     /// @param rioAmount The amount of RIO to be transferred
-
-    function safeMint(
-        address to,
+    function mint(
         uint256[] memory region,
         // address token,
         uint256 rioAmount
     ) external payable notOwned(region) whenNotPaused {
+        if (totalSupply() >= MAX_TILE_NUM) {
+            revert MaxTilesReached();
+        }
         if (rioAmount > 0) {
             if (rioAmount < price * region.length) {
                 revert InsufficientBalance();
-            } else {
-                IERC20(RIO_TOKEN).approve(address(this), rioAmount);
-                IERC20(RIO_TOKEN).transferFrom(
-                    msg.sender,
-                    address(this),
-                    rioAmount
-                );
-                IERC20(RIO_TOKEN).approve(swapToken, (rioAmount * 20) / 100);
-                uint256 minAmount = ISwapToken(swapToken).getAmountOutMin(
-                    RIO_TOKEN,
-                    WETH,
-                    (rioAmount * 20) / 100
-                );
-                ISwapToken(swapToken).swap(
-                    RIO_TOKEN,
-                    WETH,
-                    (rioAmount * 20) / 100,
-                    minAmount,
-                    devFund
-                );
-                IERC20(RIO_TOKEN).transfer(landBank, (rioAmount * 80) / 100);
             }
-        } else {
-            uint256 minAmount = ISwapToken(swapToken).getAmountOutMin(
-                WETH,
-                RIO_TOKEN,
-                msg.value
+
+            // number of tiles to be mints
+            uint256 numberOfTiles = region.length;
+            // Loop through the number of tiles and mark them as owned
+            for (uint256 i; i < numberOfTiles; i++) {
+                isOwned[region[i]] = true;
+            }
+            // Approve the amount of RIO to be transferred
+            IERC20(RIO_TOKEN).approve(address(this), rioAmount);
+            // Transfer the amount of RIO to the contract
+            bool success = IERC20(RIO_TOKEN).transferFrom(
+                msg.sender,
+                address(this),
+                rioAmount
             );
-            require(minAmount >= price * region.length, "low value");
-            ISwapToken(swapToken).swap{value: (msg.value * 80) / 100}(
-                WETH,
-                RIO_TOKEN,
-                (rioAmount * 80) / 100,
-                (minAmount * 80) / 100,
-                landBank
+
+            if (!success) {
+                revert TransferFailed();
+            }
+
+            uint256 amountIn = (rioAmount * 20) / 100;
+            // Approve the Uniswap Router contract
+            IERC20(RIO_TOKEN).approve(UNISWAP_V2_ROUTER, amountIn);
+
+            address[] memory path = new address[](2);
+            path[0] = address(RIO_TOKEN);
+            path[1] = address(WETH);
+            uint256 amountOutMin = getAmountOutMin(amountIn, path);
+            IUniswapV2Router(UNISWAP_V2_ROUTER).swapExactTokensForETH(
+                amountIn,
+                amountOutMin,
+                path,
+                devFund,
+                block.timestamp
             );
-            (bool success, ) = devFund.call{value: (msg.value * 20) / 100}("");
-            require(success, "Transfer to devFund failed.");
+            success = IERC20(RIO_TOKEN).transfer(
+                landBank,
+                (rioAmount * 80) / 100
+            );
+
+            if (!success) {
+                revert TransferFailed();
+            }
+
+            _safeMint(msg.sender, numberOfTiles);
+
+            tilesBought += numberOfTiles;
+            emit LandSold(msg.sender, region);
         }
-        _mint(to, nextId);
-        firstOwners[nextId] = to;
-        regionNumbers[nextId] = region;
-        nextId++;
-        totalTileNum += uint64(region.length);
-        require(totalTileNum <= maxTileNum, "Max limit of tile");
-        //set Ownership
-        for (uint256 i = 0; i < region.length; i++) {
-            isOwned[region[i]] = true;
-        }
+    }
+
+    function getAmountOutMin(uint256 _amountIn, address[] memory path)
+        public
+        view
+        returns (uint256)
+    {
+        uint256[] memory amountOutMins = IUniswapV2Router(UNISWAP_V2_ROUTER)
+            .getAmountsOut(_amountIn, path);
+        return amountOutMins[path.length - 1];
     }
 
     /// View Functions
 
     /// @notice Returns the number of tiles selects
     /// @param index the index of the tile selected
-    function getLength(uint256 index) external view returns (uint256 len) {
-        len = regionNumbers[index].length;
-    }
+    // function getLength(uint256 index) external view returns (uint256 len) {
+    //     len = regionNumbers[index].length;
+    // }
 
-    /// @notice Returns the price the tile in ETH
-    /// @param _price the price of the token in RIO
-    function getETHPrice(uint256 _price) external view returns (uint256) {
-        return ISwapToken(swapToken).getAmountOutMin(RIO_TOKEN, WETH, _price);
-    }
+    // /// @notice Returns the price the tile in ETH
+    // /// @param _price the price of the token in RIO
+    // function getETHPrice(uint256 _price) external view returns (uint256) {
+    //     return ISwapToken(swapToken).getAmountOutMin(RIO_TOKEN, WETH, _price);
+    // }
 
     /// @notice Returns a token URI
     /// @param tokenId the id of the token
@@ -297,4 +309,10 @@ contract LandNFT is ERC721, Ownable, Pausable, ReentrancyGuard {
                 ? string(abi.encodePacked(baseURI, tokenId.toString()))
                 : "";
     }
+
+    //this function will return the minimum amount from a swap
+    //input the 3 parameters below and it will return the minimum amount out
+    //this is needed for the swap function above
+
+    receive() external payable {}
 }

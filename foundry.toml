@@ -8,8 +8,9 @@ remappings = [
     '@rari-capital/solmate/=lib/solmate/',
     '@uniswap/v2-core/=lib/v2-core/',
     '@uniswap/v2-periphery/=lib/v2-periphery/',
+    'ERC721A/=lib/ERC721A/',
 ]
-solc_version = "0.8.10"
+solc_version = "0.8.15"
 gas_reports = ["*"]
 
 

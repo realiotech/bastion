@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.8.10;
+pragma solidity >=0.8.15;
 
+// TODO: Fix broken ISwaps
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {ILandNFT} from "./interfaces/ILandNft.sol";
 import {ILandBank} from "./interfaces/ILandBank.sol";
 import {ReentrancyGuard} from "@rari-capital/solmate/src/utils/ReentrancyGuard.sol";
-import {ISwapToken} from "./interfaces/ISwapToken.sol";
+
+// import {ISwapToken} from "./interfaces/ISwapToken.sol";
 
 contract Marketplace is ReentrancyGuard {
     address private constant RIO_TOKEN =
@@ -155,14 +157,14 @@ contract Marketplace is ReentrancyGuard {
         );
         uint256 commissionRate = ILandNFT(landNft).commissionRate();
         if (_rioAmount == 0) {
-            require(
-                ISwapToken(swapToken).getAmountOutMin(
-                    WETH,
-                    RIO_TOKEN,
-                    msg.value
-                ) >= sellBidPrice[tokenId],
-                "Not enough funds"
-            );
+            // require(
+            //     ISwapToken(swapToken).getAmountOutMin(
+            //         WETH,
+            //         RIO_TOKEN,
+            //         msg.value
+            //     ) >= sellBidPrice[tokenId],
+            //     "Not enough funds"
+            // );
             ILandNFT(landNft).transferFrom(owner, msg.sender, tokenId);
 
             uint256 amount4DevFund = (msg.value * (commissionRate / 2)) / 100;
@@ -191,13 +193,13 @@ contract Marketplace is ReentrancyGuard {
 
             // require(false, "here");
             // ***********************************have to swap and if the valance is correct, send RIO to landbank
-            ISwapToken(swapToken).swap{value: amount4LandBank}(
-                WETH,
-                RIO_TOKEN,
-                amount4LandBank,
-                0, // we already check if user sent correct value so we don't need this param
-                address(landBank)
-            );
+            // ISwapToken(swapToken).swap{value: amount4LandBank}(
+            //     WETH,
+            //     RIO_TOKEN,
+            //     amount4LandBank,
+            //     0, // we already check if user sent correct value so we don't need this param
+            //     address(landBank)
+            // );
         } else {
             // RIO case
             require(_rioAmount == sellBidPrice[tokenId], "Not enough funds");
@@ -215,14 +217,14 @@ contract Marketplace is ReentrancyGuard {
                 amount4DevFund
             );
             IERC20(RIO_TOKEN).approve(swapToken, amount4DevFund);
-            ISwapToken(swapToken).swap(
-                RIO_TOKEN,
-                WETH,
-                amount4DevFund,
-                0, // we can set the minPrice to 0
-                ILandNFT(landNft).devFund()
-            );
-            // require(false, "here");
+            // ISwapToken(swapToken).swap(
+            //     RIO_TOKEN,
+            //     WETH,
+            //     amount4DevFund,
+            //     0, // we can set the minPrice to 0
+            //     ILandNFT(landNft).devFund()
+            // );
+            // // require(false, "here");
             IERC20(RIO_TOKEN).transferFrom(
                 msg.sender,
                 address(landBank),
@@ -324,22 +326,22 @@ contract Marketplace is ReentrancyGuard {
             auctions[tokenId].highestBidder = payable(msg.sender);
             auctions[tokenId].highestBid = rioAmount;
         } else {
-            uint256 rioVal = ISwapToken(swapToken).getAmountOutMin(
-                WETH,
-                RIO_TOKEN,
-                msg.value
-            );
-            require(
-                rioVal > auctions[tokenId].highestBid,
-                "There already is a higher bid."
-            );
-            ISwapToken(swapToken).swap{value: msg.value}(
-                WETH,
-                RIO_TOKEN,
-                msg.value,
-                0, // we can set this to 0 because we already check that in require condition
-                address(this)
-            );
+            // uint256 rioVal = ISwapToken(swapToken).getAmountOutMin(
+            //     WETH,
+            //     RIO_TOKEN,
+            //     msg.value
+            // );
+            // require(
+            //     rioVal > auctions[tokenId].highestBid,
+            //     "There already is a higher bid."
+            // );
+            // ISwapToken(swapToken).swap{value: msg.value}(
+            //     WETH,
+            //     RIO_TOKEN,
+            //     msg.value,
+            //     0, // we can set this to 0 because we already check that in require condition
+            //     address(this)
+            // );
             if (auctions[tokenId].highestBid > 0) {
                 IERC20(RIO_TOKEN).transfer(
                     auctions[tokenId].highestBidder,
@@ -352,7 +354,7 @@ contract Marketplace is ReentrancyGuard {
             }
             // now store the bid data
             auctions[tokenId].highestBidder = payable(msg.sender);
-            auctions[tokenId].highestBid = rioVal;
+            // auctions[tokenId].highestBid = rioVal;
         }
     }
 
@@ -420,13 +422,13 @@ contract Marketplace is ReentrancyGuard {
                 amount4LandBank;
 
             IERC20(RIO_TOKEN).approve(swapToken, amount4DevFund);
-            ISwapToken(swapToken).swap(
-                RIO_TOKEN,
-                WETH,
-                amount4DevFund,
-                0,
-                ILandNFT(landNft).devFund()
-            );
+            // ISwapToken(swapToken).swap(
+            //     RIO_TOKEN,
+            //     WETH,
+            //     amount4DevFund,
+            //     0,
+            //     ILandNFT(landNft).devFund()
+            // );
             IERC20(RIO_TOKEN).transfer(address(landBank), amount4LandBank);
             IERC20(RIO_TOKEN).transfer(
                 auctions[tokenId].beneficiary,
@@ -479,30 +481,30 @@ contract Marketplace is ReentrancyGuard {
             "Must be owned by bank contract"
         );
         if (rioAmount == 0) {
-            require(
-                ISwapToken(swapToken).getAmountOutMin(
-                    WETH,
-                    RIO_TOKEN,
-                    (msg.value * 5) / 6
-                ) >=
-                    (IERC20(RIO_TOKEN).balanceOf(address(landBank)) /
-                        ILandNFT(landNft).totalTileNum()) *
-                        ILandNFT(landNft).getLength(tokenId),
-                "Must pay exact coin"
-            );
+            // require(
+            //     ISwapToken(swapToken).getAmountOutMin(
+            //         WETH,
+            //         RIO_TOKEN,
+            //         (msg.value * 5) / 6
+            //     ) >=
+            //         (IERC20(RIO_TOKEN).balanceOf(address(landBank)) /
+            //             ILandNFT(landNft).totalTileNum()) *
+            //             ILandNFT(landNft).getLength(tokenId),
+            //     "Must pay exact coin"
+            // );
 
             ILandBank(landBank).buyLandFromBank(msg.sender, tokenId);
-            ISwapToken(swapToken).swap{value: (msg.value * 5) / 6}(
-                WETH,
-                RIO_TOKEN,
-                (msg.value * 5) / 6,
-                ISwapToken(swapToken).getAmountOutMin(
-                    WETH,
-                    RIO_TOKEN,
-                    (msg.value * 5) / 6
-                ),
-                address(landBank)
-            );
+            // ISwapToken(swapToken).swap{value: (msg.value * 5) / 6}(
+            //     WETH,
+            //     RIO_TOKEN,
+            //     (msg.value * 5) / 6,
+            //     ISwapToken(swapToken).getAmountOutMin(
+            //         WETH,
+            //         RIO_TOKEN,
+            //         (msg.value * 5) / 6
+            //     ),
+            //     address(landBank)
+            // );
             (bool success2, ) = ILandNFT(landNft).devFund().call{
                 value: msg.value / 6
             }("");
@@ -521,13 +523,13 @@ contract Marketplace is ReentrancyGuard {
                 rioAmount
             );
             IERC20(RIO_TOKEN).approve(swapToken, rioAmount / 6);
-            ISwapToken(swapToken).swap(
-                RIO_TOKEN,
-                WETH,
-                rioAmount / 6,
-                0,
-                address(ILandNFT(landNft).devFund())
-            );
+            // ISwapToken(swapToken).swap(
+            //     RIO_TOKEN,
+            //     WETH,
+            //     rioAmount / 6,
+            //     0,
+            //     address(ILandNFT(landNft).devFund())
+            // );
             IERC20(RIO_TOKEN).transfer(address(landBank), (rioAmount * 5) / 6);
             ILandBank(landBank).buyLandFromBank(msg.sender, tokenId);
         }
