@@ -1,5 +1,6 @@
 {
     "filter_paths": "lib",
+    "detectors_to_exclude": "timestamp,naming-convention,pragma,solc-version,uninitialized-local",
     "solc_remaps": [
         "forge-std/=lib/forge-std/src/",
         "@openzeppelin/=lib/openzeppelin-contracts/",
