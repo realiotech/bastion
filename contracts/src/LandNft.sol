@@ -10,6 +10,8 @@ import {ReentrancyGuard} from "@rari-capital/solmate/src/utils/ReentrancyGuard.s
 import {SafeTransferLib} from "@rari-capital/solmate/src/utils/SafeTransferLib.sol";
 
 import "./interfaces/IUniswapV2Router.sol";
+import "./interfaces/IUniswapV2Pair.sol";
+
 
 error CannotSetAddressZero();
 error NoTilesSelected();
@@ -29,13 +31,14 @@ error MaxTilesReached();
 contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
     using Strings for uint256;
 
-    address swapToken;
     // RIO token address
     address private constant RIO_TOKEN =
         0xf21661D0D1d76d3ECb8e1B9F1c923DBfffAe4097;
     address public constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
     address private constant UNISWAP_V2_ROUTER =
         0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;
+    address private constant UNISWAP_V2_PAIR =
+        0x0b85B3000BEf3E26e01428D1b525A532eA7513b8;
     // admin : can set all parameters
     address public admin;
     // store all funds by ETH
@@ -50,7 +53,6 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
     uint256 public tilesBought; // total supply of tiles
 
     mapping(uint256 => bool) public isOwned;
-    // mapping(uint256 => uint256[]) public regionNumbers;
     mapping(uint256 => address) public firstOwners;
 
     event AdminChanged(address indexed newAdmin, address indexed oldAdmin);
@@ -77,6 +79,9 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
             revert NoTilesSelected();
         }
         bool ownerStatus;
+        // TODO: It might be possible to this loop to run out of gas.
+        // investigate workarounds.
+        // use ERC's ownerOf function
         for (uint256 i = 0; i < region.length; i++) {
             if (isOwned[region[i]]) {
                 ownerStatus = true;
@@ -90,27 +95,18 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
     }
 
     constructor(
-        address _swapLibAddr,
         address _devFund,
-        address _landBank
+        address _landBank,
+        uint256 _price
     ) ERC721A("RealioVerse", "RVRS") {
-        if (
-            _swapLibAddr == address(0) ||
-            _devFund == address(0) ||
-            _landBank == address(0)
-        ) {
+        if (_devFund == address(0) || _landBank == address(0)) {
             revert CannotSetAddressZero();
         }
-        // TODO: Update these for prod. If these contracts are not deployed before this ,
-        // it might make sense not to add them to the constructor.
         devFund = _devFund;
-        // to prevent error we have to set the landbank address to msg.sender
         landBank = _landBank;
         admin = msg.sender;
         commissionRate = 10;
-        price = 5 * 10**20;
-        swapToken = _swapLibAddr;
-        // we don't need this
+        price = _price;
         baseURI = "Realio";
     }
 
@@ -205,24 +201,30 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
     /// @notice Mints a new NFT according the the tiles selected
     /// @param region The tiles selected
     /// @param rioAmount The amount of RIO to be transferred
-    function mint(
-        uint256[] memory region,
-        // address token,
-        uint256 rioAmount
-    ) external payable notOwned(region) whenNotPaused {
+    // TODO: what happens if the users sends too much rio?
+    // TODO: Should the rio mint and ether mint function be seperate?
+    function mint(uint256[] memory region, uint256 rioAmount)
+        external
+        payable
+        notOwned(region)
+        whenNotPaused
+    {
         if (totalSupply() >= MAX_TILE_NUM) {
             revert MaxTilesReached();
         }
-        if (rioAmount > 0) {
-            if (rioAmount < price * region.length) {
+        // number of tiles to be mints
+        uint256 numberOfTiles = region.length;
+        // Loop through the number of tiles and mark them as owned
+        for (uint256 i; i < numberOfTiles; i++) {
+            isOwned[region[i]] = true;
+        }
+        if (rioAmount > 0 || msg.value == 0) {
+            address[] memory path = new address[](2);
+            path[0] = address(RIO_TOKEN);
+            path[1] = address(WETH);
+            uint256 minAmountRio = getTokenPrice(price * numberOfTiles);
+            if (rioAmount < minAmountRio) {
                 revert InsufficientBalance();
-            }
-
-            // number of tiles to be mints
-            uint256 numberOfTiles = region.length;
-            // Loop through the number of tiles and mark them as owned
-            for (uint256 i; i < numberOfTiles; i++) {
-                isOwned[region[i]] = true;
             }
             // Approve the amount of RIO to be transferred
             IERC20(RIO_TOKEN).approve(address(this), rioAmount);
@@ -241,7 +243,7 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
             // Approve the Uniswap Router contract
             IERC20(RIO_TOKEN).approve(UNISWAP_V2_ROUTER, amountIn);
 
-            address[] memory path = new address[](2);
+            path = new address[](2);
             path[0] = address(RIO_TOKEN);
             path[1] = address(WETH);
             uint256 amountOutMin = getAmountOutMin(amountIn, path);
@@ -260,7 +262,32 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
             if (!success) {
                 revert TransferFailed();
             }
+            // TODO: Remove SafeMint?
+            _safeMint(msg.sender, numberOfTiles);
 
+            tilesBought += numberOfTiles;
+            emit LandSold(msg.sender, region);
+        } else if (msg.value > 0 || rioAmount == 0) {
+            // send 20% to dev fund
+            // Convert the msg.value to RIO
+            if (msg.value < price * region.length) {
+                revert InsufficientBalance();
+            }
+            // transfer will throw on failure , so no need to handle this.
+            // as transfer will propagate the error on the receving contract.
+            // Safe transfer??
+            // send 20% to dev fund
+            payable(devFund).transfer((msg.value * 20) / 100);
+
+            // Covert 80% of msg.value to RIO
+            uint256 amountIn = (msg.value * 80) / 100;
+            address[] memory path = new address[](2);
+            path[0] = address(WETH);
+            path[1] = address(RIO_TOKEN);
+            uint256 amountOutMin = getAmountOutMin(amountIn, path);
+            IUniswapV2Router(UNISWAP_V2_ROUTER).swapExactETHForTokens{
+                value: amountIn
+            }(amountOutMin, path, landBank, block.timestamp);
             _safeMint(msg.sender, numberOfTiles);
 
             tilesBought += numberOfTiles;
@@ -278,19 +305,12 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
         return amountOutMins[path.length - 1];
     }
 
-    /// View Functions
-
-    /// @notice Returns the number of tiles selects
-    /// @param index the index of the tile selected
-    // function getLength(uint256 index) external view returns (uint256 len) {
-    //     len = regionNumbers[index].length;
-    // }
-
-    // /// @notice Returns the price the tile in ETH
-    // /// @param _price the price of the token in RIO
-    // function getETHPrice(uint256 _price) external view returns (uint256) {
-    //     return ISwapToken(swapToken).getAmountOutMin(RIO_TOKEN, WETH, _price);
-    // }
+    // calculate price based on pair reserves
+    function getTokenPrice(uint256 amount) public view returns (uint256) {
+        IUniswapV2Pair pair = IUniswapV2Pair(UNISWAP_V2_PAIR);
+        (uint256 Res0, uint256 Res1, ) = pair.getReserves();
+        return ((amount * Res1) / Res0);
+    }
 
     /// @notice Returns a token URI
     /// @param tokenId the id of the token
@@ -309,10 +329,6 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
                 ? string(abi.encodePacked(baseURI, tokenId.toString()))
                 : "";
     }
-
-    //this function will return the minimum amount from a swap
-    //input the 3 parameters below and it will return the minimum amount out
-    //this is needed for the swap function above
 
     receive() external payable {}
 }

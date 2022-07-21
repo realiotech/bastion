@@ -1,19 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.15;
 
-// import "ds-test/test.sol";
 import "forge-std/Test.sol";
-// import "forge-std/Vm.sol";
 import "../LandNFT.sol";
-import "../SwapToken.sol";
-import {Utilities} from "./utils/Utilities.sol";
+import {Utilities} from "./utils/Utilities.t.sol";
 
 contract LandNFTTest is Test {
-    // Vm vm = Vm(0x7109709ECfa91a80626fF3989D68f67F5b1DD12D);
     address public admin;
-    address payable public devFund =
-        payable(0x00EEDFadcC5102B00B1d90D23d135128A29c8B38);
-    address public landBank = 0xE1277a3465B92E329c49991D4b95Bc779ba43765;
+    address public devFund;
+    address public landBank;
+    address public brokeDude;
+    address public ethDude;
     address public swapToken;
     address public owner = 0xb4c79daB8f259C7Aee6E5b2Aa729821864227e84;
     address public nftReceiver = 0x892D509964C144f501Aaa8fb1a57069789D65Ce4;
@@ -23,20 +20,28 @@ contract LandNFTTest is Test {
     uint256 public nextId;
     uint256 public commissionRate;
     uint256 public constant maxTileNum = 10**10;
-    uint256 public price;
+
     address private constant RIO_TOKEN =
         0xf21661D0D1d76d3ECb8e1B9F1c923DBfffAe4097;
     address private constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+    uint256 public constant FEE_MULTIPLIER = (97 / uint256(100));
+    uint256 public price = 0.01 ether;
 
-    SwapToken swap;
     LandNFT landNFT;
     Utilities internal utils;
 
     function setUp() public {
         utils = new Utilities();
-        // address payable[] memory users = utils.createUsers(2);
-        swap = new SwapToken();
-        landNFT = new LandNFT(address(swap), devFund, landBank);
+        address payable[] memory users = utils.createUsers(4);
+        devFund = users[0];
+        landBank = users[1];
+        brokeDude = users[2];
+        ethDude = users[3];
+        vm.label(devFund, "devFund");
+        vm.label(landBank, "landBank");
+        vm.label(brokeDude, "brokeDude");
+        vm.label(ethDude, "ethDude");
+        landNFT = new LandNFT(devFund, landBank, price);
     }
 
     function testInitialization() public {
@@ -45,6 +50,7 @@ contract LandNFTTest is Test {
         assertEq(landNFT.admin(), owner);
         assertEq(landNFT.commissionRate(), 10);
         assertEq(landNFT.baseURI(), "Realio");
+        assertEq(landNFT.price(), price);
     }
 
     function testSetAdmin() public {
@@ -52,6 +58,14 @@ contract LandNFTTest is Test {
         vm.prank(owner);
         landNFT.setAdmin(newAdmin);
         assertEq(landNFT.admin(), newAdmin);
+        vm.stopPrank();
+        vm.prank(newAdmin);
+        vm.expectRevert(CannotSetAddressZero.selector);
+        landNFT.setAdmin(address(0));
+        vm.stopPrank();
+        vm.startPrank(address(0xE1277a3465B92E329c49991D4b95Bc779ba43765));
+        vm.expectRevert(NotAuthorised.selector);
+        landNFT.setAdmin(newAdmin);
     }
 
     function testSetPrice() public {
@@ -91,62 +105,93 @@ contract LandNFTTest is Test {
     }
 
     function testSafeMintWithRio() public {
-        console.log("Begning ETH balance Test", address(this).balance);
-        console.log("Begining ETH balance Dev Fund", address(devFund).balance);
         vm.startPrank(rioWhale);
         uint256[] memory regions = new uint256[](3);
         regions[0] = 1;
         regions[1] = 2;
         regions[2] = 3;
-        uint256 rioAmount = 3 * 5 * 10**20;
+        address[] memory path = new address[](2);
+        path[0] = address(WETH);
+        path[1] = address(RIO_TOKEN);
+        uint256 rioAmount = landNFT.getTokenPrice(price * regions.length);
         IERC20(RIO_TOKEN).approve(address(landNFT), rioAmount);
-        // vm.expectEmit(true, true, true, true);
+        landNFT.mint(regions, rioAmount);
+        vm.expectRevert(RegionAlreadyOwned.selector);
         landNFT.mint(regions, rioAmount);
         vm.stopPrank();
-        // Check Whale Balance is reduced by tile price
-        // assertEq(
-        //     IERC20(RIO_TOKEN).balanceOf(rioWhale),
-        //     (IERC20(RIO_TOKEN).balanceOf(rioWhale) - 3 * 5 * 10**20)
-        // );
         // Assert that the tile is minted to the rioWhale
-        assertEq(3, landNFT.balanceOf(rioWhale));
-        assertEq(3, landNFT.tilesBought());
-        // Assert that Developer Fund is increased by 20 % of the sale price
-        // assertEq(IERC20(WETH).balanceOf(devFund), 300000000000000000000);
-        // Assert that the dev fund is increased by 20 % of the sale price.
-        address[] memory path = new address[](2);
+        assertEq(regions.length, landNFT.balanceOf(rioWhale));
+        assertEq(regions.length, landNFT.tilesBought());
+        path = new address[](2);
         path[0] = address(RIO_TOKEN);
         path[1] = address(WETH);
-        // FIXME 
-        assertEq(
-            IERC20(WETH).balanceOf(devFund),
-            landNFT.getAmountOutMin(((rioAmount * 20) / 100), path)
+        // Assert that Developer Fund is increased by 20 % of the sale price
+        // We use the greater than or equals to comparison as we can't determine
+        // the exact amount of tokens that are sent to the devfund, but we know that
+        // it should be at least the `minOutAmount` for the swap.
+        uint256 minOutAmountDevFund = landNFT.getAmountOutMin(
+            ((rioAmount * 20) / 100),
+            path
         );
-        // Assert that the LandBank is increased by 80 % of the sale price
-        assertEq(1200000000000000000000, IERC20(RIO_TOKEN).balanceOf(landBank));
+        assertGe(address(devFund).balance, minOutAmountDevFund);
+        assertEq((rioAmount * 8) / 10, IERC20(RIO_TOKEN).balanceOf(landBank));
+        vm.startPrank(rioWhale);
+        IERC20(RIO_TOKEN).transfer(brokeDude, 1 * 10**20);
+        vm.stopPrank();
+        vm.startPrank(brokeDude);
+        regions = new uint256[](3);
+        regions[0] = 4;
+        regions[1] = 5;
+        regions[2] = 6;
+        uint256 newRioAmount = 1 * 10**18;
+        IERC20(RIO_TOKEN).approve(address(landNFT), newRioAmount);
+        vm.expectRevert(InsufficientBalance.selector);
+        landNFT.mint(regions, rioAmount);
     }
 
-    // function testSafeMintWithETH() public {
-    //     uint256 id = 1;
-    //     uint256 price = 100;
-    //     uint256 commissionRate = 20;
-    // }
-
-    // function testGetLength() public {
-    //     uint256 length = landNFT.getLength();
-    //     assertEq(length, 0);
-    // }
-
-    // function testGetEthPrice() public {
-    //     uint256 ethPrice = landNFT.getEthPrice();
-    //     assertEq(ethPrice, 0);
-    // }
+    function testSafeMintWithETH() public {
+        vm.prank(ethDude);
+        uint256[] memory regions = new uint256[](3);
+        regions[0] = 4;
+        regions[1] = 5;
+        regions[2] = 6;
+        uint256 ethAmount = price * regions.length;
+        landNFT.mint{value: ethAmount}(regions, 0);
+        assertEq(regions.length, landNFT.balanceOf(ethDude));
+        assertEq(regions.length, landNFT.tilesBought());
+        vm.expectRevert(RegionAlreadyOwned.selector);
+        landNFT.mint{value: ethAmount}(regions, 0);
+        /// @dev: the dev account is seeded with 100 Ether so we need to reflex that
+        /// in the assertion.
+        assertEq(address(devFund).balance, 100 ether + (ethAmount * 2) / 10);
+        address[] memory path = new address[](2);
+        path[0] = address(WETH);
+        path[1] = address(RIO_TOKEN);
+        // Assert that LandBank's Balance is increased by 80 % of the sale price
+        // We use the greater than or equals to comparison as we can't determine
+        // the exact amount of tokens that are sent to the devfund, but we know that
+        // it should be at least the `minOutAmount` for the swap.
+        uint256 minOutAmountLandBankFund = landNFT.getAmountOutMin(
+            ((ethAmount * 80) / 100),
+            path
+        );
+        assertGe(
+            IERC20(RIO_TOKEN).balanceOf(landBank),
+            minOutAmountLandBankFund
+        );
+        uint256 cheapSkate = (price * regions.length) / 10;
+        regions = new uint256[](3);
+        regions[0] = 8;
+        regions[1] = 9;
+        regions[2] = 10;
+        vm.expectRevert(InsufficientBalance.selector);
+        landNFT.mint{value: cheapSkate}(regions, 0);
+    }
 
     // function testTokenURI() public {
     //     string memory uri = landNFT.tokenURI(1);
     //     assertEq(uri, "");
     // }
-    fallback() external payable {}
 
     receive() external payable {}
 }
