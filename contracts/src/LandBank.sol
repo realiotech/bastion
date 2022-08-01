@@ -46,15 +46,15 @@ contract LandBank is ReentrancyGuard {
         );
     }
 
-    function withdraw(address _beneficiary, uint256 _amount) external {
-        require(
-            owner == msg.sender,
-            "Only owner contract can call withdraw function"
-        );
-        require(
-            _amount <= IERC20(RIO_TOKEN).balanceOf(address(this)),
-            "Too large amount"
-        );
-        IERC20(RIO_TOKEN).transfer(_beneficiary, _amount);
-    }
+    // function withdraw(address _beneficiary, uint256 _amount) external {
+    //     require(
+    //         owner == msg.sender,
+    //         "Only owner contract can call withdraw function"
+    //     );
+    //     require(
+    //         _amount <= IERC20(RIO_TOKEN).balanceOf(address(this)),
+    //         "Too large amount"
+    //     );
+    //     IERC20(RIO_TOKEN).transfer(_beneficiary, _amount);
+    // }
 }

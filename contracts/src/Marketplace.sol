@@ -8,6 +8,16 @@ import {ILandBank} from "./interfaces/ILandBank.sol";
 import {ReentrancyGuard} from "@rari-capital/solmate/src/utils/ReentrancyGuard.sol";
 
 // import {ISwapToken} from "./interfaces/ISwapToken.sol";
+error CannotSetAddressZero();
+error NoTilesSelected();
+error RegionAlreadyOwned();
+error NotAuthorised();
+error ComissionOutOfAllowedRange();
+error InsufficientBalance();
+error InvalidToken();
+error NonExistentTokenURI();
+error TransferFailed();
+error MaxTilesReached();
 
 contract Marketplace is ReentrancyGuard {
     address private constant RIO_TOKEN =
@@ -77,14 +87,15 @@ contract Marketplace is ReentrancyGuard {
       ╚═════════════════════════════╝*/
     /**********************************/
 
-    constructor(address _landNft, address _swapToken) {
+
+
+    constructor(address _landNft) {
         require(
-            _landNft != address(0) && _swapToken != address(0),
+            _landNft != address(0),
             "can't set zero address"
         );
 
         landNft = _landNft;
-        swapToken = _swapToken;
         admin = msg.sender;
     }
 
