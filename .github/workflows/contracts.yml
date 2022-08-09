@@ -16,6 +16,7 @@ jobs:
         uses: onbjerg/foundry-toolchain@v1
         with:
           version: nightly
+      - run: pwd
       - name: Run tests
         run: forge test -f $INFURA --gas-report --root .
         env:
@@ -69,6 +70,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          submodules: recursive
 
       - name: Install Foundry
         uses: onbjerg/foundry-toolchain@v1
@@ -81,7 +84,7 @@ jobs:
 
       - name: Build contracts before checking bindings are correct
         working-directory: contracts
-        run: forge build
+        run: forge build --root . 
 
       - name: Check bindings are correct
         run: forge bind --bindings-path ./bindings --crate-name bindings
