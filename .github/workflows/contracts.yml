@@ -17,7 +17,9 @@ jobs:
         with:
           version: nightly
       - name: Run tests
-        run: forge test --gas-report
+        run: forge test -f $INFURA --gas-report
+        env:
+          INFURA : ${{secrets.INFURA}}
 
       - name: Run Coverage
         run: forge coverage --report lcov
@@ -36,6 +38,8 @@ jobs:
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v3
+          with:
+            submodules: recursive
 
         - name: Install Foundry
           uses: onbjerg/foundry-toolchain@v1
