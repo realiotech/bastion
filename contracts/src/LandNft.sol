@@ -12,7 +12,6 @@ import {SafeTransferLib} from "@rari-capital/solmate/src/utils/SafeTransferLib.s
 import "./interfaces/IUniswapV2Router.sol";
 import "./interfaces/IUniswapV2Pair.sol";
 
-
 error CannotSetAddressZero();
 error NoTilesSelected();
 error RegionAlreadyOwned();
