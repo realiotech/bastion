@@ -1,6 +1,6 @@
-pub use safe_transfer_lib::*;
+pub use address::*;
 #[allow(clippy::too_many_arguments, non_camel_case_types)]
-pub mod safe_transfer_lib {
+pub mod address {
     #![allow(clippy::enum_variant_names)]
     #![allow(dead_code)]
     #![allow(clippy::type_complexity)]
@@ -14,37 +14,37 @@ pub mod safe_transfer_lib {
         types::*,
     };
     use ethers::providers::Middleware;
-    #[doc = "SafeTransferLib was auto-generated with ethers-rs Abigen. More information at: https://github.com/gakonst/ethers-rs"]
+    #[doc = "Address was auto-generated with ethers-rs Abigen. More information at: https://github.com/gakonst/ethers-rs"]
     use std::sync::Arc;
-    pub static SAFETRANSFERLIB_ABI: ethers::contract::Lazy<ethers::core::abi::Abi> =
+    pub static ADDRESS_ABI: ethers::contract::Lazy<ethers::core::abi::Abi> =
         ethers::contract::Lazy::new(|| {
             ethers::core::utils::__serde_json::from_str("[]").expect("invalid abi")
         });
     #[doc = r" Bytecode of the #name contract"]
-    pub static SAFETRANSFERLIB_BYTECODE: ethers::contract::Lazy<ethers::core::types::Bytes> =
+    pub static ADDRESS_BYTECODE: ethers::contract::Lazy<ethers::core::types::Bytes> =
         ethers::contract::Lazy::new(|| {
-            "0x60566037600b82828239805160001a607314602a57634e487b7160e01b600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea264697066735822122016f1159465c0823346b9689d8a12e4662680c282a02ccddbe2b1542b9eab569c64736f6c634300080f0033" . parse () . expect ("invalid bytecode")
+            "0x60566037600b82828239805160001a607314602a57634e487b7160e01b600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea26469706673582212208bb28db1dbf8a4cdd3be9b504b8299ad2d72615cb6496014fc858db2a26f265964736f6c634300080f0033" . parse () . expect ("invalid bytecode")
         });
-    pub struct SafeTransferLib<M>(ethers::contract::Contract<M>);
-    impl<M> Clone for SafeTransferLib<M> {
+    pub struct Address<M>(ethers::contract::Contract<M>);
+    impl<M> Clone for Address<M> {
         fn clone(&self) -> Self {
-            SafeTransferLib(self.0.clone())
+            Address(self.0.clone())
         }
     }
-    impl<M> std::ops::Deref for SafeTransferLib<M> {
+    impl<M> std::ops::Deref for Address<M> {
         type Target = ethers::contract::Contract<M>;
         fn deref(&self) -> &Self::Target {
             &self.0
         }
     }
-    impl<M: ethers::providers::Middleware> std::fmt::Debug for SafeTransferLib<M> {
+    impl<M: ethers::providers::Middleware> std::fmt::Debug for Address<M> {
         fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-            f.debug_tuple(stringify!(SafeTransferLib))
+            f.debug_tuple(stringify!(Address))
                 .field(&self.address())
                 .finish()
         }
     }
-    impl<M: ethers::providers::Middleware> SafeTransferLib<M> {
+    impl<M: ethers::providers::Middleware> Address<M> {
         #[doc = r" Creates a new contract instance with the specified `ethers`"]
         #[doc = r" client at the given `Address`. The contract derefs to a `ethers::Contract`"]
         #[doc = r" object"]
@@ -52,8 +52,7 @@ pub mod safe_transfer_lib {
             address: T,
             client: ::std::sync::Arc<M>,
         ) -> Self {
-            ethers::contract::Contract::new(address.into(), SAFETRANSFERLIB_ABI.clone(), client)
-                .into()
+            ethers::contract::Contract::new(address.into(), ADDRESS_ABI.clone(), client).into()
         }
         #[doc = r" Constructs the general purpose `Deployer` instance based on the provided constructor arguments and sends it."]
         #[doc = r" Returns a new instance of a deployer that returns an instance of this contract after sending the transaction"]
@@ -86,8 +85,8 @@ pub mod safe_transfer_lib {
             ethers::contract::ContractError<M>,
         > {
             let factory = ethers::contract::ContractFactory::new(
-                SAFETRANSFERLIB_ABI.clone(),
-                SAFETRANSFERLIB_BYTECODE.clone().into(),
+                ADDRESS_ABI.clone(),
+                ADDRESS_BYTECODE.clone().into(),
                 client,
             );
             let deployer = factory.deploy(constructor_args)?;
@@ -95,7 +94,7 @@ pub mod safe_transfer_lib {
             Ok(deployer)
         }
     }
-    impl<M: ethers::providers::Middleware> From<ethers::contract::Contract<M>> for SafeTransferLib<M> {
+    impl<M: ethers::providers::Middleware> From<ethers::contract::Contract<M>> for Address<M> {
         fn from(contract: ethers::contract::Contract<M>) -> Self {
             Self(contract)
         }

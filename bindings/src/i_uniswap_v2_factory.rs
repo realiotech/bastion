@@ -1,6 +1,6 @@
-pub use iuniswapv2factory_mod::*;
+pub use i_uniswap_v2_factory::*;
 #[allow(clippy::too_many_arguments, non_camel_case_types)]
-pub mod iuniswapv2factory_mod {
+pub mod i_uniswap_v2_factory {
     #![allow(clippy::enum_variant_names)]
     #![allow(dead_code)]
     #![allow(clippy::type_complexity)]
@@ -18,7 +18,7 @@ pub mod iuniswapv2factory_mod {
     use std::sync::Arc;
     pub static IUNISWAPV2FACTORY_ABI: ethers::contract::Lazy<ethers::core::abi::Abi> =
         ethers::contract::Lazy::new(|| {
-            serde_json :: from_str ("[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"token0\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"token1\",\"type\":\"address\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"getPair\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\",\"components\":[]}]}]") . expect ("invalid abi")
+            ethers :: core :: utils :: __serde_json :: from_str ("[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"token0\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"token1\",\"type\":\"address\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"getPair\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\",\"components\":[]}]}]") . expect ("invalid abi")
         });
     pub struct IUniswapV2Factory<M>(ethers::contract::Contract<M>);
     impl<M> Clone for IUniswapV2Factory<M> {
@@ -68,7 +68,7 @@ pub mod iuniswapv2factory_mod {
             Self(contract)
         }
     }
-    #[doc = "Container type for all input parameters for the `getPair`function with signature `getPair(address,address)` and selector `[230, 164, 57, 5]`"]
+    #[doc = "Container type for all input parameters for the `getPair` function with signature `getPair(address,address)` and selector `[230, 164, 57, 5]`"]
     #[derive(
         Clone,
         Debug,
@@ -83,4 +83,15 @@ pub mod iuniswapv2factory_mod {
         pub token_0: ethers::core::types::Address,
         pub token_1: ethers::core::types::Address,
     }
+    #[doc = "Container type for all return fields from the `getPair` function with signature `getPair(address,address)` and selector `[230, 164, 57, 5]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthAbiType,
+        ethers :: contract :: EthAbiCodec,
+    )]
+    pub struct GetPairReturn(pub ethers::core::types::Address);
 }
