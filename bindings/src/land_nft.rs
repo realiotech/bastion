@@ -1,6 +1,6 @@
-pub use landnft_mod::*;
+pub use land_nft::*;
 #[allow(clippy::too_many_arguments, non_camel_case_types)]
-pub mod landnft_mod {
+pub mod land_nft {
     #![allow(clippy::enum_variant_names)]
     #![allow(dead_code)]
     #![allow(clippy::type_complexity)]
@@ -18,12 +18,12 @@ pub mod landnft_mod {
     use std::sync::Arc;
     pub static LANDNFT_ABI: ethers::contract::Lazy<ethers::core::abi::Abi> =
         ethers::contract::Lazy::new(|| {
-            serde_json :: from_str ("[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_swapLibAddr\",\"type\":\"address\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"CannotSetAddressZero\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"ComissionOutOfAllowedRange\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"InsufficientBalance\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"NoTilesSelected\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"NotAuthorised\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"RegionAlreadyOwned\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newAdmin\",\"type\":\"address\",\"components\":[],\"indexed\":false},{\"internalType\":\"address\",\"name\":\"oldAdmin\",\"type\":\"address\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"AdminChanged\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"spender\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"Approval\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"ApprovalForAll\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"newCommission\",\"type\":\"uint256\",\"components\":[],\"indexed\":false},{\"internalType\":\"uint256\",\"name\":\"oldCommission\",\"type\":\"uint256\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"CommissionRateChanged\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"bool\",\"name\":\"paused\",\"type\":\"bool\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"ContractPaused\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"bool\",\"name\":\"paused\",\"type\":\"bool\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"ContractUnpaused\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newDevFund\",\"type\":\"address\",\"components\":[],\"indexed\":false},{\"internalType\":\"address\",\"name\":\"oldDevFund\",\"type\":\"address\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"DevFundChanged\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newLandBank\",\"type\":\"address\",\"components\":[],\"indexed\":false},{\"internalType\":\"address\",\"name\":\"oldLandBank\",\"type\":\"address\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"LandBankChanged\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"landNft\",\"type\":\"address\",\"components\":[],\"indexed\":false},{\"internalType\":\"address\",\"name\":\"landBank\",\"type\":\"address\",\"components\":[],\"indexed\":false},{\"internalType\":\"address\",\"name\":\"swapToken\",\"type\":\"address\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"LandNFTCreated\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"landNft\",\"type\":\"address\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"LandNFTDestroyed\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"buyer\",\"type\":\"address\",\"components\":[],\"indexed\":false},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"LandNFTTileBought\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"beneficiary\",\"type\":\"address\",\"components\":[],\"indexed\":false},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"LandNFTTileDeposited\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"seller\",\"type\":\"address\",\"components\":[],\"indexed\":false},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"LandNFTTileSold\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"beneficiary\",\"type\":\"address\",\"components\":[],\"indexed\":false},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"LandNFTTileWithdrawn\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"OwnershipTransferred\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"Paused\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"Transfer\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"Unpaused\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"WETH\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"admin\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"spender\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"approve\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"balanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"baseURI\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"commissionRate\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"devFund\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"firstOwners\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"getApproved\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_price\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"getETHPrice\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"getLength\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"len\",\"type\":\"uint256\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"isApprovedForAll\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"isOwned\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"landBank\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"maxTileNum\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"name\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"nextId\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"ownerOf\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"pause\",\"outputs\":[]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"paused\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"price\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"regionNumbers\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"renounceOwnership\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256[]\",\"name\":\"region\",\"type\":\"uint256[]\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"rioAmount\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"payable\",\"type\":\"function\",\"name\":\"safeMint\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"safeTransferFrom\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"safeTransferFrom\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_newAdmin\",\"type\":\"address\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"setAdmin\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"setApprovalForAll\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_commissionRate\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"setCommissionRate\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address payable\",\"name\":\"_devFund\",\"type\":\"address\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"setDevFund\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address payable\",\"name\":\"_landBank\",\"type\":\"address\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"setLandBank\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_price\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"setPrice\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"symbol\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"tokenURI\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"totalTileNum\",\"outputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"transferFrom\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"transferOwnership\",\"outputs\":[]},{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"unpause\",\"outputs\":[]}]") . expect ("invalid abi")
+            ethers :: core :: utils :: __serde_json :: from_str ("[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_devFund\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"_landBank\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"_price\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"ApprovalCallerNotOwnerNorApproved\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"ApprovalQueryForNonexistentToken\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"ApproveToCaller\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"BalanceQueryForZeroAddress\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"CannotSetAddressZero\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"ComissionOutOfAllowedRange\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"InsufficientBalance\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"MaxTilesReached\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"MintERC2309QuantityExceedsLimit\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"MintToZeroAddress\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"MintZeroQuantity\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"NoTilesSelected\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"NonExistentTokenURI\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"NotAuthorised\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"OwnerQueryForNonexistentToken\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"OwnershipNotInitializedForExtraData\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"RegionAlreadyOwned\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"TransferCallerNotOwnerNorApproved\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"TransferFailed\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"TransferFromIncorrectOwner\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"TransferToNonERC721ReceiverImplementer\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"TransferToZeroAddress\",\"outputs\":[]},{\"inputs\":[],\"type\":\"error\",\"name\":\"URIQueryForNonexistentToken\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newAdmin\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"oldAdmin\",\"type\":\"address\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"AdminChanged\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"approved\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"Approval\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"ApprovalForAll\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"newCommission\",\"type\":\"uint256\",\"components\":[],\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"oldCommission\",\"type\":\"uint256\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"CommissionRateChanged\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"fromTokenId\",\"type\":\"uint256\",\"components\":[],\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"toTokenId\",\"type\":\"uint256\",\"components\":[],\"indexed\":false},{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"ConsecutiveTransfer\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"bool\",\"name\":\"paused\",\"type\":\"bool\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"ContractPaused\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"bool\",\"name\":\"paused\",\"type\":\"bool\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"ContractUnpaused\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newDevFund\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"oldDevFund\",\"type\":\"address\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"DevFundChanged\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newLandBank\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"oldLandBank\",\"type\":\"address\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"LandBankChanged\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"buyer\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"uint256[]\",\"name\":\"region\",\"type\":\"uint256[]\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"LandSold\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"OwnershipTransferred\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"Paused\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[],\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\",\"components\":[],\"indexed\":true}],\"type\":\"event\",\"name\":\"Transfer\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\",\"components\":[],\"indexed\":false}],\"type\":\"event\",\"name\":\"Unpaused\",\"outputs\":[],\"anonymous\":false},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"MAX_TILE_NUM\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"WETH\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"admin\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"approve\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"balanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"baseURI\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"commissionRate\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"devFund\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"firstOwners\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_amountIn\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"address[]\",\"name\":\"path\",\"type\":\"address[]\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"getAmountOutMin\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"getApproved\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"getTokenPrice\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"isApprovedForAll\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"isOwned\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"landBank\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"uint256[]\",\"name\":\"region\",\"type\":\"uint256[]\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"rioAmount\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"payable\",\"type\":\"function\",\"name\":\"mint\",\"outputs\":[]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"name\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"nextId\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"ownerOf\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"pause\",\"outputs\":[]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"paused\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"price\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"renounceOwnership\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"safeTransferFrom\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\",\"components\":[]},{\"internalType\":\"bytes\",\"name\":\"_data\",\"type\":\"bytes\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"safeTransferFrom\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_newAdmin\",\"type\":\"address\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"setAdmin\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"setApprovalForAll\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_commissionRate\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"setCommissionRate\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address payable\",\"name\":\"_devFund\",\"type\":\"address\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"setDevFund\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address payable\",\"name\":\"_landBank\",\"type\":\"address\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"setLandBank\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_price\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"setPrice\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"symbol\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"tilesBought\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"tokenURI\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\",\"components\":[]}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"totalSupply\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\",\"components\":[]}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"transferFrom\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"transferOwnership\",\"outputs\":[]},{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"unpause\",\"outputs\":[]},{\"inputs\":[],\"stateMutability\":\"payable\",\"type\":\"receive\",\"outputs\":[]}]") . expect ("invalid abi")
         });
     #[doc = r" Bytecode of the #name contract"]
     pub static LANDNFT_BYTECODE: ethers::contract::Lazy<ethers::core::types::Bytes> =
         ethers::contract::Lazy::new(|| {
-            "0x608060405260016007553480156200001657600080fd5b5060405162002e0338038062002e038339810160408190526200003991620002a7565b604080518082018252600b81526a5265616c696f566572736560a81b6020808301918252835180850190945260048452635256525360e01b908401528151919291620000889160009162000201565b5080516200009e90600190602084019062000201565b505050620000bb620000b5620001ab60201b60201c565b620001af565b6006805460ff60a01b191690556001600160a01b038116620001235760405162461bcd60e51b815260206004820152601660248201527f63616e277420736574207a65726f206164647265737300000000000000000000604482015260640160405180910390fd5b600a8054336001600160a01b031991821681178355600b80548316821790556009805483169091179055600e91909155681b1ae4d6e2ef500000600f55600880549091166001600160a01b038316179055604080518082019091526006808252655265616c696f60d01b6020909201918252620001a391600c9162000201565b505062000316565b3390565b600680546001600160a01b038381166001600160a01b0319831681179093556040519116919082907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e090600090a35050565b8280546200020f90620002d9565b90600052602060002090601f0160209004810192826200023357600085556200027e565b82601f106200024e57805160ff19168380011785556200027e565b828001600101855582156200027e579182015b828111156200027e57825182559160200191906001019062000261565b506200028c92915062000290565b5090565b5b808211156200028c576000815560010162000291565b600060208284031215620002ba57600080fd5b81516001600160a01b0381168114620002d257600080fd5b9392505050565b600181811c90821680620002ee57607f821691505b602082108114156200031057634e487b7160e01b600052602260045260246000fd5b50919050565b612add80620003266000396000f3fe60806040526004361061023b5760003560e01c8063704b6c021161012e578063ad5c4648116100ab578063efaff03c1161006f578063efaff03c146106ea578063efd3297314610720578063f0640d9514610740578063f2fde38b14610760578063f851a4401461078057600080fd5b8063ad5c464814610627578063ae4db9191461064f578063b88d4fde1461066f578063c87b56dd1461068f578063e985e9c5146106af57600080fd5b806391b7f5ed116100f257806391b7f5ed1461059c57806394c9c3e4146105bc57806395d89b41146105dc578063a035b1fe146105f1578063a22cb4651461060757600080fd5b8063704b6c021461051457806370a0823114610534578063715018a6146105545780638456cb59146105695780638da5cb5b1461057e57600080fd5b806342842e0e116101bc5780635ea1d6f8116101805780635ea1d6f814610472578063618b2add1461048857806361b8ce8c146104c95780636352211e146104df5780636c0360eb146104ff57600080fd5b806342842e0e146103ca5780634390d2a8146103ea578063557527581461040a578063599f689c146104235780635c975abb1461045357600080fd5b806319fac8fd1161020357806319fac8fd146103425780631a753fed1461036257806323b872dd146103825780633f4ba83a146103a257806342583524146103b757600080fd5b806301ffc9a71461024057806306fdde0314610275578063081812fc14610297578063095ea7b3146102e55780630986e64714610307575b600080fd5b34801561024c57600080fd5b5061026061025b3660046123fa565b6107a0565b60405190151581526020015b60405180910390f35b34801561028157600080fd5b5061028a6107f2565b60405161026c919061244e565b3480156102a357600080fd5b506102cd6102b2366004612481565b6004602052600090815260409020546001600160a01b031681565b6040516001600160a01b03909116815260200161026c565b3480156102f157600080fd5b506103056103003660046124ba565b610880565b005b34801561031357600080fd5b50610334610322366004612481565b60009081526011602052604090205490565b60405190815260200161026c565b34801561034e57600080fd5b5061030561035d366004612481565b610967565b34801561036e57600080fd5b5061033461037d366004612481565b610a03565b34801561038e57600080fd5b5061030561039d3660046124e6565b610a9b565b3480156103ae57600080fd5b50610305610c62565b6103056103c536600461253d565b610cd4565b3480156103d657600080fd5b506103056103e53660046124e6565b6118b5565b3480156103f657600080fd5b50600a546102cd906001600160a01b031681565b34801561041657600080fd5b506103346402540be40081565b34801561042f57600080fd5b5061026061043e366004612481565b60106020526000908152604090205460ff1681565b34801561045f57600080fd5b50600654600160a01b900460ff16610260565b34801561047e57600080fd5b50610334600e5481565b34801561049457600080fd5b50600b546104b090600160a01b900467ffffffffffffffff1681565b60405167ffffffffffffffff909116815260200161026c565b3480156104d557600080fd5b50610334600d5481565b3480156104eb57600080fd5b506102cd6104fa366004612481565b6119ad565b34801561050b57600080fd5b5061028a611a04565b34801561052057600080fd5b5061030561052f366004612628565b611a11565b34801561054057600080fd5b5061033461054f366004612628565b611abc565b34801561056057600080fd5b50610305611b1f565b34801561057557600080fd5b50610305611b33565b34801561058a57600080fd5b506006546001600160a01b03166102cd565b3480156105a857600080fd5b506103056105b7366004612481565b611b9f565b3480156105c857600080fd5b506103346105d7366004612645565b611bd3565b3480156105e857600080fd5b5061028a611c04565b3480156105fd57600080fd5b50610334600f5481565b34801561061357600080fd5b50610305610622366004612675565b611c11565b34801561063357600080fd5b506102cd73c02aaa39b223fe8d0a0e5c4f27ead9083c756cc281565b34801561065b57600080fd5b5061030561066a366004612628565b611c7d565b34801561067b57600080fd5b5061030561068a3660046126ae565b611d2c565b34801561069b57600080fd5b5061028a6106aa366004612481565b611e14565b3480156106bb57600080fd5b506102606106ca36600461274d565b600560209081526000928352604080842090915290825290205460ff1681565b3480156106f657600080fd5b506102cd610705366004612481565b6012602052600090815260409020546001600160a01b031681565b34801561072c57600080fd5b50600b546102cd906001600160a01b031681565b34801561074c57600080fd5b5061030561075b366004612628565b611e72565b34801561076c57600080fd5b5061030561077b366004612628565b611f21565b34801561078c57600080fd5b506009546102cd906001600160a01b031681565b60006301ffc9a760e01b6001600160e01b0319831614806107d157506380ac58cd60e01b6001600160e01b03198316145b806107ec5750635b5e139f60e01b6001600160e01b03198316145b92915050565b600080546107ff9061277b565b80601f016020809104026020016040519081016040528092919081815260200182805461082b9061277b565b80156108785780601f1061084d57610100808354040283529160200191610878565b820191906000526020600020905b81548152906001019060200180831161085b57829003601f168201915b505050505081565b6000818152600260205260409020546001600160a01b0316338114806108c957506001600160a01b038116600090815260056020908152604080832033845290915290205460ff165b61090b5760405162461bcd60e51b815260206004820152600e60248201526d1393d517d055551213d49256915160921b60448201526064015b60405180910390fd5b60008281526004602052604080822080546001600160a01b0319166001600160a01b0387811691821790925591518593918516917f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b92591a4505050565b600e546009546001600160a01b0316331461099557604051631648fd0160e01b815260040160405180910390fd5b60148211806109a2575060005b156109c057604051637d1dd3df60e11b815260040160405180910390fd5b600e82905560408051838152602081018390527f74b81a9e0217358c4b0755d3032738dc303e980dde2980905160b1d8e7b68ba691015b60405180910390a15050565b600854604051633c50eec160e01b81526000916001600160a01b031690633c50eec190610a5a90600080516020612a888339815191529073c02aaa39b223fe8d0a0e5c4f27ead9083c756cc29087906004016127b6565b602060405180830381865afa158015610a77573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906107ec91906127da565b6000818152600260205260409020546001600160a01b03848116911614610af15760405162461bcd60e51b815260206004820152600a60248201526957524f4e475f46524f4d60b01b6044820152606401610902565b6001600160a01b038216610b3b5760405162461bcd60e51b81526020600482015260116024820152701253959053125117d49150d25412515395607a1b6044820152606401610902565b336001600160a01b0384161480610b7557506001600160a01b038316600090815260056020908152604080832033845290915290205460ff165b80610b9657506000818152600460205260409020546001600160a01b031633145b610bd35760405162461bcd60e51b815260206004820152600e60248201526d1393d517d055551213d49256915160921b6044820152606401610902565b6001600160a01b0380841660008181526003602090815260408083208054600019019055938616808352848320805460010190558583526002825284832080546001600160a01b03199081168317909155600490925284832080549092169091559251849392917fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef91a4505050565b610c6a611f97565b6009546001600160a01b03163314610c9557604051631648fd0160e01b815260040160405180910390fd5b610c9d611fe7565b604051600181527fc6cd34d367248623c114617f3cf4e7d54b15f11b158367408ee3b4c0ff1a5e2e906020015b60405180910390a1565b82805160001415610cf8576040516397dde56d60e01b815260040160405180910390fd5b6000805b8251811015610d5e5760106000848381518110610d1b57610d1b6127f3565b60209081029190910181015182528101919091526040016000205460ff16151560011415610d4c5760019150610d5e565b80610d568161281f565b915050610cfc565b5080610d7d57604051635d29dd2360e01b815260040160405180910390fd5b610d85612037565b6001600160a01b038416600080516020612a888339815191521415611107578451600f54610db3919061283a565b831015610dd357604051631e9acf1760e31b815260040160405180910390fd5b6040516323b872dd60e01b8152600080516020612a88833981519152906323b872dd90610e08903390309088906004016127b6565b6020604051808303816000875af1158015610e27573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610e4b9190612859565b50600854600080516020612a888339815191529063095ea7b3906001600160a01b03166064610e7b87601461283a565b610e85919061288c565b6040516001600160e01b031960e085901b1681526001600160a01b03909216600483015260248201526044016020604051808303816000875af1158015610ed0573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610ef49190612859565b506008546000906001600160a01b0316633c50eec1600080516020612a8883398151915273c02aaa39b223fe8d0a0e5c4f27ead9083c756cc26064610f3a89601461283a565b610f44919061288c565b6040518463ffffffff1660e01b8152600401610f62939291906127b6565b602060405180830381865afa158015610f7f573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610fa391906127da565b6008549091506001600160a01b031663d5bcb9b5600080516020612a8883398151915273c02aaa39b223fe8d0a0e5c4f27ead9083c756cc26064610fe889601461283a565b610ff2919061288c565b600a546040516001600160e01b031960e087901b1681526110269493929188916001600160a01b03909116906004016128a0565b600060405180830381600087803b15801561104057600080fd5b505af1158015611054573d6000803e3d6000fd5b5050600b54600080516020612a88833981519152925063a9059cbb91506001600160a01b0316606461108788605061283a565b611091919061288c565b6040516001600160e01b031960e085901b1681526001600160a01b03909216600483015260248201526044016020604051808303816000875af11580156110dc573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906111009190612859565b505061112a565b600f5483101561112a57604051631e9acf1760e31b815260040160405180910390fd5b82156114ad578451600f5461113f919061283a565b83146111795760405162461bcd60e51b81526020600482015260096024820152686c6f772076616c756560b81b6044820152606401610902565b6040516323b872dd60e01b8152600080516020612a88833981519152906323b872dd906111ae903390309088906004016127b6565b6020604051808303816000875af11580156111cd573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906111f19190612859565b50600854600080516020612a888339815191529063095ea7b3906001600160a01b0316606461122187601461283a565b61122b919061288c565b6040516001600160e01b031960e085901b1681526001600160a01b03909216600483015260248201526044016020604051808303816000875af1158015611276573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061129a9190612859565b506008546000906001600160a01b0316633c50eec1600080516020612a8883398151915273c02aaa39b223fe8d0a0e5c4f27ead9083c756cc260646112e089601461283a565b6112ea919061288c565b6040518463ffffffff1660e01b8152600401611308939291906127b6565b602060405180830381865afa158015611325573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061134991906127da565b6008549091506001600160a01b031663d5bcb9b5600080516020612a8883398151915273c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2606461138e89601461283a565b611398919061288c565b600a546040516001600160e01b031960e087901b1681526113cc9493929188916001600160a01b03909116906004016128a0565b600060405180830381600087803b1580156113e657600080fd5b505af11580156113fa573d6000803e3d6000fd5b5050600b54600080516020612a88833981519152925063a9059cbb91506001600160a01b0316606461142d88605061283a565b611437919061288c565b6040516001600160e01b031960e085901b1681526001600160a01b03909216600483015260248201526044016020604051808303816000875af1158015611482573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906114a69190612859565b505061172b565b600854604051633c50eec160e01b81526000916001600160a01b031690633c50eec1906115049073c02aaa39b223fe8d0a0e5c4f27ead9083c756cc290600080516020612a888339815191529034906004016127b6565b602060405180830381865afa158015611521573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061154591906127da565b90508551600f54611556919061283a565b8110156115915760405162461bcd60e51b81526020600482015260096024820152686c6f772076616c756560b81b6044820152606401610902565b6008546001600160a01b031663d5bcb9b560646115af34605061283a565b6115b9919061288c565b73c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2600080516020612a8883398151915260646115ea8a605061283a565b6115f4919061288c565b606461160188605061283a565b61160b919061288c565b600b546040516001600160e01b031960e089901b16815261163c95949392916001600160a01b0316906004016128a0565b6000604051808303818588803b15801561165557600080fd5b505af1158015611669573d6000803e3d6000fd5b5050600a54600093506001600160a01b031691506064905061168c34601461283a565b611696919061288c565b604051600081818185875af1925050503d80600081146116d2576040519150601f19603f3d011682016040523d82523d6000602084013e6116d7565b606091505b50509050806117285760405162461bcd60e51b815260206004820152601b60248201527f5472616e7366657220746f2064657646756e64206661696c65642e00000000006044820152606401610902565b50505b61173786600d54612084565b600d8054600090815260126020908152604080832080546001600160a01b0319166001600160a01b038c161790559254825260118152919020865161177e92880190612384565b50600d805490600061178f8361281f565b90915550508451600b80546014906117b9908490600160a01b900467ffffffffffffffff166128d0565b92506101000a81548167ffffffffffffffff021916908367ffffffffffffffff1602179055506402540be400600b60149054906101000a900467ffffffffffffffff1667ffffffffffffffff1611156118485760405162461bcd60e51b81526020600482015260116024820152704d6178206c696d6974206f662074696c6560781b6044820152606401610902565b60005b85518110156118ac5760016010600088848151811061186c5761186c6127f3565b6020026020010151815260200190815260200160002060006101000a81548160ff02191690831515021790555080806118a49061281f565b91505061184b565b50505050505050565b6118c0838383610a9b565b6001600160a01b0382163b15806119695750604051630a85bd0160e11b8082523360048301526001600160a01b03858116602484015260448301849052608060648401526000608484015290919084169063150b7a029060a4016020604051808303816000875af1158015611939573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061195d91906128fc565b6001600160e01b031916145b6119a85760405162461bcd60e51b815260206004820152601060248201526f155394d0519157d49150d2541251539560821b6044820152606401610902565b505050565b6000818152600260205260409020546001600160a01b0316806119ff5760405162461bcd60e51b815260206004820152600a6024820152691393d517d3525395115160b21b6044820152606401610902565b919050565b600c80546107ff9061277b565b6009546001600160a01b03163314611a3c57604051631648fd0160e01b815260040160405180910390fd5b6001600160a01b038116611a63576040516397b43c7960e01b815260040160405180910390fd5b600980546001600160a01b0319166001600160a01b038316908117909155604080519182523360208301527f7e644d79422f17c01e4894b5f4f588d331ebfa28653d42ae832dc59e38c9798f910160405180910390a150565b60006001600160a01b038216611b035760405162461bcd60e51b815260206004820152600c60248201526b5a45524f5f4144445245535360a01b6044820152606401610902565b506001600160a01b031660009081526003602052604090205490565b611b2761218f565b611b3160006121e9565b565b611b3b612037565b6009546001600160a01b03163314611b6657604051631648fd0160e01b815260040160405180910390fd5b611b6e61223b565b604051600181527f752d7e161ff5146f80e3820893176eb40532811e5e20400dfdde57455213706a90602001610cca565b6009546001600160a01b03163314611bca57604051631648fd0160e01b815260040160405180910390fd5b600f8190555b50565b60116020528160005260406000208181548110611bef57600080fd5b90600052602060002001600091509150505481565b600180546107ff9061277b565b3360008181526005602090815260408083206001600160a01b03871680855290835292819020805460ff191686151590811790915590519081529192917f17307eab39ab6107e8899845ad3d59bd9653f200f220920489ca2b5937696c31910160405180910390a35050565b600a546009546001600160a01b0391821691163314611caf57604051631648fd0160e01b815260040160405180910390fd5b6001600160a01b038216611cd6576040516397b43c7960e01b815260040160405180910390fd5b600a80546001600160a01b0319166001600160a01b038481169182179092556040805191825291831660208201527ff87e12ba363db684b1b69a530d850a8a3f416932cd031e008ef71e42a1d8845091016109f7565b611d37858585610a9b565b6001600160a01b0384163b1580611dce5750604051630a85bd0160e11b808252906001600160a01b0386169063150b7a0290611d7f9033908a90899089908990600401612919565b6020604051808303816000875af1158015611d9e573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190611dc291906128fc565b6001600160e01b031916145b611e0d5760405162461bcd60e51b815260206004820152601060248201526f155394d0519157d49150d2541251539560821b6044820152606401610902565b5050505050565b60606000600c8054611e259061277b565b905011611e4157604051806020016040528060008152506107ec565b600c611e4c8361227e565b604051602001611e5d929190612989565b60405160208183030381529060405292915050565b600b546009546001600160a01b0391821691163314611ea457604051631648fd0160e01b815260040160405180910390fd5b6001600160a01b038216611ecb576040516397b43c7960e01b815260040160405180910390fd5b600b80546001600160a01b0319166001600160a01b038481169182179092556040805191825291831660208201527f04c90a5bd107b5b753ce9758599ca56cffaadede0b5f6c4b3a375a5effe208d491016109f7565b611f2961218f565b6001600160a01b038116611f8e5760405162461bcd60e51b815260206004820152602660248201527f4f776e61626c653a206e6577206f776e657220697320746865207a65726f206160448201526564647265737360d01b6064820152608401610902565b611bd0816121e9565b600654600160a01b900460ff16611b315760405162461bcd60e51b815260206004820152601460248201527314185d5cd8589b194e881b9bdd081c185d5cd95960621b6044820152606401610902565b611fef611f97565b6006805460ff60a01b191690557f5db9ee0a495bf2e6ff9c91a7834c1ba4fdd244a5e8aa4e537bd38aeae4b073aa335b6040516001600160a01b039091168152602001610cca565b600654600160a01b900460ff1615611b315760405162461bcd60e51b815260206004820152601060248201526f14185d5cd8589b194e881c185d5cd95960821b6044820152606401610902565b6001600160a01b0382166120ce5760405162461bcd60e51b81526020600482015260116024820152701253959053125117d49150d25412515395607a1b6044820152606401610902565b6000818152600260205260409020546001600160a01b0316156121245760405162461bcd60e51b815260206004820152600e60248201526d1053149150511657d3525395115160921b6044820152606401610902565b6001600160a01b038216600081815260036020908152604080832080546001019055848352600290915280822080546001600160a01b0319168417905551839291907fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef908290a45050565b6006546001600160a01b03163314611b315760405162461bcd60e51b815260206004820181905260248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e65726044820152606401610902565b600680546001600160a01b038381166001600160a01b0319831681179093556040519116919082907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e090600090a35050565b612243612037565b6006805460ff60a01b1916600160a01b1790557f62e78cea01bee320cd4e420270b5ea74000d11b0c9f74754ebdbfc544b05a25861201f3390565b6060816122a25750506040805180820190915260018152600360fc1b602082015290565b8160005b81156122cc57806122b68161281f565b91506122c59050600a8361288c565b91506122a6565b60008167ffffffffffffffff8111156122e7576122e7612527565b6040519080825280601f01601f191660200182016040528015612311576020820181803683370190505b5090505b841561237c57612326600183612a44565b9150612333600a86612a5b565b61233e906030612a6f565b60f81b818381518110612353576123536127f3565b60200101906001600160f81b031916908160001a905350612375600a8661288c565b9450612315565b949350505050565b8280548282559060005260206000209081019282156123bf579160200282015b828111156123bf5782518255916020019190600101906123a4565b506123cb9291506123cf565b5090565b5b808211156123cb57600081556001016123d0565b6001600160e01b031981168114611bd057600080fd5b60006020828403121561240c57600080fd5b8135612417816123e4565b9392505050565b60005b83811015612439578181015183820152602001612421565b83811115612448576000848401525b50505050565b602081526000825180602084015261246d81604085016020870161241e565b601f01601f19169190910160400192915050565b60006020828403121561249357600080fd5b5035919050565b6001600160a01b0381168114611bd057600080fd5b80356119ff8161249a565b600080604083850312156124cd57600080fd5b82356124d88161249a565b946020939093013593505050565b6000806000606084860312156124fb57600080fd5b83356125068161249a565b925060208401356125168161249a565b929592945050506040919091013590565b634e487b7160e01b600052604160045260246000fd5b6000806000806080858703121561255357600080fd5b843561255e8161249a565b935060208581013567ffffffffffffffff8082111561257c57600080fd5b818801915088601f83011261259057600080fd5b8135818111156125a2576125a2612527565b8060051b604051601f19603f830116810181811085821117156125c7576125c7612527565b60405291825284820192508381018501918b8311156125e557600080fd5b938501935b82851015612603578435845293850193928501926125ea565b809850505050505050612618604086016124af565b9396929550929360600135925050565b60006020828403121561263a57600080fd5b81356124178161249a565b6000806040838503121561265857600080fd5b50508035926020909101359150565b8015158114611bd057600080fd5b6000806040838503121561268857600080fd5b82356126938161249a565b915060208301356126a381612667565b809150509250929050565b6000806000806000608086880312156126c657600080fd5b85356126d18161249a565b945060208601356126e18161249a565b935060408601359250606086013567ffffffffffffffff8082111561270557600080fd5b818801915088601f83011261271957600080fd5b81358181111561272857600080fd5b89602082850101111561273a57600080fd5b9699959850939650602001949392505050565b6000806040838503121561276057600080fd5b823561276b8161249a565b915060208301356126a38161249a565b600181811c9082168061278f57607f821691505b602082108114156127b057634e487b7160e01b600052602260045260246000fd5b50919050565b6001600160a01b039384168152919092166020820152604081019190915260600190565b6000602082840312156127ec57600080fd5b5051919050565b634e487b7160e01b600052603260045260246000fd5b634e487b7160e01b600052601160045260246000fd5b600060001982141561283357612833612809565b5060010190565b600081600019048311821515161561285457612854612809565b500290565b60006020828403121561286b57600080fd5b815161241781612667565b634e487b7160e01b600052601260045260246000fd5b60008261289b5761289b612876565b500490565b6001600160a01b039586168152938516602085015260408401929092526060830152909116608082015260a00190565b600067ffffffffffffffff8083168185168083038211156128f3576128f3612809565b01949350505050565b60006020828403121561290e57600080fd5b8151612417816123e4565b6001600160a01b038681168252851660208201526040810184905260806060820181905281018290526000828460a0840137600060a0848401015260a0601f19601f85011683010190509695505050505050565b6000815161297f81856020860161241e565b9290920192915050565b600080845481600182811c9150808316806129a557607f831692505b60208084108214156129c557634e487b7160e01b86526022600452602486fd5b8180156129d957600181146129ea57612a17565b60ff19861689528489019650612a17565b60008b81526020902060005b86811015612a0f5781548b8201529085019083016129f6565b505084890196505b505050505050612a3b612a2a828661296d565b64173539b7b760d91b815260050190565b95945050505050565b600082821015612a5657612a56612809565b500390565b600082612a6a57612a6a612876565b500690565b60008219821115612a8257612a82612809565b50019056fe000000000000000000000000f21661d0d1d76d3ecb8e1b9f1c923dbfffae4097a264697066735822122088f05480b5a78c1dbe183fc1fc82b1c61024c797aebc853b053193d4a212661f64736f6c634300080a0033" . parse () . expect ("invalid bytecode")
+            "0x608060405260016009553480156200001657600080fd5b5060405162002de038038062002de08339810160408190526200003991620001de565b6040518060400160405280600b81526020016a5265616c696f566572736560a81b815250604051806040016040528060048152602001635256525360e01b81525081600290816200008b9190620002c4565b5060036200009a8282620002c4565b50506000805550620000ac336200016f565b6008805460ff60a01b191690556001600160a01b0383161580620000d757506001600160a01b038216155b15620000f6576040516397b43c7960e01b815260040160405180910390fd5b600b80546001600160a01b038086166001600160a01b031992831617909255600c805492851692821692909217909155600a805490911633178155600f5560108190556040805180820190915260068152655265616c696f60d01b6020820152600d90620001659082620002c4565b5050505062000390565b600880546001600160a01b038381166001600160a01b0319831681179093556040519116919082907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e090600090a35050565b80516001600160a01b0381168114620001d957600080fd5b919050565b600080600060608486031215620001f457600080fd5b620001ff84620001c1565b92506200020f60208501620001c1565b9150604084015190509250925092565b634e487b7160e01b600052604160045260246000fd5b600181811c908216806200024a57607f821691505b6020821081036200026b57634e487b7160e01b600052602260045260246000fd5b50919050565b601f821115620002bf57600081815260208120601f850160051c810160208610156200029a5750805b601f850160051c820191505b81811015620002bb57828155600101620002a6565b5050505b505050565b81516001600160401b03811115620002e057620002e06200021f565b620002f881620002f1845462000235565b8462000271565b602080601f831160018114620003305760008415620003175750858301515b600019600386901b1c1916600185901b178555620002bb565b600085815260208120601f198616915b82811015620003615788860151825594840194600190910190840162000340565b5085821015620003805787850151600019600388901b60f8161c191681555b5050505050600190811b01905550565b612a4080620003a06000396000f3fe60806040526004361061023f5760003560e01c8063715018a61161012e578063c427e2b5116100ab578063efd329731161006f578063efd32973146106c7578063f0640d95146106e7578063f2fde38b14610707578063f5f7581b14610727578063f851a4401461074057600080fd5b8063c427e2b5146105f2578063c457fb3714610608578063c87b56dd14610628578063e985e9c514610648578063efaff03c1461069157600080fd5b8063a035b1fe116100f2578063a035b1fe14610554578063a22cb4651461056a578063ad5c46481461058a578063ae4db919146105b2578063b88d4fde146105d257600080fd5b8063715018a6146104d75780638456cb59146104ec5780638da5cb5b1461050157806391b7f5ed1461051f57806395d89b411461053f57600080fd5b80634390d2a8116101bc57806361b8ce8c1161018057806361b8ce8c1461044c5780636352211e146104625780636c0360eb14610482578063704b6c021461049757806370a08231146104b757600080fd5b80634390d2a8146103a757806348334429146103c7578063599f689c146103e75780635c975abb146104175780635ea1d6f81461043657600080fd5b806318160ddd1161020357806318160ddd1461030f57806319fac8fd1461033257806323b872dd146103525780633f4ba83a1461037257806342842e0e1461038757600080fd5b806301ffc9a71461024b57806306fdde0314610280578063081812fc146102a2578063095ea7b3146102da5780630bd06246146102fc57600080fd5b3661024657005b600080fd5b34801561025757600080fd5b5061026b6102663660046121a4565b610760565b60405190151581526020015b60405180910390f35b34801561028c57600080fd5b506102956107b2565b6040516102779190612219565b3480156102ae57600080fd5b506102c26102bd36600461222c565b610844565b6040516001600160a01b039091168152602001610277565b3480156102e657600080fd5b506102fa6102f536600461225a565b610888565b005b6102fa61030a3660046122f1565b610928565b34801561031b57600080fd5b50600154600054035b604051908152602001610277565b34801561033e57600080fd5b506102fa61034d36600461222c565b611213565b34801561035e57600080fd5b506102fa61036d36600461238d565b6112a2565b34801561037e57600080fd5b506102fa61143a565b34801561039357600080fd5b506102fa6103a236600461238d565b6114a3565b3480156103b357600080fd5b50600b546102c2906001600160a01b031681565b3480156103d357600080fd5b506103246103e23660046123ce565b6114c3565b3480156103f357600080fd5b5061026b61040236600461222c565b60126020526000908152604090205460ff1681565b34801561042357600080fd5b50600854600160a01b900460ff1661026b565b34801561044257600080fd5b50610324600f5481565b34801561045857600080fd5b50610324600e5481565b34801561046e57600080fd5b506102c261047d36600461222c565b611578565b34801561048e57600080fd5b50610295611583565b3480156104a357600080fd5b506102fa6104b2366004612474565b611611565b3480156104c357600080fd5b506103246104d2366004612474565b6116b0565b3480156104e357600080fd5b506102fa6116ff565b3480156104f857600080fd5b506102fa611713565b34801561050d57600080fd5b506008546001600160a01b03166102c2565b34801561052b57600080fd5b506102fa61053a36600461222c565b61177c565b34801561054b57600080fd5b506102956117b0565b34801561056057600080fd5b5061032460105481565b34801561057657600080fd5b506102fa61058536600461249f565b6117bf565b34801561059657600080fd5b506102c273c02aaa39b223fe8d0a0e5c4f27ead9083c756cc281565b3480156105be57600080fd5b506102fa6105cd366004612474565b611854565b3480156105de57600080fd5b506102fa6105ed3660046124d8565b6118fd565b3480156105fe57600080fd5b5061032460115481565b34801561061457600080fd5b5061032461062336600461222c565b611947565b34801561063457600080fd5b5061029561064336600461222c565b6119f5565b34801561065457600080fd5b5061026b61066336600461259c565b6001600160a01b03918216600090815260076020908152604080832093909416825291909152205460ff1690565b34801561069d57600080fd5b506102c26106ac36600461222c565b6013602052600090815260409020546001600160a01b031681565b3480156106d357600080fd5b50600c546102c2906001600160a01b031681565b3480156106f357600080fd5b506102fa610702366004612474565b611a85565b34801561071357600080fd5b506102fa610722366004612474565b611b2e565b34801561073357600080fd5b506103246402540be40081565b34801561074c57600080fd5b50600a546102c2906001600160a01b031681565b60006301ffc9a760e01b6001600160e01b03198316148061079157506380ac58cd60e01b6001600160e01b03198316145b806107ac5750635b5e139f60e01b6001600160e01b03198316145b92915050565b6060600280546107c1906125ca565b80601f01602080910402602001604051908101604052809291908181526020018280546107ed906125ca565b801561083a5780601f1061080f5761010080835404028352916020019161083a565b820191906000526020600020905b81548152906001019060200180831161081d57829003601f168201915b5050505050905090565b600061084f82611ba9565b61086c576040516333d1c03960e21b815260040160405180910390fd5b506000908152600660205260409020546001600160a01b031690565b600061089382611578565b9050336001600160a01b038216146108cc576108af8133610663565b6108cc576040516367d9dca160e11b815260040160405180910390fd5b60008281526006602052604080822080546001600160a01b0319166001600160a01b0387811691821790925591518593918516917f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b92591a4505050565b81805160000361094b576040516397dde56d60e01b815260040160405180910390fd5b6000805b82518110156109ac576012600084838151811061096e5761096e612604565b60209081029190910181015182528101919091526040016000205460ff161561099a57600191506109ac565b806109a481612630565b91505061094f565b5080156109cc57604051635d29dd2360e01b815260040160405180910390fd5b6109d4611bd0565b6402540be4006109e76001546000540390565b10610a055760405163e74fd80b60e01b815260040160405180910390fd5b835160005b81811015610a6a57600160126000888481518110610a2a57610a2a612604565b6020026020010151815260200190815260200160002060006101000a81548160ff0219169083151502179055508080610a6290612630565b915050610a0a565b506000841180610a78575034155b15610fa75760408051600280825260608201835260009260208301908036833701905050905073f21661d0d1d76d3ecb8e1b9f1c923dbfffae409781600081518110610ac657610ac6612604565b60200260200101906001600160a01b031690816001600160a01b03168152505073c02aaa39b223fe8d0a0e5c4f27ead9083c756cc281600181518110610b0e57610b0e612604565b60200260200101906001600160a01b031690816001600160a01b0316815250506000610b41836010546106239190612649565b905080861015610b6457604051631e9acf1760e31b815260040160405180910390fd5b60405163095ea7b360e01b81523060048201526024810187905273f21661d0d1d76d3ecb8e1b9f1c923dbfffae40979063095ea7b3906044016020604051808303816000875af1158015610bbc573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610be09190612668565b506040516323b872dd60e01b81523360048201523060248201526044810187905260009073f21661d0d1d76d3ecb8e1b9f1c923dbfffae4097906323b872dd906064016020604051808303816000875af1158015610c42573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610c669190612668565b905080610c86576040516312171d8360e31b815260040160405180910390fd5b60006064610c95896014612649565b610c9f919061269b565b60405163095ea7b360e01b8152737a250d5630b4cf539739df2c5dacb4c659f2488d60048201526024810182905290915073f21661d0d1d76d3ecb8e1b9f1c923dbfffae40979063095ea7b3906044016020604051808303816000875af1158015610d0e573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610d329190612668565b50604080516002808252606082018352909160208301908036833701905050935073f21661d0d1d76d3ecb8e1b9f1c923dbfffae409784600081518110610d7b57610d7b612604565b60200260200101906001600160a01b031690816001600160a01b03168152505073c02aaa39b223fe8d0a0e5c4f27ead9083c756cc284600181518110610dc357610dc3612604565b60200260200101906001600160a01b031690816001600160a01b0316815250506000610def82866114c3565b600b546040516318cbafe560e01b8152919250737a250d5630b4cf539739df2c5dacb4c659f2488d916318cbafe591610e3c91869186918b916001600160a01b03169042906004016126f3565b600060405180830381600087803b158015610e5657600080fd5b505af1158015610e6a573d6000803e3d6000fd5b5050600c5473f21661d0d1d76d3ecb8e1b9f1c923dbfffae4097925063a9059cbb91506001600160a01b03166064610ea38d6050612649565b610ead919061269b565b6040516001600160e01b031960e085901b1681526001600160a01b03909216600483015260248201526044016020604051808303816000875af1158015610ef8573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610f1c9190612668565b925082610f3c576040516312171d8360e31b815260040160405180910390fd5b610f463387611c1d565b8560116000828254610f58919061272f565b9091555050604051610f6b908b90612747565b6040519081900381209033907fab02a395656b31357e2fc3ba9c1656dfb341fa67d19d8b741faebcd7f07c3cab90600090a3505050505061120c565b6000341180610fb4575083155b1561120c578451601054610fc89190612649565b341015610fe857604051631e9acf1760e31b815260040160405180910390fd5b600b546001600160a01b03166108fc6064611004346014612649565b61100e919061269b565b6040518115909202916000818181858888f19350505050158015611036573d6000803e3d6000fd5b5060006064611046346050612649565b611050919061269b565b604080516002808252606082018352929350600092909160208301908036833701905050905073c02aaa39b223fe8d0a0e5c4f27ead9083c756cc28160008151811061109e5761109e612604565b60200260200101906001600160a01b031690816001600160a01b03168152505073f21661d0d1d76d3ecb8e1b9f1c923dbfffae4097816001815181106110e6576110e6612604565b60200260200101906001600160a01b031690816001600160a01b031681525050600061111283836114c3565b600c54604051637ff36ab560e01b8152919250737a250d5630b4cf539739df2c5dacb4c659f2488d91637ff36ab591869161115f91869188916001600160a01b031690429060040161277d565b60006040518083038185885af115801561117d573d6000803e3d6000fd5b50505050506040513d6000823e601f3d908101601f191682016040526111a691908101906127b2565b506111b13385611c1d565b83601160008282546111c3919061272f565b90915550506040516111d6908990612747565b6040519081900381209033907fab02a395656b31357e2fc3ba9c1656dfb341fa67d19d8b741faebcd7f07c3cab90600090a35050505b5050505050565b600f54600a546001600160a01b0316331461124157604051631648fd0160e01b815260040160405180910390fd5b601482118061124e575060005b1561126c57604051637d1dd3df60e11b815260040160405180910390fd5b600f829055604051819083907f74b81a9e0217358c4b0755d3032738dc303e980dde2980905160b1d8e7b68ba690600090a35050565b60006112ad82611c3b565b9050836001600160a01b0316816001600160a01b0316146112e05760405162a1148160e81b815260040160405180910390fd5b60008281526006602052604090208054338082146001600160a01b0388169091141761132d576113108633610663565b61132d57604051632ce44b5f60e11b815260040160405180910390fd5b6001600160a01b03851661135457604051633a954ecd60e21b815260040160405180910390fd5b801561135f57600082555b6001600160a01b038681166000908152600560205260408082208054600019019055918716808252919020805460010190554260a01b17600160e11b17600085815260046020526040812091909155600160e11b841690036113f1576001840160008181526004602052604081205490036113ef5760005481146113ef5760008181526004602052604090208490555b505b83856001600160a01b0316876001600160a01b03167fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef60405160405180910390a4505050505050565b611442611ca9565b600a546001600160a01b0316331461146d57604051631648fd0160e01b815260040160405180910390fd5b611475611cf9565b6040516001907fc6cd34d367248623c114617f3cf4e7d54b15f11b158367408ee3b4c0ff1a5e2e90600090a2565b6114be838383604051806020016040528060008152506118fd565b505050565b60405163d06ca61f60e01b81526000908190737a250d5630b4cf539739df2c5dacb4c659f2488d9063d06ca61f906115019087908790600401612843565b600060405180830381865afa15801561151e573d6000803e3d6000fd5b505050506040513d6000823e601f3d908101601f1916820160405261154691908101906127b2565b90508060018451611557919061285c565b8151811061156757611567612604565b602002602001015191505092915050565b60006107ac82611c3b565b600d8054611590906125ca565b80601f01602080910402602001604051908101604052809291908181526020018280546115bc906125ca565b80156116095780601f106115de57610100808354040283529160200191611609565b820191906000526020600020905b8154815290600101906020018083116115ec57829003601f168201915b505050505081565b600a546001600160a01b0316331461163c57604051631648fd0160e01b815260040160405180910390fd5b6001600160a01b038116611663576040516397b43c7960e01b815260040160405180910390fd5b600a80546001600160a01b0319166001600160a01b0383169081179091556040513391907f7e644d79422f17c01e4894b5f4f588d331ebfa28653d42ae832dc59e38c9798f90600090a350565b60006001600160a01b0382166116d9576040516323d3ad8160e21b815260040160405180910390fd5b506001600160a01b031660009081526005602052604090205467ffffffffffffffff1690565b611707611d4e565b6117116000611da8565b565b61171b611bd0565b600a546001600160a01b0316331461174657604051631648fd0160e01b815260040160405180910390fd5b61174e611dfa565b6040516001907f752d7e161ff5146f80e3820893176eb40532811e5e20400dfdde57455213706a90600090a2565b600a546001600160a01b031633146117a757604051631648fd0160e01b815260040160405180910390fd5b60108190555b50565b6060600380546107c1906125ca565b336001600160a01b038316036117e85760405163b06307db60e01b815260040160405180910390fd5b3360008181526007602090815260408083206001600160a01b03871680855290835292819020805460ff191686151590811790915590519081529192917f17307eab39ab6107e8899845ad3d59bd9653f200f220920489ca2b5937696c31910160405180910390a35050565b600b54600a546001600160a01b039182169116331461188657604051631648fd0160e01b815260040160405180910390fd5b6001600160a01b0382166118ad576040516397b43c7960e01b815260040160405180910390fd5b600b80546001600160a01b0319166001600160a01b03848116918217909255604051918316917ff87e12ba363db684b1b69a530d850a8a3f416932cd031e008ef71e42a1d8845090600090a35050565b6119088484846112a2565b6001600160a01b0383163b156119415761192484848484611e3d565b611941576040516368d2bf6b60e11b815260040160405180910390fd5b50505050565b600080730b85b3000bef3e26e01428d1b525a532ea7513b89050600080826001600160a01b0316630902f1ac6040518163ffffffff1660e01b8152600401606060405180830381865afa1580156119a2573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906119c6919061288f565b506001600160701b039182169350169050816119e28287612649565b6119ec919061269b565b95945050505050565b60606000611a0283611578565b6001600160a01b031603611a295760405163d872946b60e01b815260040160405180910390fd5b6000600d8054611a38906125ca565b905011611a5457604051806020016040528060008152506107ac565b600d611a5f83611f29565b604051602001611a709291906128fb565b60405160208183030381529060405292915050565b600c54600a546001600160a01b0391821691163314611ab757604051631648fd0160e01b815260040160405180910390fd5b6001600160a01b038216611ade576040516397b43c7960e01b815260040160405180910390fd5b600c80546001600160a01b0319166001600160a01b03848116918217909255604051918316917f04c90a5bd107b5b753ce9758599ca56cffaadede0b5f6c4b3a375a5effe208d490600090a35050565b611b36611d4e565b6001600160a01b038116611ba05760405162461bcd60e51b815260206004820152602660248201527f4f776e61626c653a206e6577206f776e657220697320746865207a65726f206160448201526564647265737360d01b60648201526084015b60405180910390fd5b6117ad81611da8565b60008054821080156107ac575050600090815260046020526040902054600160e01b161590565b600854600160a01b900460ff16156117115760405162461bcd60e51b815260206004820152601060248201526f14185d5cd8589b194e881c185d5cd95960821b6044820152606401611b97565b611c3782826040518060200160405280600081525061202a565b5050565b600081600054811015611c905760008181526004602052604081205490600160e01b82169003611c8e575b80600003611c87575060001901600081815260046020526040902054611c66565b9392505050565b505b604051636f96cda160e11b815260040160405180910390fd5b600854600160a01b900460ff166117115760405162461bcd60e51b815260206004820152601460248201527314185d5cd8589b194e881b9bdd081c185d5cd95960621b6044820152606401611b97565b611d01611ca9565b6008805460ff60a01b191690557f5db9ee0a495bf2e6ff9c91a7834c1ba4fdd244a5e8aa4e537bd38aeae4b073aa335b6040516001600160a01b03909116815260200160405180910390a1565b6008546001600160a01b031633146117115760405162461bcd60e51b815260206004820181905260248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e65726044820152606401611b97565b600880546001600160a01b038381166001600160a01b0319831681179093556040519116919082907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e090600090a35050565b611e02611bd0565b6008805460ff60a01b1916600160a01b1790557f62e78cea01bee320cd4e420270b5ea74000d11b0c9f74754ebdbfc544b05a258611d313390565b604051630a85bd0160e11b81526000906001600160a01b0385169063150b7a0290611e7290339089908890889060040161299c565b6020604051808303816000875af1925050508015611ead575060408051601f3d908101601f19168201909252611eaa918101906129d9565b60015b611f0b573d808015611edb576040519150601f19603f3d011682016040523d82523d6000602084013e611ee0565b606091505b508051600003611f03576040516368d2bf6b60e11b815260040160405180910390fd5b805181602001fd5b6001600160e01b031916630a85bd0160e11b1490505b949350505050565b606081600003611f505750506040805180820190915260018152600360fc1b602082015290565b8160005b8115611f7a5780611f6481612630565b9150611f739050600a8361269b565b9150611f54565b60008167ffffffffffffffff811115611f9557611f95612286565b6040519080825280601f01601f191660200182016040528015611fbf576020820181803683370190505b5090505b8415611f2157611fd460018361285c565b9150611fe1600a866129f6565b611fec90603061272f565b60f81b81838151811061200157612001612604565b60200101906001600160f81b031916908160001a905350612023600a8661269b565b9450611fc3565b6120348383612090565b6001600160a01b0383163b156114be576000548281035b61205e6000868380600101945086611e3d565b61207b576040516368d2bf6b60e11b815260040160405180910390fd5b81811061204b57816000541461120c57600080fd5b60008054908290036120b55760405163b562e8dd60e01b815260040160405180910390fd5b6001600160a01b03831660008181526005602090815260408083208054680100000000000000018802019055848352600490915281206001851460e11b4260a01b178317905582840190839083907fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef8180a4600183015b81811461216457808360007fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef600080a460010161212c565b508160000361218557604051622e076360e81b815260040160405180910390fd5b60005550505050565b6001600160e01b0319811681146117ad57600080fd5b6000602082840312156121b657600080fd5b8135611c878161218e565b60005b838110156121dc5781810151838201526020016121c4565b838111156119415750506000910152565b600081518084526122058160208601602086016121c1565b601f01601f19169290920160200192915050565b602081526000611c8760208301846121ed565b60006020828403121561223e57600080fd5b5035919050565b6001600160a01b03811681146117ad57600080fd5b6000806040838503121561226d57600080fd5b823561227881612245565b946020939093013593505050565b634e487b7160e01b600052604160045260246000fd5b604051601f8201601f1916810167ffffffffffffffff811182821017156122c5576122c5612286565b604052919050565b600067ffffffffffffffff8211156122e7576122e7612286565b5060051b60200190565b6000806040838503121561230457600080fd5b823567ffffffffffffffff81111561231b57600080fd5b8301601f8101851361232c57600080fd5b8035602061234161233c836122cd565b61229c565b82815260059290921b8301810191818101908884111561236057600080fd5b938201935b8385101561237e57843582529382019390820190612365565b98969091013596505050505050565b6000806000606084860312156123a257600080fd5b83356123ad81612245565b925060208401356123bd81612245565b929592945050506040919091013590565b600080604083850312156123e157600080fd5b8235915060208084013567ffffffffffffffff81111561240057600080fd5b8401601f8101861361241157600080fd5b803561241f61233c826122cd565b81815260059190911b8201830190838101908883111561243e57600080fd5b928401925b8284101561246557833561245681612245565b82529284019290840190612443565b80955050505050509250929050565b60006020828403121561248657600080fd5b8135611c8781612245565b80151581146117ad57600080fd5b600080604083850312156124b257600080fd5b82356124bd81612245565b915060208301356124cd81612491565b809150509250929050565b600080600080608085870312156124ee57600080fd5b84356124f981612245565b935060208581013561250a81612245565b935060408601359250606086013567ffffffffffffffff8082111561252e57600080fd5b818801915088601f83011261254257600080fd5b81358181111561255457612554612286565b612566601f8201601f1916850161229c565b9150808252898482850101111561257c57600080fd5b808484018584013760008482840101525080935050505092959194509250565b600080604083850312156125af57600080fd5b82356125ba81612245565b915060208301356124cd81612245565b600181811c908216806125de57607f821691505b6020821081036125fe57634e487b7160e01b600052602260045260246000fd5b50919050565b634e487b7160e01b600052603260045260246000fd5b634e487b7160e01b600052601160045260246000fd5b6000600182016126425761264261261a565b5060010190565b60008160001904831182151516156126635761266361261a565b500290565b60006020828403121561267a57600080fd5b8151611c8781612491565b634e487b7160e01b600052601260045260246000fd5b6000826126aa576126aa612685565b500490565b600081518084526020808501945080840160005b838110156126e85781516001600160a01b0316875295820195908201906001016126c3565b509495945050505050565b85815284602082015260a06040820152600061271260a08301866126af565b6001600160a01b0394909416606083015250608001529392505050565b600082198211156127425761274261261a565b500190565b815160009082906020808601845b8381101561277157815185529382019390820190600101612755565b50929695505050505050565b84815260806020820152600061279660808301866126af565b6001600160a01b03949094166040830152506060015292915050565b600060208083850312156127c557600080fd5b825167ffffffffffffffff8111156127dc57600080fd5b8301601f810185136127ed57600080fd5b80516127fb61233c826122cd565b81815260059190911b8201830190838101908783111561281a57600080fd5b928401925b828410156128385783518252928401929084019061281f565b979650505050505050565b828152604060208201526000611f2160408301846126af565b60008282101561286e5761286e61261a565b500390565b80516001600160701b038116811461288a57600080fd5b919050565b6000806000606084860312156128a457600080fd5b6128ad84612873565b92506128bb60208501612873565b9150604084015163ffffffff811681146128d457600080fd5b809150509250925092565b600081516128f18185602086016121c1565b9290920192915050565b600080845481600182811c91508083168061291757607f831692505b6020808410820361293657634e487b7160e01b86526022600452602486fd5b81801561294a576001811461295f5761298c565b60ff198616895284151585028901965061298c565b60008b81526020902060005b868110156129845781548b82015290850190830161296b565b505084890196505b5050505050506119ec81856128df565b6001600160a01b03858116825284166020820152604081018390526080606082018190526000906129cf908301846121ed565b9695505050505050565b6000602082840312156129eb57600080fd5b8151611c878161218e565b600082612a0557612a05612685565b50069056fea264697066735822122046072bbf906e3e27918f59faea6e08b092922158bd3963dd8013f04b052769f664736f6c634300080f0033" . parse () . expect ("invalid bytecode")
         });
     pub struct LandNFT<M>(ethers::contract::Contract<M>);
     impl<M> Clone for LandNFT<M> {
@@ -80,7 +80,7 @@ pub mod landnft_mod {
         pub fn deploy<T: ethers::core::abi::Tokenize>(
             client: ::std::sync::Arc<M>,
             constructor_args: T,
-        ) -> Result<
+        ) -> ::std::result::Result<
             ethers::contract::builders::ContractDeployer<M, Self>,
             ethers::contract::ContractError<M>,
         > {
@@ -92,6 +92,14 @@ pub mod landnft_mod {
             let deployer = factory.deploy(constructor_args)?;
             let deployer = ethers::contract::ContractDeployer::new(deployer);
             Ok(deployer)
+        }
+        #[doc = "Calls the contract's `MAX_TILE_NUM` (0xf5f7581b) function"]
+        pub fn max_tile_num(
+            &self,
+        ) -> ethers::contract::builders::ContractCall<M, ethers::core::types::U256> {
+            self.0
+                .method_hash([245, 247, 88, 27], ())
+                .expect("method not found (this should never happen)")
         }
         #[doc = "Calls the contract's `WETH` (0xad5c4648) function"]
         pub fn weth(
@@ -112,11 +120,11 @@ pub mod landnft_mod {
         #[doc = "Calls the contract's `approve` (0x095ea7b3) function"]
         pub fn approve(
             &self,
-            spender: ethers::core::types::Address,
-            id: ethers::core::types::U256,
+            to: ethers::core::types::Address,
+            token_id: ethers::core::types::U256,
         ) -> ethers::contract::builders::ContractCall<M, ()> {
             self.0
-                .method_hash([9, 94, 167, 179], (spender, id))
+                .method_hash([9, 94, 167, 179], (to, token_id))
                 .expect("method not found (this should never happen)")
         }
         #[doc = "Calls the contract's `balanceOf` (0x70a08231) function"]
@@ -159,41 +167,42 @@ pub mod landnft_mod {
                 .method_hash([239, 175, 240, 60], p0)
                 .expect("method not found (this should never happen)")
         }
+        #[doc = "Calls the contract's `getAmountOutMin` (0x48334429) function"]
+        pub fn get_amount_out_min(
+            &self,
+            amount_in: ethers::core::types::U256,
+            path: ::std::vec::Vec<ethers::core::types::Address>,
+        ) -> ethers::contract::builders::ContractCall<M, ethers::core::types::U256> {
+            self.0
+                .method_hash([72, 51, 68, 41], (amount_in, path))
+                .expect("method not found (this should never happen)")
+        }
         #[doc = "Calls the contract's `getApproved` (0x081812fc) function"]
         pub fn get_approved(
             &self,
-            p0: ethers::core::types::U256,
+            token_id: ethers::core::types::U256,
         ) -> ethers::contract::builders::ContractCall<M, ethers::core::types::Address> {
             self.0
-                .method_hash([8, 24, 18, 252], p0)
+                .method_hash([8, 24, 18, 252], token_id)
                 .expect("method not found (this should never happen)")
         }
-        #[doc = "Calls the contract's `getETHPrice` (0x1a753fed) function"]
-        pub fn get_eth_price(
+        #[doc = "Calls the contract's `getTokenPrice` (0xc457fb37) function"]
+        pub fn get_token_price(
             &self,
-            price: ethers::core::types::U256,
+            amount: ethers::core::types::U256,
         ) -> ethers::contract::builders::ContractCall<M, ethers::core::types::U256> {
             self.0
-                .method_hash([26, 117, 63, 237], price)
-                .expect("method not found (this should never happen)")
-        }
-        #[doc = "Calls the contract's `getLength` (0x0986e647) function"]
-        pub fn get_length(
-            &self,
-            index: ethers::core::types::U256,
-        ) -> ethers::contract::builders::ContractCall<M, ethers::core::types::U256> {
-            self.0
-                .method_hash([9, 134, 230, 71], index)
+                .method_hash([196, 87, 251, 55], amount)
                 .expect("method not found (this should never happen)")
         }
         #[doc = "Calls the contract's `isApprovedForAll` (0xe985e9c5) function"]
         pub fn is_approved_for_all(
             &self,
-            p0: ethers::core::types::Address,
-            p1: ethers::core::types::Address,
+            owner: ethers::core::types::Address,
+            operator: ethers::core::types::Address,
         ) -> ethers::contract::builders::ContractCall<M, bool> {
             self.0
-                .method_hash([233, 133, 233, 197], (p0, p1))
+                .method_hash([233, 133, 233, 197], (owner, operator))
                 .expect("method not found (this should never happen)")
         }
         #[doc = "Calls the contract's `isOwned` (0x599f689c) function"]
@@ -213,12 +222,14 @@ pub mod landnft_mod {
                 .method_hash([239, 211, 41, 115], ())
                 .expect("method not found (this should never happen)")
         }
-        #[doc = "Calls the contract's `maxTileNum` (0x55752758) function"]
-        pub fn max_tile_num(
+        #[doc = "Calls the contract's `mint` (0x0bd06246) function"]
+        pub fn mint(
             &self,
-        ) -> ethers::contract::builders::ContractCall<M, ethers::core::types::U256> {
+            region: ::std::vec::Vec<ethers::core::types::U256>,
+            rio_amount: ethers::core::types::U256,
+        ) -> ethers::contract::builders::ContractCall<M, ()> {
             self.0
-                .method_hash([85, 117, 39, 88], ())
+                .method_hash([11, 208, 98, 70], (region, rio_amount))
                 .expect("method not found (this should never happen)")
         }
         #[doc = "Calls the contract's `name` (0x06fdde03) function"]
@@ -246,10 +257,10 @@ pub mod landnft_mod {
         #[doc = "Calls the contract's `ownerOf` (0x6352211e) function"]
         pub fn owner_of(
             &self,
-            id: ethers::core::types::U256,
+            token_id: ethers::core::types::U256,
         ) -> ethers::contract::builders::ContractCall<M, ethers::core::types::Address> {
             self.0
-                .method_hash([99, 82, 33, 30], id)
+                .method_hash([99, 82, 33, 30], token_id)
                 .expect("method not found (this should never happen)")
         }
         #[doc = "Calls the contract's `pause` (0x8456cb59) function"]
@@ -272,32 +283,10 @@ pub mod landnft_mod {
                 .method_hash([160, 53, 177, 254], ())
                 .expect("method not found (this should never happen)")
         }
-        #[doc = "Calls the contract's `regionNumbers` (0x94c9c3e4) function"]
-        pub fn region_numbers(
-            &self,
-            p0: ethers::core::types::U256,
-            p1: ethers::core::types::U256,
-        ) -> ethers::contract::builders::ContractCall<M, ethers::core::types::U256> {
-            self.0
-                .method_hash([148, 201, 195, 228], (p0, p1))
-                .expect("method not found (this should never happen)")
-        }
         #[doc = "Calls the contract's `renounceOwnership` (0x715018a6) function"]
         pub fn renounce_ownership(&self) -> ethers::contract::builders::ContractCall<M, ()> {
             self.0
                 .method_hash([113, 80, 24, 166], ())
-                .expect("method not found (this should never happen)")
-        }
-        #[doc = "Calls the contract's `safeMint` (0x42583524) function"]
-        pub fn safe_mint(
-            &self,
-            to: ethers::core::types::Address,
-            region: ::std::vec::Vec<ethers::core::types::U256>,
-            token: ethers::core::types::Address,
-            rio_amount: ethers::core::types::U256,
-        ) -> ethers::contract::builders::ContractCall<M, ()> {
-            self.0
-                .method_hash([66, 88, 53, 36], (to, region, token, rio_amount))
                 .expect("method not found (this should never happen)")
         }
         #[doc = "Calls the contract's `safeTransferFrom` (0x42842e0e) function"]
@@ -305,10 +294,10 @@ pub mod landnft_mod {
             &self,
             from: ethers::core::types::Address,
             to: ethers::core::types::Address,
-            id: ethers::core::types::U256,
+            token_id: ethers::core::types::U256,
         ) -> ethers::contract::builders::ContractCall<M, ()> {
             self.0
-                .method_hash([66, 132, 46, 14], (from, to, id))
+                .method_hash([66, 132, 46, 14], (from, to, token_id))
                 .expect("method not found (this should never happen)")
         }
         #[doc = "Calls the contract's `safeTransferFrom` (0xb88d4fde) function"]
@@ -316,11 +305,11 @@ pub mod landnft_mod {
             &self,
             from: ethers::core::types::Address,
             to: ethers::core::types::Address,
-            id: ethers::core::types::U256,
+            token_id: ethers::core::types::U256,
             data: ethers::core::types::Bytes,
         ) -> ethers::contract::builders::ContractCall<M, ()> {
             self.0
-                .method_hash([184, 141, 79, 222], (from, to, id, data))
+                .method_hash([184, 141, 79, 222], (from, to, token_id, data))
                 .expect("method not found (this should never happen)")
         }
         #[doc = "Calls the contract's `setAdmin` (0x704b6c02) function"]
@@ -393,6 +382,14 @@ pub mod landnft_mod {
                 .method_hash([149, 216, 155, 65], ())
                 .expect("method not found (this should never happen)")
         }
+        #[doc = "Calls the contract's `tilesBought` (0xc427e2b5) function"]
+        pub fn tiles_bought(
+            &self,
+        ) -> ethers::contract::builders::ContractCall<M, ethers::core::types::U256> {
+            self.0
+                .method_hash([196, 39, 226, 181], ())
+                .expect("method not found (this should never happen)")
+        }
         #[doc = "Calls the contract's `tokenURI` (0xc87b56dd) function"]
         pub fn token_uri(
             &self,
@@ -402,10 +399,12 @@ pub mod landnft_mod {
                 .method_hash([200, 123, 86, 221], token_id)
                 .expect("method not found (this should never happen)")
         }
-        #[doc = "Calls the contract's `totalTileNum` (0x618b2add) function"]
-        pub fn total_tile_num(&self) -> ethers::contract::builders::ContractCall<M, u64> {
+        #[doc = "Calls the contract's `totalSupply` (0x18160ddd) function"]
+        pub fn total_supply(
+            &self,
+        ) -> ethers::contract::builders::ContractCall<M, ethers::core::types::U256> {
             self.0
-                .method_hash([97, 139, 42, 221], ())
+                .method_hash([24, 22, 13, 221], ())
                 .expect("method not found (this should never happen)")
         }
         #[doc = "Calls the contract's `transferFrom` (0x23b872dd) function"]
@@ -413,10 +412,10 @@ pub mod landnft_mod {
             &self,
             from: ethers::core::types::Address,
             to: ethers::core::types::Address,
-            id: ethers::core::types::U256,
+            token_id: ethers::core::types::U256,
         ) -> ethers::contract::builders::ContractCall<M, ()> {
             self.0
-                .method_hash([35, 184, 114, 221], (from, to, id))
+                .method_hash([35, 184, 114, 221], (from, to, token_id))
                 .expect("method not found (this should never happen)")
         }
         #[doc = "Calls the contract's `transferOwnership` (0xf2fde38b) function"]
@@ -456,6 +455,12 @@ pub mod landnft_mod {
         ) -> ethers::contract::builders::Event<M, CommissionRateChangedFilter> {
             self.0.event()
         }
+        #[doc = "Gets the contract's `ConsecutiveTransfer` event"]
+        pub fn consecutive_transfer_filter(
+            &self,
+        ) -> ethers::contract::builders::Event<M, ConsecutiveTransferFilter> {
+            self.0.event()
+        }
         #[doc = "Gets the contract's `ContractPaused` event"]
         pub fn contract_paused_filter(
             &self,
@@ -480,40 +485,8 @@ pub mod landnft_mod {
         ) -> ethers::contract::builders::Event<M, LandBankChangedFilter> {
             self.0.event()
         }
-        #[doc = "Gets the contract's `LandNFTCreated` event"]
-        pub fn land_nft_created_filter(
-            &self,
-        ) -> ethers::contract::builders::Event<M, LandNFTCreatedFilter> {
-            self.0.event()
-        }
-        #[doc = "Gets the contract's `LandNFTDestroyed` event"]
-        pub fn land_nft_destroyed_filter(
-            &self,
-        ) -> ethers::contract::builders::Event<M, LandNFTDestroyedFilter> {
-            self.0.event()
-        }
-        #[doc = "Gets the contract's `LandNFTTileBought` event"]
-        pub fn land_nft_tile_bought_filter(
-            &self,
-        ) -> ethers::contract::builders::Event<M, LandNFTTileBoughtFilter> {
-            self.0.event()
-        }
-        #[doc = "Gets the contract's `LandNFTTileDeposited` event"]
-        pub fn land_nft_tile_deposited_filter(
-            &self,
-        ) -> ethers::contract::builders::Event<M, LandNFTTileDepositedFilter> {
-            self.0.event()
-        }
-        #[doc = "Gets the contract's `LandNFTTileSold` event"]
-        pub fn land_nft_tile_sold_filter(
-            &self,
-        ) -> ethers::contract::builders::Event<M, LandNFTTileSoldFilter> {
-            self.0.event()
-        }
-        #[doc = "Gets the contract's `LandNFTTileWithdrawn` event"]
-        pub fn land_nft_tile_withdrawn_filter(
-            &self,
-        ) -> ethers::contract::builders::Event<M, LandNFTTileWithdrawnFilter> {
+        #[doc = "Gets the contract's `LandSold` event"]
+        pub fn land_sold_filter(&self) -> ethers::contract::builders::Event<M, LandSoldFilter> {
             self.0.event()
         }
         #[doc = "Gets the contract's `OwnershipTransferred` event"]
@@ -544,6 +517,652 @@ pub mod landnft_mod {
             Self(contract)
         }
     }
+    #[doc = "Custom Error type `ApprovalCallerNotOwnerNorApproved` with signature `ApprovalCallerNotOwnerNorApproved()` and selector `[207, 179, 185, 66]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthError,
+        ethers :: contract :: EthDisplay,
+    )]
+    #[etherror(
+        name = "ApprovalCallerNotOwnerNorApproved",
+        abi = "ApprovalCallerNotOwnerNorApproved()"
+    )]
+    pub struct ApprovalCallerNotOwnerNorApproved;
+    #[doc = "Custom Error type `ApprovalQueryForNonexistentToken` with signature `ApprovalQueryForNonexistentToken()` and selector `[207, 71, 0, 228]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthError,
+        ethers :: contract :: EthDisplay,
+    )]
+    #[etherror(
+        name = "ApprovalQueryForNonexistentToken",
+        abi = "ApprovalQueryForNonexistentToken()"
+    )]
+    pub struct ApprovalQueryForNonexistentToken;
+    #[doc = "Custom Error type `ApproveToCaller` with signature `ApproveToCaller()` and selector `[176, 99, 7, 219]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthError,
+        ethers :: contract :: EthDisplay,
+    )]
+    #[etherror(name = "ApproveToCaller", abi = "ApproveToCaller()")]
+    pub struct ApproveToCaller;
+    #[doc = "Custom Error type `BalanceQueryForZeroAddress` with signature `BalanceQueryForZeroAddress()` and selector `[143, 78, 182, 4]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthError,
+        ethers :: contract :: EthDisplay,
+    )]
+    #[etherror(
+        name = "BalanceQueryForZeroAddress",
+        abi = "BalanceQueryForZeroAddress()"
+    )]
+    pub struct BalanceQueryForZeroAddress;
+    #[doc = "Custom Error type `CannotSetAddressZero` with signature `CannotSetAddressZero()` and selector `[151, 180, 60, 121]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthError,
+        ethers :: contract :: EthDisplay,
+    )]
+    #[etherror(name = "CannotSetAddressZero", abi = "CannotSetAddressZero()")]
+    pub struct CannotSetAddressZero;
+    #[doc = "Custom Error type `ComissionOutOfAllowedRange` with signature `ComissionOutOfAllowedRange()` and selector `[250, 59, 167, 190]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthError,
+        ethers :: contract :: EthDisplay,
+    )]
+    #[etherror(
+        name = "ComissionOutOfAllowedRange",
+        abi = "ComissionOutOfAllowedRange()"
+    )]
+    pub struct ComissionOutOfAllowedRange;
+    #[doc = "Custom Error type `InsufficientBalance` with signature `InsufficientBalance()` and selector `[244, 214, 120, 184]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthError,
+        ethers :: contract :: EthDisplay,
+    )]
+    #[etherror(name = "InsufficientBalance", abi = "InsufficientBalance()")]
+    pub struct InsufficientBalance;
+    #[doc = "Custom Error type `MaxTilesReached` with signature `MaxTilesReached()` and selector `[231, 79, 216, 11]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthError,
+        ethers :: contract :: EthDisplay,
+    )]
+    #[etherror(name = "MaxTilesReached", abi = "MaxTilesReached()")]
+    pub struct MaxTilesReached;
+    #[doc = "Custom Error type `MintERC2309QuantityExceedsLimit` with signature `MintERC2309QuantityExceedsLimit()` and selector `[61, 177, 249, 175]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthError,
+        ethers :: contract :: EthDisplay,
+    )]
+    #[etherror(
+        name = "MintERC2309QuantityExceedsLimit",
+        abi = "MintERC2309QuantityExceedsLimit()"
+    )]
+    pub struct MintERC2309QuantityExceedsLimit;
+    #[doc = "Custom Error type `MintToZeroAddress` with signature `MintToZeroAddress()` and selector `[46, 7, 99, 0]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthError,
+        ethers :: contract :: EthDisplay,
+    )]
+    #[etherror(name = "MintToZeroAddress", abi = "MintToZeroAddress()")]
+    pub struct MintToZeroAddress;
+    #[doc = "Custom Error type `MintZeroQuantity` with signature `MintZeroQuantity()` and selector `[181, 98, 232, 221]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthError,
+        ethers :: contract :: EthDisplay,
+    )]
+    #[etherror(name = "MintZeroQuantity", abi = "MintZeroQuantity()")]
+    pub struct MintZeroQuantity;
+    #[doc = "Custom Error type `NoTilesSelected` with signature `NoTilesSelected()` and selector `[151, 221, 229, 109]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthError,
+        ethers :: contract :: EthDisplay,
+    )]
+    #[etherror(name = "NoTilesSelected", abi = "NoTilesSelected()")]
+    pub struct NoTilesSelected;
+    #[doc = "Custom Error type `NonExistentTokenURI` with signature `NonExistentTokenURI()` and selector `[216, 114, 148, 107]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthError,
+        ethers :: contract :: EthDisplay,
+    )]
+    #[etherror(name = "NonExistentTokenURI", abi = "NonExistentTokenURI()")]
+    pub struct NonExistentTokenURI;
+    #[doc = "Custom Error type `NotAuthorised` with signature `NotAuthorised()` and selector `[22, 72, 253, 1]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthError,
+        ethers :: contract :: EthDisplay,
+    )]
+    #[etherror(name = "NotAuthorised", abi = "NotAuthorised()")]
+    pub struct NotAuthorised;
+    #[doc = "Custom Error type `OwnerQueryForNonexistentToken` with signature `OwnerQueryForNonexistentToken()` and selector `[223, 45, 155, 66]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthError,
+        ethers :: contract :: EthDisplay,
+    )]
+    #[etherror(
+        name = "OwnerQueryForNonexistentToken",
+        abi = "OwnerQueryForNonexistentToken()"
+    )]
+    pub struct OwnerQueryForNonexistentToken;
+    #[doc = "Custom Error type `OwnershipNotInitializedForExtraData` with signature `OwnershipNotInitializedForExtraData()` and selector `[0, 213, 129, 83]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthError,
+        ethers :: contract :: EthDisplay,
+    )]
+    #[etherror(
+        name = "OwnershipNotInitializedForExtraData",
+        abi = "OwnershipNotInitializedForExtraData()"
+    )]
+    pub struct OwnershipNotInitializedForExtraData;
+    #[doc = "Custom Error type `RegionAlreadyOwned` with signature `RegionAlreadyOwned()` and selector `[93, 41, 221, 35]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthError,
+        ethers :: contract :: EthDisplay,
+    )]
+    #[etherror(name = "RegionAlreadyOwned", abi = "RegionAlreadyOwned()")]
+    pub struct RegionAlreadyOwned;
+    #[doc = "Custom Error type `TransferCallerNotOwnerNorApproved` with signature `TransferCallerNotOwnerNorApproved()` and selector `[89, 200, 150, 190]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthError,
+        ethers :: contract :: EthDisplay,
+    )]
+    #[etherror(
+        name = "TransferCallerNotOwnerNorApproved",
+        abi = "TransferCallerNotOwnerNorApproved()"
+    )]
+    pub struct TransferCallerNotOwnerNorApproved;
+    #[doc = "Custom Error type `TransferFailed` with signature `TransferFailed()` and selector `[144, 184, 236, 24]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthError,
+        ethers :: contract :: EthDisplay,
+    )]
+    #[etherror(name = "TransferFailed", abi = "TransferFailed()")]
+    pub struct TransferFailed;
+    #[doc = "Custom Error type `TransferFromIncorrectOwner` with signature `TransferFromIncorrectOwner()` and selector `[161, 20, 129, 0]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthError,
+        ethers :: contract :: EthDisplay,
+    )]
+    #[etherror(
+        name = "TransferFromIncorrectOwner",
+        abi = "TransferFromIncorrectOwner()"
+    )]
+    pub struct TransferFromIncorrectOwner;
+    #[doc = "Custom Error type `TransferToNonERC721ReceiverImplementer` with signature `TransferToNonERC721ReceiverImplementer()` and selector `[209, 165, 126, 214]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthError,
+        ethers :: contract :: EthDisplay,
+    )]
+    #[etherror(
+        name = "TransferToNonERC721ReceiverImplementer",
+        abi = "TransferToNonERC721ReceiverImplementer()"
+    )]
+    pub struct TransferToNonERC721ReceiverImplementer;
+    #[doc = "Custom Error type `TransferToZeroAddress` with signature `TransferToZeroAddress()` and selector `[234, 85, 59, 52]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthError,
+        ethers :: contract :: EthDisplay,
+    )]
+    #[etherror(name = "TransferToZeroAddress", abi = "TransferToZeroAddress()")]
+    pub struct TransferToZeroAddress;
+    #[doc = "Custom Error type `URIQueryForNonexistentToken` with signature `URIQueryForNonexistentToken()` and selector `[161, 76, 75, 80]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthError,
+        ethers :: contract :: EthDisplay,
+    )]
+    #[etherror(
+        name = "URIQueryForNonexistentToken",
+        abi = "URIQueryForNonexistentToken()"
+    )]
+    pub struct URIQueryForNonexistentToken;
+    #[derive(Debug, Clone, PartialEq, Eq, ethers :: contract :: EthAbiType)]
+    pub enum LandNFTErrors {
+        ApprovalCallerNotOwnerNorApproved(ApprovalCallerNotOwnerNorApproved),
+        ApprovalQueryForNonexistentToken(ApprovalQueryForNonexistentToken),
+        ApproveToCaller(ApproveToCaller),
+        BalanceQueryForZeroAddress(BalanceQueryForZeroAddress),
+        CannotSetAddressZero(CannotSetAddressZero),
+        ComissionOutOfAllowedRange(ComissionOutOfAllowedRange),
+        InsufficientBalance(InsufficientBalance),
+        MaxTilesReached(MaxTilesReached),
+        MintERC2309QuantityExceedsLimit(MintERC2309QuantityExceedsLimit),
+        MintToZeroAddress(MintToZeroAddress),
+        MintZeroQuantity(MintZeroQuantity),
+        NoTilesSelected(NoTilesSelected),
+        NonExistentTokenURI(NonExistentTokenURI),
+        NotAuthorised(NotAuthorised),
+        OwnerQueryForNonexistentToken(OwnerQueryForNonexistentToken),
+        OwnershipNotInitializedForExtraData(OwnershipNotInitializedForExtraData),
+        RegionAlreadyOwned(RegionAlreadyOwned),
+        TransferCallerNotOwnerNorApproved(TransferCallerNotOwnerNorApproved),
+        TransferFailed(TransferFailed),
+        TransferFromIncorrectOwner(TransferFromIncorrectOwner),
+        TransferToNonERC721ReceiverImplementer(TransferToNonERC721ReceiverImplementer),
+        TransferToZeroAddress(TransferToZeroAddress),
+        URIQueryForNonexistentToken(URIQueryForNonexistentToken),
+    }
+    impl ethers::core::abi::AbiDecode for LandNFTErrors {
+        fn decode(
+            data: impl AsRef<[u8]>,
+        ) -> ::std::result::Result<Self, ethers::core::abi::AbiError> {
+            if let Ok(decoded) =
+                <ApprovalCallerNotOwnerNorApproved as ethers::core::abi::AbiDecode>::decode(
+                    data.as_ref(),
+                )
+            {
+                return Ok(LandNFTErrors::ApprovalCallerNotOwnerNorApproved(decoded));
+            }
+            if let Ok(decoded) =
+                <ApprovalQueryForNonexistentToken as ethers::core::abi::AbiDecode>::decode(
+                    data.as_ref(),
+                )
+            {
+                return Ok(LandNFTErrors::ApprovalQueryForNonexistentToken(decoded));
+            }
+            if let Ok(decoded) =
+                <ApproveToCaller as ethers::core::abi::AbiDecode>::decode(data.as_ref())
+            {
+                return Ok(LandNFTErrors::ApproveToCaller(decoded));
+            }
+            if let Ok(decoded) =
+                <BalanceQueryForZeroAddress as ethers::core::abi::AbiDecode>::decode(data.as_ref())
+            {
+                return Ok(LandNFTErrors::BalanceQueryForZeroAddress(decoded));
+            }
+            if let Ok(decoded) =
+                <CannotSetAddressZero as ethers::core::abi::AbiDecode>::decode(data.as_ref())
+            {
+                return Ok(LandNFTErrors::CannotSetAddressZero(decoded));
+            }
+            if let Ok(decoded) =
+                <ComissionOutOfAllowedRange as ethers::core::abi::AbiDecode>::decode(data.as_ref())
+            {
+                return Ok(LandNFTErrors::ComissionOutOfAllowedRange(decoded));
+            }
+            if let Ok(decoded) =
+                <InsufficientBalance as ethers::core::abi::AbiDecode>::decode(data.as_ref())
+            {
+                return Ok(LandNFTErrors::InsufficientBalance(decoded));
+            }
+            if let Ok(decoded) =
+                <MaxTilesReached as ethers::core::abi::AbiDecode>::decode(data.as_ref())
+            {
+                return Ok(LandNFTErrors::MaxTilesReached(decoded));
+            }
+            if let Ok(decoded) =
+                <MintERC2309QuantityExceedsLimit as ethers::core::abi::AbiDecode>::decode(
+                    data.as_ref(),
+                )
+            {
+                return Ok(LandNFTErrors::MintERC2309QuantityExceedsLimit(decoded));
+            }
+            if let Ok(decoded) =
+                <MintToZeroAddress as ethers::core::abi::AbiDecode>::decode(data.as_ref())
+            {
+                return Ok(LandNFTErrors::MintToZeroAddress(decoded));
+            }
+            if let Ok(decoded) =
+                <MintZeroQuantity as ethers::core::abi::AbiDecode>::decode(data.as_ref())
+            {
+                return Ok(LandNFTErrors::MintZeroQuantity(decoded));
+            }
+            if let Ok(decoded) =
+                <NoTilesSelected as ethers::core::abi::AbiDecode>::decode(data.as_ref())
+            {
+                return Ok(LandNFTErrors::NoTilesSelected(decoded));
+            }
+            if let Ok(decoded) =
+                <NonExistentTokenURI as ethers::core::abi::AbiDecode>::decode(data.as_ref())
+            {
+                return Ok(LandNFTErrors::NonExistentTokenURI(decoded));
+            }
+            if let Ok(decoded) =
+                <NotAuthorised as ethers::core::abi::AbiDecode>::decode(data.as_ref())
+            {
+                return Ok(LandNFTErrors::NotAuthorised(decoded));
+            }
+            if let Ok(decoded) =
+                <OwnerQueryForNonexistentToken as ethers::core::abi::AbiDecode>::decode(
+                    data.as_ref(),
+                )
+            {
+                return Ok(LandNFTErrors::OwnerQueryForNonexistentToken(decoded));
+            }
+            if let Ok(decoded) =
+                <OwnershipNotInitializedForExtraData as ethers::core::abi::AbiDecode>::decode(
+                    data.as_ref(),
+                )
+            {
+                return Ok(LandNFTErrors::OwnershipNotInitializedForExtraData(decoded));
+            }
+            if let Ok(decoded) =
+                <RegionAlreadyOwned as ethers::core::abi::AbiDecode>::decode(data.as_ref())
+            {
+                return Ok(LandNFTErrors::RegionAlreadyOwned(decoded));
+            }
+            if let Ok(decoded) =
+                <TransferCallerNotOwnerNorApproved as ethers::core::abi::AbiDecode>::decode(
+                    data.as_ref(),
+                )
+            {
+                return Ok(LandNFTErrors::TransferCallerNotOwnerNorApproved(decoded));
+            }
+            if let Ok(decoded) =
+                <TransferFailed as ethers::core::abi::AbiDecode>::decode(data.as_ref())
+            {
+                return Ok(LandNFTErrors::TransferFailed(decoded));
+            }
+            if let Ok(decoded) =
+                <TransferFromIncorrectOwner as ethers::core::abi::AbiDecode>::decode(data.as_ref())
+            {
+                return Ok(LandNFTErrors::TransferFromIncorrectOwner(decoded));
+            }
+            if let Ok(decoded) =
+                <TransferToNonERC721ReceiverImplementer as ethers::core::abi::AbiDecode>::decode(
+                    data.as_ref(),
+                )
+            {
+                return Ok(LandNFTErrors::TransferToNonERC721ReceiverImplementer(
+                    decoded,
+                ));
+            }
+            if let Ok(decoded) =
+                <TransferToZeroAddress as ethers::core::abi::AbiDecode>::decode(data.as_ref())
+            {
+                return Ok(LandNFTErrors::TransferToZeroAddress(decoded));
+            }
+            if let Ok(decoded) =
+                <URIQueryForNonexistentToken as ethers::core::abi::AbiDecode>::decode(data.as_ref())
+            {
+                return Ok(LandNFTErrors::URIQueryForNonexistentToken(decoded));
+            }
+            Err(ethers::core::abi::Error::InvalidData.into())
+        }
+    }
+    impl ethers::core::abi::AbiEncode for LandNFTErrors {
+        fn encode(self) -> Vec<u8> {
+            match self {
+                LandNFTErrors::ApprovalCallerNotOwnerNorApproved(element) => element.encode(),
+                LandNFTErrors::ApprovalQueryForNonexistentToken(element) => element.encode(),
+                LandNFTErrors::ApproveToCaller(element) => element.encode(),
+                LandNFTErrors::BalanceQueryForZeroAddress(element) => element.encode(),
+                LandNFTErrors::CannotSetAddressZero(element) => element.encode(),
+                LandNFTErrors::ComissionOutOfAllowedRange(element) => element.encode(),
+                LandNFTErrors::InsufficientBalance(element) => element.encode(),
+                LandNFTErrors::MaxTilesReached(element) => element.encode(),
+                LandNFTErrors::MintERC2309QuantityExceedsLimit(element) => element.encode(),
+                LandNFTErrors::MintToZeroAddress(element) => element.encode(),
+                LandNFTErrors::MintZeroQuantity(element) => element.encode(),
+                LandNFTErrors::NoTilesSelected(element) => element.encode(),
+                LandNFTErrors::NonExistentTokenURI(element) => element.encode(),
+                LandNFTErrors::NotAuthorised(element) => element.encode(),
+                LandNFTErrors::OwnerQueryForNonexistentToken(element) => element.encode(),
+                LandNFTErrors::OwnershipNotInitializedForExtraData(element) => element.encode(),
+                LandNFTErrors::RegionAlreadyOwned(element) => element.encode(),
+                LandNFTErrors::TransferCallerNotOwnerNorApproved(element) => element.encode(),
+                LandNFTErrors::TransferFailed(element) => element.encode(),
+                LandNFTErrors::TransferFromIncorrectOwner(element) => element.encode(),
+                LandNFTErrors::TransferToNonERC721ReceiverImplementer(element) => element.encode(),
+                LandNFTErrors::TransferToZeroAddress(element) => element.encode(),
+                LandNFTErrors::URIQueryForNonexistentToken(element) => element.encode(),
+            }
+        }
+    }
+    impl ::std::fmt::Display for LandNFTErrors {
+        fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+            match self {
+                LandNFTErrors::ApprovalCallerNotOwnerNorApproved(element) => element.fmt(f),
+                LandNFTErrors::ApprovalQueryForNonexistentToken(element) => element.fmt(f),
+                LandNFTErrors::ApproveToCaller(element) => element.fmt(f),
+                LandNFTErrors::BalanceQueryForZeroAddress(element) => element.fmt(f),
+                LandNFTErrors::CannotSetAddressZero(element) => element.fmt(f),
+                LandNFTErrors::ComissionOutOfAllowedRange(element) => element.fmt(f),
+                LandNFTErrors::InsufficientBalance(element) => element.fmt(f),
+                LandNFTErrors::MaxTilesReached(element) => element.fmt(f),
+                LandNFTErrors::MintERC2309QuantityExceedsLimit(element) => element.fmt(f),
+                LandNFTErrors::MintToZeroAddress(element) => element.fmt(f),
+                LandNFTErrors::MintZeroQuantity(element) => element.fmt(f),
+                LandNFTErrors::NoTilesSelected(element) => element.fmt(f),
+                LandNFTErrors::NonExistentTokenURI(element) => element.fmt(f),
+                LandNFTErrors::NotAuthorised(element) => element.fmt(f),
+                LandNFTErrors::OwnerQueryForNonexistentToken(element) => element.fmt(f),
+                LandNFTErrors::OwnershipNotInitializedForExtraData(element) => element.fmt(f),
+                LandNFTErrors::RegionAlreadyOwned(element) => element.fmt(f),
+                LandNFTErrors::TransferCallerNotOwnerNorApproved(element) => element.fmt(f),
+                LandNFTErrors::TransferFailed(element) => element.fmt(f),
+                LandNFTErrors::TransferFromIncorrectOwner(element) => element.fmt(f),
+                LandNFTErrors::TransferToNonERC721ReceiverImplementer(element) => element.fmt(f),
+                LandNFTErrors::TransferToZeroAddress(element) => element.fmt(f),
+                LandNFTErrors::URIQueryForNonexistentToken(element) => element.fmt(f),
+            }
+        }
+    }
+    impl ::std::convert::From<ApprovalCallerNotOwnerNorApproved> for LandNFTErrors {
+        fn from(var: ApprovalCallerNotOwnerNorApproved) -> Self {
+            LandNFTErrors::ApprovalCallerNotOwnerNorApproved(var)
+        }
+    }
+    impl ::std::convert::From<ApprovalQueryForNonexistentToken> for LandNFTErrors {
+        fn from(var: ApprovalQueryForNonexistentToken) -> Self {
+            LandNFTErrors::ApprovalQueryForNonexistentToken(var)
+        }
+    }
+    impl ::std::convert::From<ApproveToCaller> for LandNFTErrors {
+        fn from(var: ApproveToCaller) -> Self {
+            LandNFTErrors::ApproveToCaller(var)
+        }
+    }
+    impl ::std::convert::From<BalanceQueryForZeroAddress> for LandNFTErrors {
+        fn from(var: BalanceQueryForZeroAddress) -> Self {
+            LandNFTErrors::BalanceQueryForZeroAddress(var)
+        }
+    }
+    impl ::std::convert::From<CannotSetAddressZero> for LandNFTErrors {
+        fn from(var: CannotSetAddressZero) -> Self {
+            LandNFTErrors::CannotSetAddressZero(var)
+        }
+    }
+    impl ::std::convert::From<ComissionOutOfAllowedRange> for LandNFTErrors {
+        fn from(var: ComissionOutOfAllowedRange) -> Self {
+            LandNFTErrors::ComissionOutOfAllowedRange(var)
+        }
+    }
+    impl ::std::convert::From<InsufficientBalance> for LandNFTErrors {
+        fn from(var: InsufficientBalance) -> Self {
+            LandNFTErrors::InsufficientBalance(var)
+        }
+    }
+    impl ::std::convert::From<MaxTilesReached> for LandNFTErrors {
+        fn from(var: MaxTilesReached) -> Self {
+            LandNFTErrors::MaxTilesReached(var)
+        }
+    }
+    impl ::std::convert::From<MintERC2309QuantityExceedsLimit> for LandNFTErrors {
+        fn from(var: MintERC2309QuantityExceedsLimit) -> Self {
+            LandNFTErrors::MintERC2309QuantityExceedsLimit(var)
+        }
+    }
+    impl ::std::convert::From<MintToZeroAddress> for LandNFTErrors {
+        fn from(var: MintToZeroAddress) -> Self {
+            LandNFTErrors::MintToZeroAddress(var)
+        }
+    }
+    impl ::std::convert::From<MintZeroQuantity> for LandNFTErrors {
+        fn from(var: MintZeroQuantity) -> Self {
+            LandNFTErrors::MintZeroQuantity(var)
+        }
+    }
+    impl ::std::convert::From<NoTilesSelected> for LandNFTErrors {
+        fn from(var: NoTilesSelected) -> Self {
+            LandNFTErrors::NoTilesSelected(var)
+        }
+    }
+    impl ::std::convert::From<NonExistentTokenURI> for LandNFTErrors {
+        fn from(var: NonExistentTokenURI) -> Self {
+            LandNFTErrors::NonExistentTokenURI(var)
+        }
+    }
+    impl ::std::convert::From<NotAuthorised> for LandNFTErrors {
+        fn from(var: NotAuthorised) -> Self {
+            LandNFTErrors::NotAuthorised(var)
+        }
+    }
+    impl ::std::convert::From<OwnerQueryForNonexistentToken> for LandNFTErrors {
+        fn from(var: OwnerQueryForNonexistentToken) -> Self {
+            LandNFTErrors::OwnerQueryForNonexistentToken(var)
+        }
+    }
+    impl ::std::convert::From<OwnershipNotInitializedForExtraData> for LandNFTErrors {
+        fn from(var: OwnershipNotInitializedForExtraData) -> Self {
+            LandNFTErrors::OwnershipNotInitializedForExtraData(var)
+        }
+    }
+    impl ::std::convert::From<RegionAlreadyOwned> for LandNFTErrors {
+        fn from(var: RegionAlreadyOwned) -> Self {
+            LandNFTErrors::RegionAlreadyOwned(var)
+        }
+    }
+    impl ::std::convert::From<TransferCallerNotOwnerNorApproved> for LandNFTErrors {
+        fn from(var: TransferCallerNotOwnerNorApproved) -> Self {
+            LandNFTErrors::TransferCallerNotOwnerNorApproved(var)
+        }
+    }
+    impl ::std::convert::From<TransferFailed> for LandNFTErrors {
+        fn from(var: TransferFailed) -> Self {
+            LandNFTErrors::TransferFailed(var)
+        }
+    }
+    impl ::std::convert::From<TransferFromIncorrectOwner> for LandNFTErrors {
+        fn from(var: TransferFromIncorrectOwner) -> Self {
+            LandNFTErrors::TransferFromIncorrectOwner(var)
+        }
+    }
+    impl ::std::convert::From<TransferToNonERC721ReceiverImplementer> for LandNFTErrors {
+        fn from(var: TransferToNonERC721ReceiverImplementer) -> Self {
+            LandNFTErrors::TransferToNonERC721ReceiverImplementer(var)
+        }
+    }
+    impl ::std::convert::From<TransferToZeroAddress> for LandNFTErrors {
+        fn from(var: TransferToZeroAddress) -> Self {
+            LandNFTErrors::TransferToZeroAddress(var)
+        }
+    }
+    impl ::std::convert::From<URIQueryForNonexistentToken> for LandNFTErrors {
+        fn from(var: URIQueryForNonexistentToken) -> Self {
+            LandNFTErrors::URIQueryForNonexistentToken(var)
+        }
+    }
     #[derive(
         Clone,
         Debug,
@@ -555,7 +1174,9 @@ pub mod landnft_mod {
     )]
     #[ethevent(name = "AdminChanged", abi = "AdminChanged(address,address)")]
     pub struct AdminChangedFilter {
+        #[ethevent(indexed)]
         pub new_admin: ethers::core::types::Address,
+        #[ethevent(indexed)]
         pub old_admin: ethers::core::types::Address,
     }
     #[derive(
@@ -572,9 +1193,9 @@ pub mod landnft_mod {
         #[ethevent(indexed)]
         pub owner: ethers::core::types::Address,
         #[ethevent(indexed)]
-        pub spender: ethers::core::types::Address,
+        pub approved: ethers::core::types::Address,
         #[ethevent(indexed)]
-        pub id: ethers::core::types::U256,
+        pub token_id: ethers::core::types::U256,
     }
     #[derive(
         Clone,
@@ -607,8 +1228,32 @@ pub mod landnft_mod {
         abi = "CommissionRateChanged(uint256,uint256)"
     )]
     pub struct CommissionRateChangedFilter {
+        #[ethevent(indexed)]
         pub new_commission: ethers::core::types::U256,
+        #[ethevent(indexed)]
         pub old_commission: ethers::core::types::U256,
+    }
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthEvent,
+        ethers :: contract :: EthDisplay,
+    )]
+    #[ethevent(
+        name = "ConsecutiveTransfer",
+        abi = "ConsecutiveTransfer(uint256,uint256,address,address)"
+    )]
+    pub struct ConsecutiveTransferFilter {
+        #[ethevent(indexed)]
+        pub from_token_id: ethers::core::types::U256,
+        pub to_token_id: ethers::core::types::U256,
+        #[ethevent(indexed)]
+        pub from: ethers::core::types::Address,
+        #[ethevent(indexed)]
+        pub to: ethers::core::types::Address,
     }
     #[derive(
         Clone,
@@ -621,6 +1266,7 @@ pub mod landnft_mod {
     )]
     #[ethevent(name = "ContractPaused", abi = "ContractPaused(bool)")]
     pub struct ContractPausedFilter {
+        #[ethevent(indexed)]
         pub paused: bool,
     }
     #[derive(
@@ -634,6 +1280,7 @@ pub mod landnft_mod {
     )]
     #[ethevent(name = "ContractUnpaused", abi = "ContractUnpaused(bool)")]
     pub struct ContractUnpausedFilter {
+        #[ethevent(indexed)]
         pub paused: bool,
     }
     #[derive(
@@ -647,7 +1294,9 @@ pub mod landnft_mod {
     )]
     #[ethevent(name = "DevFundChanged", abi = "DevFundChanged(address,address)")]
     pub struct DevFundChangedFilter {
+        #[ethevent(indexed)]
         pub new_dev_fund: ethers::core::types::Address,
+        #[ethevent(indexed)]
         pub old_dev_fund: ethers::core::types::Address,
     }
     #[derive(
@@ -661,7 +1310,9 @@ pub mod landnft_mod {
     )]
     #[ethevent(name = "LandBankChanged", abi = "LandBankChanged(address,address)")]
     pub struct LandBankChangedFilter {
+        #[ethevent(indexed)]
         pub new_land_bank: ethers::core::types::Address,
+        #[ethevent(indexed)]
         pub old_land_bank: ethers::core::types::Address,
     }
     #[derive(
@@ -673,89 +1324,12 @@ pub mod landnft_mod {
         ethers :: contract :: EthEvent,
         ethers :: contract :: EthDisplay,
     )]
-    #[ethevent(
-        name = "LandNFTCreated",
-        abi = "LandNFTCreated(address,address,address)"
-    )]
-    pub struct LandNFTCreatedFilter {
-        pub land_nft: ethers::core::types::Address,
-        pub land_bank: ethers::core::types::Address,
-        pub swap_token: ethers::core::types::Address,
-    }
-    #[derive(
-        Clone,
-        Debug,
-        Default,
-        Eq,
-        PartialEq,
-        ethers :: contract :: EthEvent,
-        ethers :: contract :: EthDisplay,
-    )]
-    #[ethevent(name = "LandNFTDestroyed", abi = "LandNFTDestroyed(address)")]
-    pub struct LandNFTDestroyedFilter {
-        pub land_nft: ethers::core::types::Address,
-    }
-    #[derive(
-        Clone,
-        Debug,
-        Default,
-        Eq,
-        PartialEq,
-        ethers :: contract :: EthEvent,
-        ethers :: contract :: EthDisplay,
-    )]
-    #[ethevent(name = "LandNFTTileBought", abi = "LandNFTTileBought(address,uint256)")]
-    pub struct LandNFTTileBoughtFilter {
+    #[ethevent(name = "LandSold", abi = "LandSold(address,uint256[])")]
+    pub struct LandSoldFilter {
+        #[ethevent(indexed)]
         pub buyer: ethers::core::types::Address,
-        pub token_id: ethers::core::types::U256,
-    }
-    #[derive(
-        Clone,
-        Debug,
-        Default,
-        Eq,
-        PartialEq,
-        ethers :: contract :: EthEvent,
-        ethers :: contract :: EthDisplay,
-    )]
-    #[ethevent(
-        name = "LandNFTTileDeposited",
-        abi = "LandNFTTileDeposited(address,uint256)"
-    )]
-    pub struct LandNFTTileDepositedFilter {
-        pub beneficiary: ethers::core::types::Address,
-        pub amount: ethers::core::types::U256,
-    }
-    #[derive(
-        Clone,
-        Debug,
-        Default,
-        Eq,
-        PartialEq,
-        ethers :: contract :: EthEvent,
-        ethers :: contract :: EthDisplay,
-    )]
-    #[ethevent(name = "LandNFTTileSold", abi = "LandNFTTileSold(address,uint256)")]
-    pub struct LandNFTTileSoldFilter {
-        pub seller: ethers::core::types::Address,
-        pub token_id: ethers::core::types::U256,
-    }
-    #[derive(
-        Clone,
-        Debug,
-        Default,
-        Eq,
-        PartialEq,
-        ethers :: contract :: EthEvent,
-        ethers :: contract :: EthDisplay,
-    )]
-    #[ethevent(
-        name = "LandNFTTileWithdrawn",
-        abi = "LandNFTTileWithdrawn(address,uint256)"
-    )]
-    pub struct LandNFTTileWithdrawnFilter {
-        pub beneficiary: ethers::core::types::Address,
-        pub amount: ethers::core::types::U256,
+        #[ethevent(indexed)]
+        pub region: ethers::core::types::H256,
     }
     #[derive(
         Clone,
@@ -805,7 +1379,7 @@ pub mod landnft_mod {
         #[ethevent(indexed)]
         pub to: ethers::core::types::Address,
         #[ethevent(indexed)]
-        pub id: ethers::core::types::U256,
+        pub token_id: ethers::core::types::U256,
     }
     #[derive(
         Clone,
@@ -826,23 +1400,21 @@ pub mod landnft_mod {
         ApprovalFilter(ApprovalFilter),
         ApprovalForAllFilter(ApprovalForAllFilter),
         CommissionRateChangedFilter(CommissionRateChangedFilter),
+        ConsecutiveTransferFilter(ConsecutiveTransferFilter),
         ContractPausedFilter(ContractPausedFilter),
         ContractUnpausedFilter(ContractUnpausedFilter),
         DevFundChangedFilter(DevFundChangedFilter),
         LandBankChangedFilter(LandBankChangedFilter),
-        LandNFTCreatedFilter(LandNFTCreatedFilter),
-        LandNFTDestroyedFilter(LandNFTDestroyedFilter),
-        LandNFTTileBoughtFilter(LandNFTTileBoughtFilter),
-        LandNFTTileDepositedFilter(LandNFTTileDepositedFilter),
-        LandNFTTileSoldFilter(LandNFTTileSoldFilter),
-        LandNFTTileWithdrawnFilter(LandNFTTileWithdrawnFilter),
+        LandSoldFilter(LandSoldFilter),
         OwnershipTransferredFilter(OwnershipTransferredFilter),
         PausedFilter(PausedFilter),
         TransferFilter(TransferFilter),
         UnpausedFilter(UnpausedFilter),
     }
     impl ethers::contract::EthLogDecode for LandNFTEvents {
-        fn decode_log(log: &ethers::core::abi::RawLog) -> Result<Self, ethers::core::abi::Error>
+        fn decode_log(
+            log: &ethers::core::abi::RawLog,
+        ) -> ::std::result::Result<Self, ethers::core::abi::Error>
         where
             Self: Sized,
         {
@@ -858,6 +1430,9 @@ pub mod landnft_mod {
             if let Ok(decoded) = CommissionRateChangedFilter::decode_log(log) {
                 return Ok(LandNFTEvents::CommissionRateChangedFilter(decoded));
             }
+            if let Ok(decoded) = ConsecutiveTransferFilter::decode_log(log) {
+                return Ok(LandNFTEvents::ConsecutiveTransferFilter(decoded));
+            }
             if let Ok(decoded) = ContractPausedFilter::decode_log(log) {
                 return Ok(LandNFTEvents::ContractPausedFilter(decoded));
             }
@@ -870,23 +1445,8 @@ pub mod landnft_mod {
             if let Ok(decoded) = LandBankChangedFilter::decode_log(log) {
                 return Ok(LandNFTEvents::LandBankChangedFilter(decoded));
             }
-            if let Ok(decoded) = LandNFTCreatedFilter::decode_log(log) {
-                return Ok(LandNFTEvents::LandNFTCreatedFilter(decoded));
-            }
-            if let Ok(decoded) = LandNFTDestroyedFilter::decode_log(log) {
-                return Ok(LandNFTEvents::LandNFTDestroyedFilter(decoded));
-            }
-            if let Ok(decoded) = LandNFTTileBoughtFilter::decode_log(log) {
-                return Ok(LandNFTEvents::LandNFTTileBoughtFilter(decoded));
-            }
-            if let Ok(decoded) = LandNFTTileDepositedFilter::decode_log(log) {
-                return Ok(LandNFTEvents::LandNFTTileDepositedFilter(decoded));
-            }
-            if let Ok(decoded) = LandNFTTileSoldFilter::decode_log(log) {
-                return Ok(LandNFTEvents::LandNFTTileSoldFilter(decoded));
-            }
-            if let Ok(decoded) = LandNFTTileWithdrawnFilter::decode_log(log) {
-                return Ok(LandNFTEvents::LandNFTTileWithdrawnFilter(decoded));
+            if let Ok(decoded) = LandSoldFilter::decode_log(log) {
+                return Ok(LandNFTEvents::LandSoldFilter(decoded));
             }
             if let Ok(decoded) = OwnershipTransferredFilter::decode_log(log) {
                 return Ok(LandNFTEvents::OwnershipTransferredFilter(decoded));
@@ -910,16 +1470,12 @@ pub mod landnft_mod {
                 LandNFTEvents::ApprovalFilter(element) => element.fmt(f),
                 LandNFTEvents::ApprovalForAllFilter(element) => element.fmt(f),
                 LandNFTEvents::CommissionRateChangedFilter(element) => element.fmt(f),
+                LandNFTEvents::ConsecutiveTransferFilter(element) => element.fmt(f),
                 LandNFTEvents::ContractPausedFilter(element) => element.fmt(f),
                 LandNFTEvents::ContractUnpausedFilter(element) => element.fmt(f),
                 LandNFTEvents::DevFundChangedFilter(element) => element.fmt(f),
                 LandNFTEvents::LandBankChangedFilter(element) => element.fmt(f),
-                LandNFTEvents::LandNFTCreatedFilter(element) => element.fmt(f),
-                LandNFTEvents::LandNFTDestroyedFilter(element) => element.fmt(f),
-                LandNFTEvents::LandNFTTileBoughtFilter(element) => element.fmt(f),
-                LandNFTEvents::LandNFTTileDepositedFilter(element) => element.fmt(f),
-                LandNFTEvents::LandNFTTileSoldFilter(element) => element.fmt(f),
-                LandNFTEvents::LandNFTTileWithdrawnFilter(element) => element.fmt(f),
+                LandNFTEvents::LandSoldFilter(element) => element.fmt(f),
                 LandNFTEvents::OwnershipTransferredFilter(element) => element.fmt(f),
                 LandNFTEvents::PausedFilter(element) => element.fmt(f),
                 LandNFTEvents::TransferFilter(element) => element.fmt(f),
@@ -927,7 +1483,19 @@ pub mod landnft_mod {
             }
         }
     }
-    #[doc = "Container type for all input parameters for the `WETH`function with signature `WETH()` and selector `[173, 92, 70, 72]`"]
+    #[doc = "Container type for all input parameters for the `MAX_TILE_NUM` function with signature `MAX_TILE_NUM()` and selector `[245, 247, 88, 27]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthCall,
+        ethers :: contract :: EthDisplay,
+    )]
+    #[ethcall(name = "MAX_TILE_NUM", abi = "MAX_TILE_NUM()")]
+    pub struct MaxTileNumCall;
+    #[doc = "Container type for all input parameters for the `WETH` function with signature `WETH()` and selector `[173, 92, 70, 72]`"]
     #[derive(
         Clone,
         Debug,
@@ -939,7 +1507,7 @@ pub mod landnft_mod {
     )]
     #[ethcall(name = "WETH", abi = "WETH()")]
     pub struct WethCall;
-    #[doc = "Container type for all input parameters for the `admin`function with signature `admin()` and selector `[248, 81, 164, 64]`"]
+    #[doc = "Container type for all input parameters for the `admin` function with signature `admin()` and selector `[248, 81, 164, 64]`"]
     #[derive(
         Clone,
         Debug,
@@ -951,7 +1519,7 @@ pub mod landnft_mod {
     )]
     #[ethcall(name = "admin", abi = "admin()")]
     pub struct AdminCall;
-    #[doc = "Container type for all input parameters for the `approve`function with signature `approve(address,uint256)` and selector `[9, 94, 167, 179]`"]
+    #[doc = "Container type for all input parameters for the `approve` function with signature `approve(address,uint256)` and selector `[9, 94, 167, 179]`"]
     #[derive(
         Clone,
         Debug,
@@ -963,10 +1531,10 @@ pub mod landnft_mod {
     )]
     #[ethcall(name = "approve", abi = "approve(address,uint256)")]
     pub struct ApproveCall {
-        pub spender: ethers::core::types::Address,
-        pub id: ethers::core::types::U256,
+        pub to: ethers::core::types::Address,
+        pub token_id: ethers::core::types::U256,
     }
-    #[doc = "Container type for all input parameters for the `balanceOf`function with signature `balanceOf(address)` and selector `[112, 160, 130, 49]`"]
+    #[doc = "Container type for all input parameters for the `balanceOf` function with signature `balanceOf(address)` and selector `[112, 160, 130, 49]`"]
     #[derive(
         Clone,
         Debug,
@@ -980,7 +1548,7 @@ pub mod landnft_mod {
     pub struct BalanceOfCall {
         pub owner: ethers::core::types::Address,
     }
-    #[doc = "Container type for all input parameters for the `baseURI`function with signature `baseURI()` and selector `[108, 3, 96, 235]`"]
+    #[doc = "Container type for all input parameters for the `baseURI` function with signature `baseURI()` and selector `[108, 3, 96, 235]`"]
     #[derive(
         Clone,
         Debug,
@@ -992,7 +1560,7 @@ pub mod landnft_mod {
     )]
     #[ethcall(name = "baseURI", abi = "baseURI()")]
     pub struct BaseURICall;
-    #[doc = "Container type for all input parameters for the `commissionRate`function with signature `commissionRate()` and selector `[94, 161, 214, 248]`"]
+    #[doc = "Container type for all input parameters for the `commissionRate` function with signature `commissionRate()` and selector `[94, 161, 214, 248]`"]
     #[derive(
         Clone,
         Debug,
@@ -1004,7 +1572,7 @@ pub mod landnft_mod {
     )]
     #[ethcall(name = "commissionRate", abi = "commissionRate()")]
     pub struct CommissionRateCall;
-    #[doc = "Container type for all input parameters for the `devFund`function with signature `devFund()` and selector `[67, 144, 210, 168]`"]
+    #[doc = "Container type for all input parameters for the `devFund` function with signature `devFund()` and selector `[67, 144, 210, 168]`"]
     #[derive(
         Clone,
         Debug,
@@ -1016,7 +1584,7 @@ pub mod landnft_mod {
     )]
     #[ethcall(name = "devFund", abi = "devFund()")]
     pub struct DevFundCall;
-    #[doc = "Container type for all input parameters for the `firstOwners`function with signature `firstOwners(uint256)` and selector `[239, 175, 240, 60]`"]
+    #[doc = "Container type for all input parameters for the `firstOwners` function with signature `firstOwners(uint256)` and selector `[239, 175, 240, 60]`"]
     #[derive(
         Clone,
         Debug,
@@ -1028,7 +1596,22 @@ pub mod landnft_mod {
     )]
     #[ethcall(name = "firstOwners", abi = "firstOwners(uint256)")]
     pub struct FirstOwnersCall(pub ethers::core::types::U256);
-    #[doc = "Container type for all input parameters for the `getApproved`function with signature `getApproved(uint256)` and selector `[8, 24, 18, 252]`"]
+    #[doc = "Container type for all input parameters for the `getAmountOutMin` function with signature `getAmountOutMin(uint256,address[])` and selector `[72, 51, 68, 41]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthCall,
+        ethers :: contract :: EthDisplay,
+    )]
+    #[ethcall(name = "getAmountOutMin", abi = "getAmountOutMin(uint256,address[])")]
+    pub struct GetAmountOutMinCall {
+        pub amount_in: ethers::core::types::U256,
+        pub path: ::std::vec::Vec<ethers::core::types::Address>,
+    }
+    #[doc = "Container type for all input parameters for the `getApproved` function with signature `getApproved(uint256)` and selector `[8, 24, 18, 252]`"]
     #[derive(
         Clone,
         Debug,
@@ -1039,8 +1622,10 @@ pub mod landnft_mod {
         ethers :: contract :: EthDisplay,
     )]
     #[ethcall(name = "getApproved", abi = "getApproved(uint256)")]
-    pub struct GetApprovedCall(pub ethers::core::types::U256);
-    #[doc = "Container type for all input parameters for the `getETHPrice`function with signature `getETHPrice(uint256)` and selector `[26, 117, 63, 237]`"]
+    pub struct GetApprovedCall {
+        pub token_id: ethers::core::types::U256,
+    }
+    #[doc = "Container type for all input parameters for the `getTokenPrice` function with signature `getTokenPrice(uint256)` and selector `[196, 87, 251, 55]`"]
     #[derive(
         Clone,
         Debug,
@@ -1050,25 +1635,11 @@ pub mod landnft_mod {
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
     )]
-    #[ethcall(name = "getETHPrice", abi = "getETHPrice(uint256)")]
-    pub struct GetETHPriceCall {
-        pub price: ethers::core::types::U256,
+    #[ethcall(name = "getTokenPrice", abi = "getTokenPrice(uint256)")]
+    pub struct GetTokenPriceCall {
+        pub amount: ethers::core::types::U256,
     }
-    #[doc = "Container type for all input parameters for the `getLength`function with signature `getLength(uint256)` and selector `[9, 134, 230, 71]`"]
-    #[derive(
-        Clone,
-        Debug,
-        Default,
-        Eq,
-        PartialEq,
-        ethers :: contract :: EthCall,
-        ethers :: contract :: EthDisplay,
-    )]
-    #[ethcall(name = "getLength", abi = "getLength(uint256)")]
-    pub struct GetLengthCall {
-        pub index: ethers::core::types::U256,
-    }
-    #[doc = "Container type for all input parameters for the `isApprovedForAll`function with signature `isApprovedForAll(address,address)` and selector `[233, 133, 233, 197]`"]
+    #[doc = "Container type for all input parameters for the `isApprovedForAll` function with signature `isApprovedForAll(address,address)` and selector `[233, 133, 233, 197]`"]
     #[derive(
         Clone,
         Debug,
@@ -1079,11 +1650,11 @@ pub mod landnft_mod {
         ethers :: contract :: EthDisplay,
     )]
     #[ethcall(name = "isApprovedForAll", abi = "isApprovedForAll(address,address)")]
-    pub struct IsApprovedForAllCall(
-        pub ethers::core::types::Address,
-        pub ethers::core::types::Address,
-    );
-    #[doc = "Container type for all input parameters for the `isOwned`function with signature `isOwned(uint256)` and selector `[89, 159, 104, 156]`"]
+    pub struct IsApprovedForAllCall {
+        pub owner: ethers::core::types::Address,
+        pub operator: ethers::core::types::Address,
+    }
+    #[doc = "Container type for all input parameters for the `isOwned` function with signature `isOwned(uint256)` and selector `[89, 159, 104, 156]`"]
     #[derive(
         Clone,
         Debug,
@@ -1095,7 +1666,7 @@ pub mod landnft_mod {
     )]
     #[ethcall(name = "isOwned", abi = "isOwned(uint256)")]
     pub struct IsOwnedCall(pub ethers::core::types::U256);
-    #[doc = "Container type for all input parameters for the `landBank`function with signature `landBank()` and selector `[239, 211, 41, 115]`"]
+    #[doc = "Container type for all input parameters for the `landBank` function with signature `landBank()` and selector `[239, 211, 41, 115]`"]
     #[derive(
         Clone,
         Debug,
@@ -1107,7 +1678,7 @@ pub mod landnft_mod {
     )]
     #[ethcall(name = "landBank", abi = "landBank()")]
     pub struct LandBankCall;
-    #[doc = "Container type for all input parameters for the `maxTileNum`function with signature `maxTileNum()` and selector `[85, 117, 39, 88]`"]
+    #[doc = "Container type for all input parameters for the `mint` function with signature `mint(uint256[],uint256)` and selector `[11, 208, 98, 70]`"]
     #[derive(
         Clone,
         Debug,
@@ -1117,9 +1688,12 @@ pub mod landnft_mod {
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
     )]
-    #[ethcall(name = "maxTileNum", abi = "maxTileNum()")]
-    pub struct MaxTileNumCall;
-    #[doc = "Container type for all input parameters for the `name`function with signature `name()` and selector `[6, 253, 222, 3]`"]
+    #[ethcall(name = "mint", abi = "mint(uint256[],uint256)")]
+    pub struct MintCall {
+        pub region: ::std::vec::Vec<ethers::core::types::U256>,
+        pub rio_amount: ethers::core::types::U256,
+    }
+    #[doc = "Container type for all input parameters for the `name` function with signature `name()` and selector `[6, 253, 222, 3]`"]
     #[derive(
         Clone,
         Debug,
@@ -1131,7 +1705,7 @@ pub mod landnft_mod {
     )]
     #[ethcall(name = "name", abi = "name()")]
     pub struct NameCall;
-    #[doc = "Container type for all input parameters for the `nextId`function with signature `nextId()` and selector `[97, 184, 206, 140]`"]
+    #[doc = "Container type for all input parameters for the `nextId` function with signature `nextId()` and selector `[97, 184, 206, 140]`"]
     #[derive(
         Clone,
         Debug,
@@ -1143,7 +1717,7 @@ pub mod landnft_mod {
     )]
     #[ethcall(name = "nextId", abi = "nextId()")]
     pub struct NextIdCall;
-    #[doc = "Container type for all input parameters for the `owner`function with signature `owner()` and selector `[141, 165, 203, 91]`"]
+    #[doc = "Container type for all input parameters for the `owner` function with signature `owner()` and selector `[141, 165, 203, 91]`"]
     #[derive(
         Clone,
         Debug,
@@ -1155,7 +1729,7 @@ pub mod landnft_mod {
     )]
     #[ethcall(name = "owner", abi = "owner()")]
     pub struct OwnerCall;
-    #[doc = "Container type for all input parameters for the `ownerOf`function with signature `ownerOf(uint256)` and selector `[99, 82, 33, 30]`"]
+    #[doc = "Container type for all input parameters for the `ownerOf` function with signature `ownerOf(uint256)` and selector `[99, 82, 33, 30]`"]
     #[derive(
         Clone,
         Debug,
@@ -1167,9 +1741,9 @@ pub mod landnft_mod {
     )]
     #[ethcall(name = "ownerOf", abi = "ownerOf(uint256)")]
     pub struct OwnerOfCall {
-        pub id: ethers::core::types::U256,
+        pub token_id: ethers::core::types::U256,
     }
-    #[doc = "Container type for all input parameters for the `pause`function with signature `pause()` and selector `[132, 86, 203, 89]`"]
+    #[doc = "Container type for all input parameters for the `pause` function with signature `pause()` and selector `[132, 86, 203, 89]`"]
     #[derive(
         Clone,
         Debug,
@@ -1181,7 +1755,7 @@ pub mod landnft_mod {
     )]
     #[ethcall(name = "pause", abi = "pause()")]
     pub struct PauseCall;
-    #[doc = "Container type for all input parameters for the `paused`function with signature `paused()` and selector `[92, 151, 90, 187]`"]
+    #[doc = "Container type for all input parameters for the `paused` function with signature `paused()` and selector `[92, 151, 90, 187]`"]
     #[derive(
         Clone,
         Debug,
@@ -1193,7 +1767,7 @@ pub mod landnft_mod {
     )]
     #[ethcall(name = "paused", abi = "paused()")]
     pub struct PausedCall;
-    #[doc = "Container type for all input parameters for the `price`function with signature `price()` and selector `[160, 53, 177, 254]`"]
+    #[doc = "Container type for all input parameters for the `price` function with signature `price()` and selector `[160, 53, 177, 254]`"]
     #[derive(
         Clone,
         Debug,
@@ -1205,19 +1779,7 @@ pub mod landnft_mod {
     )]
     #[ethcall(name = "price", abi = "price()")]
     pub struct PriceCall;
-    #[doc = "Container type for all input parameters for the `regionNumbers`function with signature `regionNumbers(uint256,uint256)` and selector `[148, 201, 195, 228]`"]
-    #[derive(
-        Clone,
-        Debug,
-        Default,
-        Eq,
-        PartialEq,
-        ethers :: contract :: EthCall,
-        ethers :: contract :: EthDisplay,
-    )]
-    #[ethcall(name = "regionNumbers", abi = "regionNumbers(uint256,uint256)")]
-    pub struct RegionNumbersCall(pub ethers::core::types::U256, pub ethers::core::types::U256);
-    #[doc = "Container type for all input parameters for the `renounceOwnership`function with signature `renounceOwnership()` and selector `[113, 80, 24, 166]`"]
+    #[doc = "Container type for all input parameters for the `renounceOwnership` function with signature `renounceOwnership()` and selector `[113, 80, 24, 166]`"]
     #[derive(
         Clone,
         Debug,
@@ -1229,24 +1791,7 @@ pub mod landnft_mod {
     )]
     #[ethcall(name = "renounceOwnership", abi = "renounceOwnership()")]
     pub struct RenounceOwnershipCall;
-    #[doc = "Container type for all input parameters for the `safeMint`function with signature `safeMint(address,uint256[],address,uint256)` and selector `[66, 88, 53, 36]`"]
-    #[derive(
-        Clone,
-        Debug,
-        Default,
-        Eq,
-        PartialEq,
-        ethers :: contract :: EthCall,
-        ethers :: contract :: EthDisplay,
-    )]
-    #[ethcall(name = "safeMint", abi = "safeMint(address,uint256[],address,uint256)")]
-    pub struct SafeMintCall {
-        pub to: ethers::core::types::Address,
-        pub region: ::std::vec::Vec<ethers::core::types::U256>,
-        pub token: ethers::core::types::Address,
-        pub rio_amount: ethers::core::types::U256,
-    }
-    #[doc = "Container type for all input parameters for the `safeTransferFrom`function with signature `safeTransferFrom(address,address,uint256)` and selector `[66, 132, 46, 14]`"]
+    #[doc = "Container type for all input parameters for the `safeTransferFrom` function with signature `safeTransferFrom(address,address,uint256)` and selector `[66, 132, 46, 14]`"]
     #[derive(
         Clone,
         Debug,
@@ -1263,9 +1808,9 @@ pub mod landnft_mod {
     pub struct SafeTransferFromCall {
         pub from: ethers::core::types::Address,
         pub to: ethers::core::types::Address,
-        pub id: ethers::core::types::U256,
+        pub token_id: ethers::core::types::U256,
     }
-    #[doc = "Container type for all input parameters for the `safeTransferFrom`function with signature `safeTransferFrom(address,address,uint256,bytes)` and selector `[184, 141, 79, 222]`"]
+    #[doc = "Container type for all input parameters for the `safeTransferFrom` function with signature `safeTransferFrom(address,address,uint256,bytes)` and selector `[184, 141, 79, 222]`"]
     #[derive(
         Clone,
         Debug,
@@ -1282,10 +1827,10 @@ pub mod landnft_mod {
     pub struct SafeTransferFromWithDataCall {
         pub from: ethers::core::types::Address,
         pub to: ethers::core::types::Address,
-        pub id: ethers::core::types::U256,
+        pub token_id: ethers::core::types::U256,
         pub data: ethers::core::types::Bytes,
     }
-    #[doc = "Container type for all input parameters for the `setAdmin`function with signature `setAdmin(address)` and selector `[112, 75, 108, 2]`"]
+    #[doc = "Container type for all input parameters for the `setAdmin` function with signature `setAdmin(address)` and selector `[112, 75, 108, 2]`"]
     #[derive(
         Clone,
         Debug,
@@ -1299,7 +1844,7 @@ pub mod landnft_mod {
     pub struct SetAdminCall {
         pub new_admin: ethers::core::types::Address,
     }
-    #[doc = "Container type for all input parameters for the `setApprovalForAll`function with signature `setApprovalForAll(address,bool)` and selector `[162, 44, 180, 101]`"]
+    #[doc = "Container type for all input parameters for the `setApprovalForAll` function with signature `setApprovalForAll(address,bool)` and selector `[162, 44, 180, 101]`"]
     #[derive(
         Clone,
         Debug,
@@ -1314,7 +1859,7 @@ pub mod landnft_mod {
         pub operator: ethers::core::types::Address,
         pub approved: bool,
     }
-    #[doc = "Container type for all input parameters for the `setCommissionRate`function with signature `setCommissionRate(uint256)` and selector `[25, 250, 200, 253]`"]
+    #[doc = "Container type for all input parameters for the `setCommissionRate` function with signature `setCommissionRate(uint256)` and selector `[25, 250, 200, 253]`"]
     #[derive(
         Clone,
         Debug,
@@ -1328,7 +1873,7 @@ pub mod landnft_mod {
     pub struct SetCommissionRateCall {
         pub commission_rate: ethers::core::types::U256,
     }
-    #[doc = "Container type for all input parameters for the `setDevFund`function with signature `setDevFund(address)` and selector `[174, 77, 185, 25]`"]
+    #[doc = "Container type for all input parameters for the `setDevFund` function with signature `setDevFund(address)` and selector `[174, 77, 185, 25]`"]
     #[derive(
         Clone,
         Debug,
@@ -1342,7 +1887,7 @@ pub mod landnft_mod {
     pub struct SetDevFundCall {
         pub dev_fund: ethers::core::types::Address,
     }
-    #[doc = "Container type for all input parameters for the `setLandBank`function with signature `setLandBank(address)` and selector `[240, 100, 13, 149]`"]
+    #[doc = "Container type for all input parameters for the `setLandBank` function with signature `setLandBank(address)` and selector `[240, 100, 13, 149]`"]
     #[derive(
         Clone,
         Debug,
@@ -1356,7 +1901,7 @@ pub mod landnft_mod {
     pub struct SetLandBankCall {
         pub land_bank: ethers::core::types::Address,
     }
-    #[doc = "Container type for all input parameters for the `setPrice`function with signature `setPrice(uint256)` and selector `[145, 183, 245, 237]`"]
+    #[doc = "Container type for all input parameters for the `setPrice` function with signature `setPrice(uint256)` and selector `[145, 183, 245, 237]`"]
     #[derive(
         Clone,
         Debug,
@@ -1370,7 +1915,7 @@ pub mod landnft_mod {
     pub struct SetPriceCall {
         pub price: ethers::core::types::U256,
     }
-    #[doc = "Container type for all input parameters for the `supportsInterface`function with signature `supportsInterface(bytes4)` and selector `[1, 255, 201, 167]`"]
+    #[doc = "Container type for all input parameters for the `supportsInterface` function with signature `supportsInterface(bytes4)` and selector `[1, 255, 201, 167]`"]
     #[derive(
         Clone,
         Debug,
@@ -1384,7 +1929,7 @@ pub mod landnft_mod {
     pub struct SupportsInterfaceCall {
         pub interface_id: [u8; 4],
     }
-    #[doc = "Container type for all input parameters for the `symbol`function with signature `symbol()` and selector `[149, 216, 155, 65]`"]
+    #[doc = "Container type for all input parameters for the `symbol` function with signature `symbol()` and selector `[149, 216, 155, 65]`"]
     #[derive(
         Clone,
         Debug,
@@ -1396,7 +1941,19 @@ pub mod landnft_mod {
     )]
     #[ethcall(name = "symbol", abi = "symbol()")]
     pub struct SymbolCall;
-    #[doc = "Container type for all input parameters for the `tokenURI`function with signature `tokenURI(uint256)` and selector `[200, 123, 86, 221]`"]
+    #[doc = "Container type for all input parameters for the `tilesBought` function with signature `tilesBought()` and selector `[196, 39, 226, 181]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthCall,
+        ethers :: contract :: EthDisplay,
+    )]
+    #[ethcall(name = "tilesBought", abi = "tilesBought()")]
+    pub struct TilesBoughtCall;
+    #[doc = "Container type for all input parameters for the `tokenURI` function with signature `tokenURI(uint256)` and selector `[200, 123, 86, 221]`"]
     #[derive(
         Clone,
         Debug,
@@ -1410,7 +1967,7 @@ pub mod landnft_mod {
     pub struct TokenURICall {
         pub token_id: ethers::core::types::U256,
     }
-    #[doc = "Container type for all input parameters for the `totalTileNum`function with signature `totalTileNum()` and selector `[97, 139, 42, 221]`"]
+    #[doc = "Container type for all input parameters for the `totalSupply` function with signature `totalSupply()` and selector `[24, 22, 13, 221]`"]
     #[derive(
         Clone,
         Debug,
@@ -1420,9 +1977,9 @@ pub mod landnft_mod {
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
     )]
-    #[ethcall(name = "totalTileNum", abi = "totalTileNum()")]
-    pub struct TotalTileNumCall;
-    #[doc = "Container type for all input parameters for the `transferFrom`function with signature `transferFrom(address,address,uint256)` and selector `[35, 184, 114, 221]`"]
+    #[ethcall(name = "totalSupply", abi = "totalSupply()")]
+    pub struct TotalSupplyCall;
+    #[doc = "Container type for all input parameters for the `transferFrom` function with signature `transferFrom(address,address,uint256)` and selector `[35, 184, 114, 221]`"]
     #[derive(
         Clone,
         Debug,
@@ -1436,9 +1993,9 @@ pub mod landnft_mod {
     pub struct TransferFromCall {
         pub from: ethers::core::types::Address,
         pub to: ethers::core::types::Address,
-        pub id: ethers::core::types::U256,
+        pub token_id: ethers::core::types::U256,
     }
-    #[doc = "Container type for all input parameters for the `transferOwnership`function with signature `transferOwnership(address)` and selector `[242, 253, 227, 139]`"]
+    #[doc = "Container type for all input parameters for the `transferOwnership` function with signature `transferOwnership(address)` and selector `[242, 253, 227, 139]`"]
     #[derive(
         Clone,
         Debug,
@@ -1452,7 +2009,7 @@ pub mod landnft_mod {
     pub struct TransferOwnershipCall {
         pub new_owner: ethers::core::types::Address,
     }
-    #[doc = "Container type for all input parameters for the `unpause`function with signature `unpause()` and selector `[63, 75, 168, 58]`"]
+    #[doc = "Container type for all input parameters for the `unpause` function with signature `unpause()` and selector `[63, 75, 168, 58]`"]
     #[derive(
         Clone,
         Debug,
@@ -1466,6 +2023,7 @@ pub mod landnft_mod {
     pub struct UnpauseCall;
     #[derive(Debug, Clone, PartialEq, Eq, ethers :: contract :: EthAbiType)]
     pub enum LandNFTCalls {
+        MaxTileNum(MaxTileNumCall),
         Weth(WethCall),
         Admin(AdminCall),
         Approve(ApproveCall),
@@ -1474,13 +2032,13 @@ pub mod landnft_mod {
         CommissionRate(CommissionRateCall),
         DevFund(DevFundCall),
         FirstOwners(FirstOwnersCall),
+        GetAmountOutMin(GetAmountOutMinCall),
         GetApproved(GetApprovedCall),
-        GetETHPrice(GetETHPriceCall),
-        GetLength(GetLengthCall),
+        GetTokenPrice(GetTokenPriceCall),
         IsApprovedForAll(IsApprovedForAllCall),
         IsOwned(IsOwnedCall),
         LandBank(LandBankCall),
-        MaxTileNum(MaxTileNumCall),
+        Mint(MintCall),
         Name(NameCall),
         NextId(NextIdCall),
         Owner(OwnerCall),
@@ -1488,9 +2046,7 @@ pub mod landnft_mod {
         Pause(PauseCall),
         Paused(PausedCall),
         Price(PriceCall),
-        RegionNumbers(RegionNumbersCall),
         RenounceOwnership(RenounceOwnershipCall),
-        SafeMint(SafeMintCall),
         SafeTransferFrom(SafeTransferFromCall),
         SafeTransferFromWithData(SafeTransferFromWithDataCall),
         SetAdmin(SetAdminCall),
@@ -1501,14 +2057,22 @@ pub mod landnft_mod {
         SetPrice(SetPriceCall),
         SupportsInterface(SupportsInterfaceCall),
         Symbol(SymbolCall),
+        TilesBought(TilesBoughtCall),
         TokenURI(TokenURICall),
-        TotalTileNum(TotalTileNumCall),
+        TotalSupply(TotalSupplyCall),
         TransferFrom(TransferFromCall),
         TransferOwnership(TransferOwnershipCall),
         Unpause(UnpauseCall),
     }
     impl ethers::core::abi::AbiDecode for LandNFTCalls {
-        fn decode(data: impl AsRef<[u8]>) -> Result<Self, ethers::core::abi::AbiError> {
+        fn decode(
+            data: impl AsRef<[u8]>,
+        ) -> ::std::result::Result<Self, ethers::core::abi::AbiError> {
+            if let Ok(decoded) =
+                <MaxTileNumCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
+            {
+                return Ok(LandNFTCalls::MaxTileNum(decoded));
+            }
             if let Ok(decoded) = <WethCall as ethers::core::abi::AbiDecode>::decode(data.as_ref()) {
                 return Ok(LandNFTCalls::Weth(decoded));
             }
@@ -1547,19 +2111,19 @@ pub mod landnft_mod {
                 return Ok(LandNFTCalls::FirstOwners(decoded));
             }
             if let Ok(decoded) =
+                <GetAmountOutMinCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
+            {
+                return Ok(LandNFTCalls::GetAmountOutMin(decoded));
+            }
+            if let Ok(decoded) =
                 <GetApprovedCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
                 return Ok(LandNFTCalls::GetApproved(decoded));
             }
             if let Ok(decoded) =
-                <GetETHPriceCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
+                <GetTokenPriceCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(LandNFTCalls::GetETHPrice(decoded));
-            }
-            if let Ok(decoded) =
-                <GetLengthCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
-            {
-                return Ok(LandNFTCalls::GetLength(decoded));
+                return Ok(LandNFTCalls::GetTokenPrice(decoded));
             }
             if let Ok(decoded) =
                 <IsApprovedForAllCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
@@ -1576,10 +2140,8 @@ pub mod landnft_mod {
             {
                 return Ok(LandNFTCalls::LandBank(decoded));
             }
-            if let Ok(decoded) =
-                <MaxTileNumCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
-            {
-                return Ok(LandNFTCalls::MaxTileNum(decoded));
+            if let Ok(decoded) = <MintCall as ethers::core::abi::AbiDecode>::decode(data.as_ref()) {
+                return Ok(LandNFTCalls::Mint(decoded));
             }
             if let Ok(decoded) = <NameCall as ethers::core::abi::AbiDecode>::decode(data.as_ref()) {
                 return Ok(LandNFTCalls::Name(decoded));
@@ -1610,19 +2172,9 @@ pub mod landnft_mod {
                 return Ok(LandNFTCalls::Price(decoded));
             }
             if let Ok(decoded) =
-                <RegionNumbersCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
-            {
-                return Ok(LandNFTCalls::RegionNumbers(decoded));
-            }
-            if let Ok(decoded) =
                 <RenounceOwnershipCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
                 return Ok(LandNFTCalls::RenounceOwnership(decoded));
-            }
-            if let Ok(decoded) =
-                <SafeMintCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
-            {
-                return Ok(LandNFTCalls::SafeMint(decoded));
             }
             if let Ok(decoded) =
                 <SafeTransferFromCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
@@ -1676,14 +2228,19 @@ pub mod landnft_mod {
                 return Ok(LandNFTCalls::Symbol(decoded));
             }
             if let Ok(decoded) =
+                <TilesBoughtCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
+            {
+                return Ok(LandNFTCalls::TilesBought(decoded));
+            }
+            if let Ok(decoded) =
                 <TokenURICall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
                 return Ok(LandNFTCalls::TokenURI(decoded));
             }
             if let Ok(decoded) =
-                <TotalTileNumCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
+                <TotalSupplyCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {
-                return Ok(LandNFTCalls::TotalTileNum(decoded));
+                return Ok(LandNFTCalls::TotalSupply(decoded));
             }
             if let Ok(decoded) =
                 <TransferFromCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
@@ -1706,6 +2263,7 @@ pub mod landnft_mod {
     impl ethers::core::abi::AbiEncode for LandNFTCalls {
         fn encode(self) -> Vec<u8> {
             match self {
+                LandNFTCalls::MaxTileNum(element) => element.encode(),
                 LandNFTCalls::Weth(element) => element.encode(),
                 LandNFTCalls::Admin(element) => element.encode(),
                 LandNFTCalls::Approve(element) => element.encode(),
@@ -1714,13 +2272,13 @@ pub mod landnft_mod {
                 LandNFTCalls::CommissionRate(element) => element.encode(),
                 LandNFTCalls::DevFund(element) => element.encode(),
                 LandNFTCalls::FirstOwners(element) => element.encode(),
+                LandNFTCalls::GetAmountOutMin(element) => element.encode(),
                 LandNFTCalls::GetApproved(element) => element.encode(),
-                LandNFTCalls::GetETHPrice(element) => element.encode(),
-                LandNFTCalls::GetLength(element) => element.encode(),
+                LandNFTCalls::GetTokenPrice(element) => element.encode(),
                 LandNFTCalls::IsApprovedForAll(element) => element.encode(),
                 LandNFTCalls::IsOwned(element) => element.encode(),
                 LandNFTCalls::LandBank(element) => element.encode(),
-                LandNFTCalls::MaxTileNum(element) => element.encode(),
+                LandNFTCalls::Mint(element) => element.encode(),
                 LandNFTCalls::Name(element) => element.encode(),
                 LandNFTCalls::NextId(element) => element.encode(),
                 LandNFTCalls::Owner(element) => element.encode(),
@@ -1728,9 +2286,7 @@ pub mod landnft_mod {
                 LandNFTCalls::Pause(element) => element.encode(),
                 LandNFTCalls::Paused(element) => element.encode(),
                 LandNFTCalls::Price(element) => element.encode(),
-                LandNFTCalls::RegionNumbers(element) => element.encode(),
                 LandNFTCalls::RenounceOwnership(element) => element.encode(),
-                LandNFTCalls::SafeMint(element) => element.encode(),
                 LandNFTCalls::SafeTransferFrom(element) => element.encode(),
                 LandNFTCalls::SafeTransferFromWithData(element) => element.encode(),
                 LandNFTCalls::SetAdmin(element) => element.encode(),
@@ -1741,8 +2297,9 @@ pub mod landnft_mod {
                 LandNFTCalls::SetPrice(element) => element.encode(),
                 LandNFTCalls::SupportsInterface(element) => element.encode(),
                 LandNFTCalls::Symbol(element) => element.encode(),
+                LandNFTCalls::TilesBought(element) => element.encode(),
                 LandNFTCalls::TokenURI(element) => element.encode(),
-                LandNFTCalls::TotalTileNum(element) => element.encode(),
+                LandNFTCalls::TotalSupply(element) => element.encode(),
                 LandNFTCalls::TransferFrom(element) => element.encode(),
                 LandNFTCalls::TransferOwnership(element) => element.encode(),
                 LandNFTCalls::Unpause(element) => element.encode(),
@@ -1752,6 +2309,7 @@ pub mod landnft_mod {
     impl ::std::fmt::Display for LandNFTCalls {
         fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
             match self {
+                LandNFTCalls::MaxTileNum(element) => element.fmt(f),
                 LandNFTCalls::Weth(element) => element.fmt(f),
                 LandNFTCalls::Admin(element) => element.fmt(f),
                 LandNFTCalls::Approve(element) => element.fmt(f),
@@ -1760,13 +2318,13 @@ pub mod landnft_mod {
                 LandNFTCalls::CommissionRate(element) => element.fmt(f),
                 LandNFTCalls::DevFund(element) => element.fmt(f),
                 LandNFTCalls::FirstOwners(element) => element.fmt(f),
+                LandNFTCalls::GetAmountOutMin(element) => element.fmt(f),
                 LandNFTCalls::GetApproved(element) => element.fmt(f),
-                LandNFTCalls::GetETHPrice(element) => element.fmt(f),
-                LandNFTCalls::GetLength(element) => element.fmt(f),
+                LandNFTCalls::GetTokenPrice(element) => element.fmt(f),
                 LandNFTCalls::IsApprovedForAll(element) => element.fmt(f),
                 LandNFTCalls::IsOwned(element) => element.fmt(f),
                 LandNFTCalls::LandBank(element) => element.fmt(f),
-                LandNFTCalls::MaxTileNum(element) => element.fmt(f),
+                LandNFTCalls::Mint(element) => element.fmt(f),
                 LandNFTCalls::Name(element) => element.fmt(f),
                 LandNFTCalls::NextId(element) => element.fmt(f),
                 LandNFTCalls::Owner(element) => element.fmt(f),
@@ -1774,9 +2332,7 @@ pub mod landnft_mod {
                 LandNFTCalls::Pause(element) => element.fmt(f),
                 LandNFTCalls::Paused(element) => element.fmt(f),
                 LandNFTCalls::Price(element) => element.fmt(f),
-                LandNFTCalls::RegionNumbers(element) => element.fmt(f),
                 LandNFTCalls::RenounceOwnership(element) => element.fmt(f),
-                LandNFTCalls::SafeMint(element) => element.fmt(f),
                 LandNFTCalls::SafeTransferFrom(element) => element.fmt(f),
                 LandNFTCalls::SafeTransferFromWithData(element) => element.fmt(f),
                 LandNFTCalls::SetAdmin(element) => element.fmt(f),
@@ -1787,12 +2343,18 @@ pub mod landnft_mod {
                 LandNFTCalls::SetPrice(element) => element.fmt(f),
                 LandNFTCalls::SupportsInterface(element) => element.fmt(f),
                 LandNFTCalls::Symbol(element) => element.fmt(f),
+                LandNFTCalls::TilesBought(element) => element.fmt(f),
                 LandNFTCalls::TokenURI(element) => element.fmt(f),
-                LandNFTCalls::TotalTileNum(element) => element.fmt(f),
+                LandNFTCalls::TotalSupply(element) => element.fmt(f),
                 LandNFTCalls::TransferFrom(element) => element.fmt(f),
                 LandNFTCalls::TransferOwnership(element) => element.fmt(f),
                 LandNFTCalls::Unpause(element) => element.fmt(f),
             }
+        }
+    }
+    impl ::std::convert::From<MaxTileNumCall> for LandNFTCalls {
+        fn from(var: MaxTileNumCall) -> Self {
+            LandNFTCalls::MaxTileNum(var)
         }
     }
     impl ::std::convert::From<WethCall> for LandNFTCalls {
@@ -1835,19 +2397,19 @@ pub mod landnft_mod {
             LandNFTCalls::FirstOwners(var)
         }
     }
+    impl ::std::convert::From<GetAmountOutMinCall> for LandNFTCalls {
+        fn from(var: GetAmountOutMinCall) -> Self {
+            LandNFTCalls::GetAmountOutMin(var)
+        }
+    }
     impl ::std::convert::From<GetApprovedCall> for LandNFTCalls {
         fn from(var: GetApprovedCall) -> Self {
             LandNFTCalls::GetApproved(var)
         }
     }
-    impl ::std::convert::From<GetETHPriceCall> for LandNFTCalls {
-        fn from(var: GetETHPriceCall) -> Self {
-            LandNFTCalls::GetETHPrice(var)
-        }
-    }
-    impl ::std::convert::From<GetLengthCall> for LandNFTCalls {
-        fn from(var: GetLengthCall) -> Self {
-            LandNFTCalls::GetLength(var)
+    impl ::std::convert::From<GetTokenPriceCall> for LandNFTCalls {
+        fn from(var: GetTokenPriceCall) -> Self {
+            LandNFTCalls::GetTokenPrice(var)
         }
     }
     impl ::std::convert::From<IsApprovedForAllCall> for LandNFTCalls {
@@ -1865,9 +2427,9 @@ pub mod landnft_mod {
             LandNFTCalls::LandBank(var)
         }
     }
-    impl ::std::convert::From<MaxTileNumCall> for LandNFTCalls {
-        fn from(var: MaxTileNumCall) -> Self {
-            LandNFTCalls::MaxTileNum(var)
+    impl ::std::convert::From<MintCall> for LandNFTCalls {
+        fn from(var: MintCall) -> Self {
+            LandNFTCalls::Mint(var)
         }
     }
     impl ::std::convert::From<NameCall> for LandNFTCalls {
@@ -1905,19 +2467,9 @@ pub mod landnft_mod {
             LandNFTCalls::Price(var)
         }
     }
-    impl ::std::convert::From<RegionNumbersCall> for LandNFTCalls {
-        fn from(var: RegionNumbersCall) -> Self {
-            LandNFTCalls::RegionNumbers(var)
-        }
-    }
     impl ::std::convert::From<RenounceOwnershipCall> for LandNFTCalls {
         fn from(var: RenounceOwnershipCall) -> Self {
             LandNFTCalls::RenounceOwnership(var)
-        }
-    }
-    impl ::std::convert::From<SafeMintCall> for LandNFTCalls {
-        fn from(var: SafeMintCall) -> Self {
-            LandNFTCalls::SafeMint(var)
         }
     }
     impl ::std::convert::From<SafeTransferFromCall> for LandNFTCalls {
@@ -1970,14 +2522,19 @@ pub mod landnft_mod {
             LandNFTCalls::Symbol(var)
         }
     }
+    impl ::std::convert::From<TilesBoughtCall> for LandNFTCalls {
+        fn from(var: TilesBoughtCall) -> Self {
+            LandNFTCalls::TilesBought(var)
+        }
+    }
     impl ::std::convert::From<TokenURICall> for LandNFTCalls {
         fn from(var: TokenURICall) -> Self {
             LandNFTCalls::TokenURI(var)
         }
     }
-    impl ::std::convert::From<TotalTileNumCall> for LandNFTCalls {
-        fn from(var: TotalTileNumCall) -> Self {
-            LandNFTCalls::TotalTileNum(var)
+    impl ::std::convert::From<TotalSupplyCall> for LandNFTCalls {
+        fn from(var: TotalSupplyCall) -> Self {
+            LandNFTCalls::TotalSupply(var)
         }
     }
     impl ::std::convert::From<TransferFromCall> for LandNFTCalls {
@@ -1995,4 +2552,279 @@ pub mod landnft_mod {
             LandNFTCalls::Unpause(var)
         }
     }
+    #[doc = "Container type for all return fields from the `MAX_TILE_NUM` function with signature `MAX_TILE_NUM()` and selector `[245, 247, 88, 27]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthAbiType,
+        ethers :: contract :: EthAbiCodec,
+    )]
+    pub struct MaxTileNumReturn(pub ethers::core::types::U256);
+    #[doc = "Container type for all return fields from the `WETH` function with signature `WETH()` and selector `[173, 92, 70, 72]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthAbiType,
+        ethers :: contract :: EthAbiCodec,
+    )]
+    pub struct WethReturn(pub ethers::core::types::Address);
+    #[doc = "Container type for all return fields from the `admin` function with signature `admin()` and selector `[248, 81, 164, 64]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthAbiType,
+        ethers :: contract :: EthAbiCodec,
+    )]
+    pub struct AdminReturn(pub ethers::core::types::Address);
+    #[doc = "Container type for all return fields from the `balanceOf` function with signature `balanceOf(address)` and selector `[112, 160, 130, 49]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthAbiType,
+        ethers :: contract :: EthAbiCodec,
+    )]
+    pub struct BalanceOfReturn(pub ethers::core::types::U256);
+    #[doc = "Container type for all return fields from the `baseURI` function with signature `baseURI()` and selector `[108, 3, 96, 235]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthAbiType,
+        ethers :: contract :: EthAbiCodec,
+    )]
+    pub struct BaseURIReturn(pub String);
+    #[doc = "Container type for all return fields from the `commissionRate` function with signature `commissionRate()` and selector `[94, 161, 214, 248]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthAbiType,
+        ethers :: contract :: EthAbiCodec,
+    )]
+    pub struct CommissionRateReturn(pub ethers::core::types::U256);
+    #[doc = "Container type for all return fields from the `devFund` function with signature `devFund()` and selector `[67, 144, 210, 168]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthAbiType,
+        ethers :: contract :: EthAbiCodec,
+    )]
+    pub struct DevFundReturn(pub ethers::core::types::Address);
+    #[doc = "Container type for all return fields from the `firstOwners` function with signature `firstOwners(uint256)` and selector `[239, 175, 240, 60]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthAbiType,
+        ethers :: contract :: EthAbiCodec,
+    )]
+    pub struct FirstOwnersReturn(pub ethers::core::types::Address);
+    #[doc = "Container type for all return fields from the `getAmountOutMin` function with signature `getAmountOutMin(uint256,address[])` and selector `[72, 51, 68, 41]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthAbiType,
+        ethers :: contract :: EthAbiCodec,
+    )]
+    pub struct GetAmountOutMinReturn(pub ethers::core::types::U256);
+    #[doc = "Container type for all return fields from the `getApproved` function with signature `getApproved(uint256)` and selector `[8, 24, 18, 252]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthAbiType,
+        ethers :: contract :: EthAbiCodec,
+    )]
+    pub struct GetApprovedReturn(pub ethers::core::types::Address);
+    #[doc = "Container type for all return fields from the `getTokenPrice` function with signature `getTokenPrice(uint256)` and selector `[196, 87, 251, 55]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthAbiType,
+        ethers :: contract :: EthAbiCodec,
+    )]
+    pub struct GetTokenPriceReturn(pub ethers::core::types::U256);
+    #[doc = "Container type for all return fields from the `isApprovedForAll` function with signature `isApprovedForAll(address,address)` and selector `[233, 133, 233, 197]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthAbiType,
+        ethers :: contract :: EthAbiCodec,
+    )]
+    pub struct IsApprovedForAllReturn(pub bool);
+    #[doc = "Container type for all return fields from the `isOwned` function with signature `isOwned(uint256)` and selector `[89, 159, 104, 156]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthAbiType,
+        ethers :: contract :: EthAbiCodec,
+    )]
+    pub struct IsOwnedReturn(pub bool);
+    #[doc = "Container type for all return fields from the `landBank` function with signature `landBank()` and selector `[239, 211, 41, 115]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthAbiType,
+        ethers :: contract :: EthAbiCodec,
+    )]
+    pub struct LandBankReturn(pub ethers::core::types::Address);
+    #[doc = "Container type for all return fields from the `name` function with signature `name()` and selector `[6, 253, 222, 3]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthAbiType,
+        ethers :: contract :: EthAbiCodec,
+    )]
+    pub struct NameReturn(pub String);
+    #[doc = "Container type for all return fields from the `nextId` function with signature `nextId()` and selector `[97, 184, 206, 140]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthAbiType,
+        ethers :: contract :: EthAbiCodec,
+    )]
+    pub struct NextIdReturn(pub ethers::core::types::U256);
+    #[doc = "Container type for all return fields from the `owner` function with signature `owner()` and selector `[141, 165, 203, 91]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthAbiType,
+        ethers :: contract :: EthAbiCodec,
+    )]
+    pub struct OwnerReturn(pub ethers::core::types::Address);
+    #[doc = "Container type for all return fields from the `ownerOf` function with signature `ownerOf(uint256)` and selector `[99, 82, 33, 30]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthAbiType,
+        ethers :: contract :: EthAbiCodec,
+    )]
+    pub struct OwnerOfReturn(pub ethers::core::types::Address);
+    #[doc = "Container type for all return fields from the `paused` function with signature `paused()` and selector `[92, 151, 90, 187]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthAbiType,
+        ethers :: contract :: EthAbiCodec,
+    )]
+    pub struct PausedReturn(pub bool);
+    #[doc = "Container type for all return fields from the `price` function with signature `price()` and selector `[160, 53, 177, 254]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthAbiType,
+        ethers :: contract :: EthAbiCodec,
+    )]
+    pub struct PriceReturn(pub ethers::core::types::U256);
+    #[doc = "Container type for all return fields from the `supportsInterface` function with signature `supportsInterface(bytes4)` and selector `[1, 255, 201, 167]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthAbiType,
+        ethers :: contract :: EthAbiCodec,
+    )]
+    pub struct SupportsInterfaceReturn(pub bool);
+    #[doc = "Container type for all return fields from the `symbol` function with signature `symbol()` and selector `[149, 216, 155, 65]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthAbiType,
+        ethers :: contract :: EthAbiCodec,
+    )]
+    pub struct SymbolReturn(pub String);
+    #[doc = "Container type for all return fields from the `tilesBought` function with signature `tilesBought()` and selector `[196, 39, 226, 181]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthAbiType,
+        ethers :: contract :: EthAbiCodec,
+    )]
+    pub struct TilesBoughtReturn(pub ethers::core::types::U256);
+    #[doc = "Container type for all return fields from the `tokenURI` function with signature `tokenURI(uint256)` and selector `[200, 123, 86, 221]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthAbiType,
+        ethers :: contract :: EthAbiCodec,
+    )]
+    pub struct TokenURIReturn(pub String);
+    #[doc = "Container type for all return fields from the `totalSupply` function with signature `totalSupply()` and selector `[24, 22, 13, 221]`"]
+    #[derive(
+        Clone,
+        Debug,
+        Default,
+        Eq,
+        PartialEq,
+        ethers :: contract :: EthAbiType,
+        ethers :: contract :: EthAbiCodec,
+    )]
+    pub struct TotalSupplyReturn(pub ethers::core::types::U256);
 }

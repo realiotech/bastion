@@ -9,25 +9,38 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
       - name: Install Foundry
         uses: onbjerg/foundry-toolchain@v1
         with:
           version: nightly
+      - run: pwd
+      - name: Run tests
+        run: forge test -f $INFURA --gas-report --root .
+        env:
+          INFURA : ${{secrets.INFURA}}
 
-      - name: Pull library deps
-        working-directory: contracts
-        run: forge update
+      - name: Run Coverage
+        run: forge coverage --report lcov
 
-      - name: Run forge tests
-        working-directory: contracts
-        run: forge test
+      # - name: Upload coverage to Codecov
+      #   uses: codecov/codecov-action@v3
+      #   with:
+      #     directory: .
+      #     env_vars: OS,PYTHON
+      #     fail_ci_if_error: true
+      #     files: ./lcov.info
+      #     name: realioververse-coverage
+      #     verbose: true
 
   analyze:
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v3
+          with:
+            submodules: recursive
 
         - name: Install Foundry
           uses: onbjerg/foundry-toolchain@v1
@@ -57,6 +70,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          submodules: recursive
 
       - name: Install Foundry
         uses: onbjerg/foundry-toolchain@v1
@@ -69,7 +84,7 @@ jobs:
 
       - name: Build contracts before checking bindings are correct
         working-directory: contracts
-        run: forge build
+        run: forge build --root . 
 
       - name: Check bindings are correct
         run: forge bind --bindings-path ./bindings --crate-name bindings

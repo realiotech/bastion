@@ -1,6 +1,6 @@
-pub use ilandbank_mod::*;
+pub use i_land_bank::*;
 #[allow(clippy::too_many_arguments, non_camel_case_types)]
-pub mod ilandbank_mod {
+pub mod i_land_bank {
     #![allow(clippy::enum_variant_names)]
     #![allow(dead_code)]
     #![allow(clippy::type_complexity)]
@@ -18,7 +18,7 @@ pub mod ilandbank_mod {
     use std::sync::Arc;
     pub static ILANDBANK_ABI: ethers::contract::Lazy<ethers::core::abi::Abi> =
         ethers::contract::Lazy::new(|| {
-            serde_json :: from_str ("[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_buyer\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"buyLandFromBank\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_seller\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"_tokenId\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"sellLandToBank\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_beneficiary\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"withdraw\",\"outputs\":[]}]") . expect ("invalid abi")
+            ethers :: core :: utils :: __serde_json :: from_str ("[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_buyer\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"buyLandFromBank\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_seller\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"_tokenId\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"sellLandToBank\",\"outputs\":[]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_beneficiary\",\"type\":\"address\",\"components\":[]},{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\",\"components\":[]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"withdraw\",\"outputs\":[]}]") . expect ("invalid abi")
         });
     pub struct ILandBank<M>(ethers::contract::Contract<M>);
     impl<M> Clone for ILandBank<M> {
@@ -85,7 +85,7 @@ pub mod ilandbank_mod {
             Self(contract)
         }
     }
-    #[doc = "Container type for all input parameters for the `buyLandFromBank`function with signature `buyLandFromBank(address,uint256)` and selector `[3, 107, 104, 183]`"]
+    #[doc = "Container type for all input parameters for the `buyLandFromBank` function with signature `buyLandFromBank(address,uint256)` and selector `[3, 107, 104, 183]`"]
     #[derive(
         Clone,
         Debug,
@@ -100,7 +100,7 @@ pub mod ilandbank_mod {
         pub buyer: ethers::core::types::Address,
         pub token_id: ethers::core::types::U256,
     }
-    #[doc = "Container type for all input parameters for the `sellLandToBank`function with signature `sellLandToBank(address,uint256)` and selector `[211, 63, 27, 29]`"]
+    #[doc = "Container type for all input parameters for the `sellLandToBank` function with signature `sellLandToBank(address,uint256)` and selector `[211, 63, 27, 29]`"]
     #[derive(
         Clone,
         Debug,
@@ -115,7 +115,7 @@ pub mod ilandbank_mod {
         pub seller: ethers::core::types::Address,
         pub token_id: ethers::core::types::U256,
     }
-    #[doc = "Container type for all input parameters for the `withdraw`function with signature `withdraw(address,uint256)` and selector `[243, 254, 243, 163]`"]
+    #[doc = "Container type for all input parameters for the `withdraw` function with signature `withdraw(address,uint256)` and selector `[243, 254, 243, 163]`"]
     #[derive(
         Clone,
         Debug,
@@ -137,7 +137,9 @@ pub mod ilandbank_mod {
         Withdraw(WithdrawCall),
     }
     impl ethers::core::abi::AbiDecode for ILandBankCalls {
-        fn decode(data: impl AsRef<[u8]>) -> Result<Self, ethers::core::abi::AbiError> {
+        fn decode(
+            data: impl AsRef<[u8]>,
+        ) -> ::std::result::Result<Self, ethers::core::abi::AbiError> {
             if let Ok(decoded) =
                 <BuyLandFromBankCall as ethers::core::abi::AbiDecode>::decode(data.as_ref())
             {

@@ -1,6 +1,6 @@
-pub use console_mod::*;
+pub use console::*;
 #[allow(clippy::too_many_arguments, non_camel_case_types)]
-pub mod console_mod {
+pub mod console {
     #![allow(clippy::enum_variant_names)]
     #![allow(dead_code)]
     #![allow(clippy::type_complexity)]
@@ -17,11 +17,13 @@ pub mod console_mod {
     #[doc = "console was auto-generated with ethers-rs Abigen. More information at: https://github.com/gakonst/ethers-rs"]
     use std::sync::Arc;
     pub static CONSOLE_ABI: ethers::contract::Lazy<ethers::core::abi::Abi> =
-        ethers::contract::Lazy::new(|| serde_json::from_str("[]").expect("invalid abi"));
+        ethers::contract::Lazy::new(|| {
+            ethers::core::utils::__serde_json::from_str("[]").expect("invalid abi")
+        });
     #[doc = r" Bytecode of the #name contract"]
     pub static CONSOLE_BYTECODE: ethers::contract::Lazy<ethers::core::types::Bytes> =
         ethers::contract::Lazy::new(|| {
-            "0x60566037600b82828239805160001a607314602a57634e487b7160e01b600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea26469706673582212203729262061fe8b44b4ab8625fe3a207f94ba34259c7e20671f0768d78f82e12064736f6c634300080a0033" . parse () . expect ("invalid bytecode")
+            "0x60566037600b82828239805160001a607314602a57634e487b7160e01b600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea2646970667358221220eeffef99a7bf17c7eed2971fce9e9ae9c2d169ec1c89a630303ff1fbf588b60864736f6c634300080f0033" . parse () . expect ("invalid bytecode")
         });
     pub struct console<M>(ethers::contract::Contract<M>);
     impl<M> Clone for console<M> {
@@ -78,7 +80,7 @@ pub mod console_mod {
         pub fn deploy<T: ethers::core::abi::Tokenize>(
             client: ::std::sync::Arc<M>,
             constructor_args: T,
-        ) -> Result<
+        ) -> ::std::result::Result<
             ethers::contract::builders::ContractDeployer<M, Self>,
             ethers::contract::ContractError<M>,
         > {
