@@ -17,7 +17,7 @@ jobs:
         with:
           version: nightly
       - name: Run tests
-        run: forge test -f $INFURA --gas-report
+        run: forge test -f $INFURA --gas-report --root .
         env:
           INFURA : ${{secrets.INFURA}}
 
