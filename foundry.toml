@@ -11,7 +11,7 @@ remappings = [
     'ERC721A/=lib/ERC721A/',
 ]
 solc_version = "0.8.15"
-gas_reports = ["LandBank", "LandNft", "Marketplace"]
+gas_reports = ["*"]
 
 
 # See more config options https://github.com/gakonst/foundry/tree/master/config
