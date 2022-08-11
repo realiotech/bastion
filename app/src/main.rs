@@ -19,6 +19,7 @@ use std::sync::{Arc, Mutex};
 #[derive(Serialize, Deserialize)]
 pub struct Contract {
     pub address: Address,
+    pub provider: String,
 }
 
 impl Responder for Contract {
@@ -41,9 +42,7 @@ async fn get_balance_of(user: web::Path<String>, data: web::Data<Contract>) -> i
     let address = address.parse::<Address>();
 
     let contract = data.address;
-    let provider =
-        Provider::try_from("https://eth-rinkeby.alchemyapi.io/v2/Lc7oIGYeL_QvInzI0Wiu_pOZZDEKBrdf")
-            .unwrap();
+    let provider = Provider::try_from(data.provider.clone()).unwrap();
     let provider = Arc::new(provider);
     let land_contract = LandNFT::new(contract, provider);
 
@@ -58,12 +57,30 @@ async fn get_balance_of(user: web::Path<String>, data: web::Data<Contract>) -> i
         .body(balance_of.unwrap().to_string())
 }
 
+#[get("/ownerOf")]
+async fn owner_of(token_id: web::Path<u32>, data: web::Data<Contract>) -> impl Responder {
+    let token_id = *token_id;
+    let contract = data.address;
+    let provider = Provider::try_from(data.provider.clone()).unwrap();
+    let provider = Arc::new(provider);
+
+    let land_contract = LandNFT::new(contract, provider);
+
+    let owner_of = land_contract
+        .method::<_, Address>("ownerOf", token_id)
+        .unwrap()
+        .call()
+        .await;
+
+    HttpResponse::Ok()
+        .content_type(ContentType::json())
+        .body(owner_of.unwrap().to_string())
+}
+
 #[get("/data")]
 async fn get_data(data: web::Data<Contract>) -> impl Responder {
     let contract = data.address;
-    let provider =
-        Provider::try_from("https://eth-rinkeby.alchemyapi.io/v2/Lc7oIGYeL_QvInzI0Wiu_pOZZDEKBrdf")
-            .unwrap();
+    let provider = Provider::try_from(data.provider.clone()).unwrap();
     let provider = Arc::new(provider);
     let land_contract = LandNFT::new(contract, provider);
 
@@ -84,6 +101,9 @@ async fn main() -> std::io::Result<()> {
         address: "0x7382507777ec4b2bc80Ea2b06F43f8A410fbbaa0"
             .parse::<Address>()
             .unwrap(),
+        provider: String::from(
+            "https://eth-rinkeby.alchemyapi.io/v2/Lc7oIGYeL_QvInzI0Wiu_pOZZDEKBrdf",
+        ),
     });
     HttpServer::new(move || {
         App::new()
