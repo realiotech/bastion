@@ -35,6 +35,23 @@ impl Responder for Contract {
     }
 }
 
+#[get("/total_supply")]
+async fn total_supply(data: web::Data<Contract>) -> impl Responder {
+    let address = data.address;
+    let provider = Provider::try_from(&data.provider).unwrap();
+    let provider = Arc::new(provider);
+    let land_contract = LandNFT::new(address, provider);
+
+    let total_supply = land_contract
+        .method::<_, U256>("totalSupply", ())
+        .unwrap()
+        .call()
+        .await;
+    HttpResponse::Ok()
+        .content_type(ContentType::json())
+        .body(total_supply.unwrap().to_string())
+}
+
 #[get("/balanceOf/{user}")]
 async fn get_balance_of(user: web::Path<String>, data: web::Data<Contract>) -> impl Responder {
     let address = String::from(&*user);
@@ -113,6 +130,7 @@ async fn main() -> std::io::Result<()> {
             .service(get_data)
             .service(get_balance_of)
             .service(owner_of)
+            .service(total_supply)
     })
     .bind(("127.0.0.1", 8000))?
     .run()
