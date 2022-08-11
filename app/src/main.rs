@@ -35,9 +35,11 @@ impl Responder for Contract {
     }
 }
 
-#[get("/balanceOf")]
+#[get("/balanceOf/{user}")]
 async fn get_balance_of(user: web::Path<String>, data: web::Data<Contract>) -> impl Responder {
     let address = String::from(&*user);
+
+    println!("address {}", address);
 
     let address = address.parse::<Address>();
 
@@ -57,7 +59,7 @@ async fn get_balance_of(user: web::Path<String>, data: web::Data<Contract>) -> i
         .body(balance_of.unwrap().to_string())
 }
 
-#[get("/ownerOf")]
+#[get("/ownerOf/{token_id}")]
 async fn owner_of(token_id: web::Path<u32>, data: web::Data<Contract>) -> impl Responder {
     let token_id = *token_id;
     let contract = data.address;
