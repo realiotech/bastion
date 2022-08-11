@@ -22,6 +22,11 @@ pub struct Contract {
     pub provider: String,
 }
 
+pub struct Region<'a> {
+    pub region: &'a [U256],
+    pub price: U256,
+}
+
 impl Responder for Contract {
     type Body = BoxBody;
 
@@ -110,6 +115,18 @@ async fn get_data(data: web::Data<Contract>) -> impl Responder {
         .await;
 
     let result = serde_json::to_string(&response.unwrap()).unwrap();
+    HttpResponse::Ok()
+        .content_type(ContentType::json())
+        .body(result)
+}
+
+#[post("/mint")]
+
+async fn mint(data: web::Data<Contract>) -> impl Responder {
+    let address = data.address;
+    let provider = Provider::try_from(&data.provider).unwrap();
+    let provider = Arc::new(provider);
+    let land_contract = LandNFT::new(address, provider);
     HttpResponse::Ok()
         .content_type(ContentType::json())
         .body(result)
