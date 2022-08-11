@@ -110,6 +110,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(app_state.clone())
             .service(get_data)
             .service(get_balance_of)
+            .service(owner_of)
     })
     .bind(("127.0.0.1", 8000))?
     .run()
