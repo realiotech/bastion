@@ -161,10 +161,11 @@ async fn main() -> std::io::Result<()> {
     });
 
     let provider = Arc::new({
-        let provider = Provider::try_from(app_state.provider.clone());
-
+        let provider = Provider::try_from(app_state.provider.clone()).unwrap();
+        let chain_id = provider.get_chainid().await.unwrap();
         let wallet = "..private_key"
             .parse::<LocalWallet>()
+            .expect("Unable to create wallet from private key")
             .with_chain_id(chain_id.as_u64());
 
         SignerMiddleware::new(provider, wallet)
