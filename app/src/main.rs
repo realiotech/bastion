@@ -22,8 +22,9 @@ pub struct Contract {
     pub provider: String,
 }
 
-pub struct Region<'a> {
-    pub region: &'a [U256],
+// region
+pub struct Region {
+    pub region: Vec<U256>,
     pub price: U256,
 }
 
@@ -121,8 +122,7 @@ async fn get_data(data: web::Data<Contract>) -> impl Responder {
 }
 
 #[post("/mint")]
-
-async fn mint(field: web::Json<Region<'_>>, data: web::Data<Contract>) -> impl Responder {
+async fn mint(field: web::Path<Region>, data: web::Data<Contract>) -> impl Responder {
     let address = data.address;
     let new_region = Region {
         region: field.region,
@@ -134,7 +134,7 @@ async fn mint(field: web::Json<Region<'_>>, data: web::Data<Contract>) -> impl R
 
     // review the tx to mint
     let tx = land_contract
-        .method("mint", new_region.into())
+        .method("mint", new_region)
         .unwrap()
         .send()
         .await;
