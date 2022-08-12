@@ -134,13 +134,14 @@ async fn mint(field: web::Json<Region<'_>>, data: web::Data<Contract>) -> impl R
 
     // review the tx to mint
     let tx = land_contract
-        .method("mint", new_region.region, new_region.price)
+        .method("mint", new_region.into())
         .unwrap()
-        .call()
+        .send()
         .await;
-    HttpResponse::Ok()
+
+    HttpResponse::Created()
         .content_type(ContentType::json())
-        .body(result)
+        .body(tx.unwrap().to_string())
 }
 #[tokio::main]
 async fn main() -> std::io::Result<()> {
