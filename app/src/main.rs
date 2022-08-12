@@ -7,10 +7,14 @@ use actix_web::{
 use bindings::land_nft::LandNFT;
 use bindings::marketplace::Marketplace;
 use ethers::abi::Uint;
+use ethers::prelude::k256::ecdsa::SigningKey;
+use ethers::prelude::k256::SecretKey;
 use ethers::prelude::{ContractError, Http};
 use ethers::providers::PendingTransaction;
+use ethers::signers::LocalWallet;
 use ethers::types::{H256, U256};
-use ethers::{prelude::Middleware, providers::Provider, types::Address};
+use ethers::utils::hex;
+use ethers::{prelude::*, providers::Provider, types::Address};
 use eyre::Result;
 use serde::{Deserialize, Serialize};
 use std::convert::TryFrom;
@@ -28,6 +32,11 @@ pub struct Contract {
 pub struct Region {
     pub region: Vec<U256>,
     pub price: U256,
+}
+
+#[derive(Deserialize, Clone)]
+pub struct WalletAccount {
+    pub key: String,
 }
 
 impl Responder for Contract {
@@ -126,6 +135,7 @@ async fn get_data(data: web::Data<Contract>) -> impl Responder {
 #[post("/mint")]
 async fn mint(field: web::Path<Region>, data: web::Data<Contract>) -> impl Responder {
     let address = data.address;
+
     let provider = Provider::try_from(&data.provider).unwrap();
     let provider = Arc::new(provider);
     let land_contract = LandNFT::new(address, provider);
@@ -148,6 +158,16 @@ async fn main() -> std::io::Result<()> {
         provider: String::from(
             "https://eth-rinkeby.alchemyapi.io/v2/Lc7oIGYeL_QvInzI0Wiu_pOZZDEKBrdf",
         ),
+    });
+
+    let provider = Arc::new({
+        let provider = Provider::try_from(app_state.provider.clone());
+
+        let wallet = "..private_key"
+            .parse::<LocalWallet>()
+            .with_chain_id(chain_id.as_u64());
+
+        SignerMiddleware::new(provider, wallet)
     });
     HttpServer::new(move || {
         App::new()
