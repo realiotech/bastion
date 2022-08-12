@@ -122,11 +122,22 @@ async fn get_data(data: web::Data<Contract>) -> impl Responder {
 
 #[post("/mint")]
 
-async fn mint(data: web::Data<Contract>) -> impl Responder {
+async fn mint(field: web::Json<Region<'_>>, data: web::Data<Contract>) -> impl Responder {
     let address = data.address;
+    let new_region = Region {
+        region: field.region,
+        price: field.price,
+    };
     let provider = Provider::try_from(&data.provider).unwrap();
     let provider = Arc::new(provider);
     let land_contract = LandNFT::new(address, provider);
+
+    // review the tx to mint
+    let tx = land_contract
+        .method("mint", new_region.region, new_region.price)
+        .unwrap()
+        .call()
+        .await;
     HttpResponse::Ok()
         .content_type(ContentType::json())
         .body(result)
