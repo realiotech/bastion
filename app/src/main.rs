@@ -7,7 +7,9 @@ use actix_web::{
 use bindings::land_nft::LandNFT;
 use bindings::marketplace::Marketplace;
 use ethers::abi::Uint;
-use ethers::types::U256;
+use ethers::prelude::{ContractError, Http};
+use ethers::providers::PendingTransaction;
+use ethers::types::{H256, U256};
 use ethers::{prelude::Middleware, providers::Provider, types::Address};
 use eyre::Result;
 use serde::{Deserialize, Serialize};
@@ -22,8 +24,9 @@ pub struct Contract {
     pub provider: String,
 }
 
-pub struct Region<'a> {
-    pub region: &'a [U256],
+#[derive(Deserialize, Clone)]
+pub struct Region {
+    pub region: Vec<U256>,
     pub price: U256,
 }
 
@@ -121,28 +124,21 @@ async fn get_data(data: web::Data<Contract>) -> impl Responder {
 }
 
 #[post("/mint")]
-
-async fn mint(field: web::Json<Region<'_>>, data: web::Data<Contract>) -> impl Responder {
+async fn mint(field: web::Json<Region>, data: web::Data<Contract>) -> impl Responder {
     let address = data.address;
-    let new_region = Region {
-        region: field.region,
-        price: field.price,
-    };
     let provider = Provider::try_from(&data.provider).unwrap();
     let provider = Arc::new(provider);
     let land_contract = LandNFT::new(address, provider);
-
-    // review the tx to mint
-    let tx = land_contract
-        .method("mint", new_region.into())
-        .unwrap()
-        .send()
-        .await;
-
-    HttpResponse::Created()
+    let method = land_contract
+        .method::<_, (Vec<U256>, U256)>("mint", (field.region.clone(), field.price))
+        .unwrap();
+    let send_method = method.send().await;
+    let response = HttpResponse::Created()
         .content_type(ContentType::json())
-        .body(tx.unwrap().to_string())
+        .body(send_method.unwrap().to_string());
+    response
 }
+
 #[tokio::main]
 async fn main() -> std::io::Result<()> {
     let app_state = web::Data::new(Contract {
@@ -160,6 +156,7 @@ async fn main() -> std::io::Result<()> {
             .service(get_balance_of)
             .service(owner_of)
             .service(total_supply)
+            .service(mint)
     })
     .bind(("127.0.0.1", 8000))?
     .run()
