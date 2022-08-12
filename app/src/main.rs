@@ -124,7 +124,7 @@ async fn get_data(data: web::Data<Contract>) -> impl Responder {
 }
 
 #[post("/mint")]
-async fn mint(field: web::Json<Region>, data: web::Data<Contract>) -> impl Responder {
+async fn mint(field: web::Path<Region>, data: web::Data<Contract>) -> impl Responder {
     let address = data.address;
     let provider = Provider::try_from(&data.provider).unwrap();
     let provider = Arc::new(provider);
