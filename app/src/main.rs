@@ -4,6 +4,7 @@ use actix_web::http::StatusCode;
 use actix_web::{
     get, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder, ResponseError,
 };
+use bindings::erc20::ERC20;
 use bindings::land_nft::LandNFT;
 use bindings::marketplace::Marketplace;
 use ethers::abi::Uint;
@@ -26,6 +27,7 @@ use std::sync::{Arc, Mutex};
 #[derive(Serialize, Deserialize)]
 pub struct Contract {
     pub address: Address,
+    pub token: Address,
     pub provider: String,
 }
 
@@ -124,10 +126,13 @@ async fn get_data(data: web::Data<Contract>) -> impl Responder {
 #[post("/mint")]
 async fn mint(field: web::Json<Region>, data: web::Data<Contract>) -> impl Responder {
     let address = data.address;
-
+    let token = data.token;
     let provider = Provider::try_from(&data.provider).unwrap();
     let provider = Arc::new(provider);
+    let token = ERC20::new(token, provider.clone());
     let land_contract = LandNFT::new(address, provider);
+    let token_method = token.approve(land_contract.address(), field.price);
+    token_method.send().await;
     let method = land_contract.mint(field.region.clone(), field.price);
     let send_method = method.send().await;
     let response = HttpResponse::Created()
@@ -159,6 +164,9 @@ async fn main() -> std::io::Result<()> {
         provider: String::from(
             "https://eth-rinkeby.alchemyapi.io/v2/Lc7oIGYeL_QvInzI0Wiu_pOZZDEKBrdf",
         ),
+        token: "0x32E0b53B799cC14c455011fE3458306f89aee848"
+            .parse::<Address>()
+            .unwrap(),
     });
 
     HttpServer::new(move || {
