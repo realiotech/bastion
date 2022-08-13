@@ -10,7 +10,8 @@ use ethers::abi::Uint;
 use ethers::prelude::k256::ecdsa::SigningKey;
 use ethers::prelude::k256::SecretKey;
 use ethers::prelude::{ContractError, Http};
-use ethers::providers::PendingTransaction;
+use ethers::providers::test_provider::TestProvider;
+use ethers::providers::{self, PendingTransaction};
 use ethers::signers::LocalWallet;
 use ethers::types::{H256, U256};
 use ethers::utils::hex;
@@ -59,11 +60,8 @@ async fn total_supply(data: web::Data<Contract>) -> impl Responder {
     let provider = Arc::new(provider);
     let land_contract = LandNFT::new(address, provider);
 
-    let total_supply = land_contract
-        .method::<_, U256>("totalSupply", ())
-        .unwrap()
-        .call()
-        .await;
+    let total_supply = land_contract.total_supply().call().await;
+
     HttpResponse::Ok()
         .content_type(ContentType::json())
         .body(total_supply.unwrap().to_string())
@@ -82,12 +80,7 @@ async fn get_balance_of(user: web::Path<String>, data: web::Data<Contract>) -> i
     let provider = Arc::new(provider);
     let land_contract = LandNFT::new(contract, provider);
 
-    let balance_of = land_contract
-        .method::<_, U256>("balanceOf", address.unwrap())
-        .unwrap()
-        .call()
-        .await;
-
+    let balance_of = land_contract.balance_of(address.unwrap()).call().await;
     HttpResponse::Ok()
         .content_type(ContentType::json())
         .body(balance_of.unwrap().to_string())
@@ -120,11 +113,7 @@ async fn get_data(data: web::Data<Contract>) -> impl Responder {
     let provider = Arc::new(provider);
     let land_contract = LandNFT::new(contract, provider);
 
-    let response = land_contract
-        .method::<_, Address>("owner", ())
-        .unwrap()
-        .call()
-        .await;
+    let response = land_contract.owner().call().await;
 
     let result = serde_json::to_string(&response.unwrap()).unwrap();
     HttpResponse::Ok()
@@ -133,15 +122,13 @@ async fn get_data(data: web::Data<Contract>) -> impl Responder {
 }
 
 #[post("/mint")]
-async fn mint(field: web::Path<Region>, data: web::Data<Contract>) -> impl Responder {
+async fn mint(field: web::Json<Region>, data: web::Data<Contract>) -> impl Responder {
     let address = data.address;
 
     let provider = Provider::try_from(&data.provider).unwrap();
     let provider = Arc::new(provider);
     let land_contract = LandNFT::new(address, provider);
-    let method = land_contract
-        .method::<_, (Vec<U256>, U256)>("mint", (field.region.clone(), field.price))
-        .unwrap();
+    let method = land_contract.mint(field.region.clone(), field.price);
     let send_method = method.send().await;
     let response = HttpResponse::Created()
         .content_type(ContentType::json())
@@ -151,6 +138,20 @@ async fn mint(field: web::Path<Region>, data: web::Data<Contract>) -> impl Respo
 
 #[tokio::main]
 async fn main() -> std::io::Result<()> {
+    // let provider = Arc::new({
+    //     let provider = Provider::try_from(
+    //         "https://eth-rinkeby.alchemyapi.io/v2/Lc7oIGYeL_QvInzI0Wiu_pOZZDEKBrdf",
+    //     )
+    //     .unwrap();
+    //     let chain_id = provider.get_chainid().await.unwrap();
+    //     let wallet = "..private_key"
+    //         .parse::<LocalWallet>()
+    //         .expect("Unable to create wallet from private key")
+    //         .with_chain_id(chain_id.as_u64());
+
+    //     SignerMiddleware::new(provider, wallet)
+    // });
+
     let app_state = web::Data::new(Contract {
         address: "0x7382507777ec4b2bc80Ea2b06F43f8A410fbbaa0"
             .parse::<Address>()
@@ -160,16 +161,6 @@ async fn main() -> std::io::Result<()> {
         ),
     });
 
-    let provider = Arc::new({
-        let provider = Provider::try_from(app_state.provider.clone()).unwrap();
-        let chain_id = provider.get_chainid().await.unwrap();
-        let wallet = "..private_key"
-            .parse::<LocalWallet>()
-            .expect("Unable to create wallet from private key")
-            .with_chain_id(chain_id.as_u64());
-
-        SignerMiddleware::new(provider, wallet)
-    });
     HttpServer::new(move || {
         App::new()
             .app_data(app_state.clone())
