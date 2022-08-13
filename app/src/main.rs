@@ -23,7 +23,7 @@ use std::convert::TryFrom;
 use std::fmt::Display;
 use std::ops::Add;
 use std::sync::{Arc, Mutex};
-
+#[warn(unused_must_use)]
 #[derive(Serialize, Deserialize)]
 pub struct Contract {
     pub address: Address,
@@ -129,15 +129,30 @@ async fn mint(field: web::Json<Region>, data: web::Data<Contract>) -> impl Respo
     let token = data.token;
     let provider = Provider::try_from(&data.provider).unwrap();
     let provider = Arc::new(provider);
+    let chain_id = provider.get_chainid().await.unwrap();
+    let wallet = "..key"
+        .parse::<LocalWallet>()
+        .expect("invalid wallet")
+        .with_chain_id(chain_id.as_u64());
+    let sti = wallet.address().to_string();
+
+    println!("wallet{}", sti);
     let token = ERC20::new(token, provider.clone());
-    let land_contract = LandNFT::new(address, provider);
+    let land_contract = LandNFT::new(address, provider.clone());
     let token_method = token.approve(land_contract.address(), field.price);
-    token_method.send().await;
+    // token_method.send().await;
+
+    let tx = token_method.from(wallet.address()).tx;
+
+    let message = provider.send_transaction(tx, None).await;
+
     let method = land_contract.mint(field.region.clone(), field.price);
+
     let send_method = method.send().await;
+
     let response = HttpResponse::Created()
         .content_type(ContentType::json())
-        .body(send_method.unwrap().to_string());
+        .body(message.unwrap().to_string());
     response
 }
 
@@ -161,9 +176,7 @@ async fn main() -> std::io::Result<()> {
         address: "0x7382507777ec4b2bc80Ea2b06F43f8A410fbbaa0"
             .parse::<Address>()
             .unwrap(),
-        provider: String::from(
-            "https://eth-rinkeby.alchemyapi.io/v2/Lc7oIGYeL_QvInzI0Wiu_pOZZDEKBrdf",
-        ),
+        provider: String::from("https://rinkeby.infura.io/v3/0a7b42115f6a48c0b2aa5be4aacfd789"),
         token: "0x32E0b53B799cC14c455011fE3458306f89aee848"
             .parse::<Address>()
             .unwrap(),
