@@ -22,6 +22,7 @@ use serde::{Deserialize, Serialize};
 use std::convert::TryFrom;
 use std::fmt::Display;
 use std::ops::Add;
+use std::str::FromStr;
 use std::sync::{Arc, Mutex};
 #[warn(unused_must_use)]
 #[derive(Serialize, Deserialize)]
@@ -127,24 +128,23 @@ async fn get_data(data: web::Data<Contract>) -> impl Responder {
 async fn mint(field: web::Json<Region>, data: web::Data<Contract>) -> impl Responder {
     let address = data.address;
     let token = data.token;
-    let provider = Provider::try_from(&data.provider).unwrap();
+    let provider = Provider::try_from(&data.provider).expect("could not connect");
     let provider = Arc::new(provider);
     let chain_id = provider.get_chainid().await.unwrap();
     let wallet = "..key"
         .parse::<LocalWallet>()
         .expect("invalid wallet")
         .with_chain_id(chain_id.as_u64());
-    let sti = wallet.address().to_string();
 
-    println!("wallet{}", sti);
     let token = ERC20::new(token, provider.clone());
-    let land_contract = LandNFT::new(address, provider.clone());
+    let land_contract = LandNFT::new(address, provider);
     let token_method = token.approve(land_contract.address(), field.price);
-    // token_method.send().await;
 
-    let tx = token_method.from(wallet.address()).tx;
+    let data = token_method.tx.data().unwrap();
 
-    let message = provider.send_transaction(tx, None).await;
+    let tx = TransactionRequest::new()
+        .data(data.clone())
+        .from(wallet.address());
 
     let method = land_contract.mint(field.region.clone(), field.price);
 
@@ -152,7 +152,7 @@ async fn mint(field: web::Json<Region>, data: web::Data<Contract>) -> impl Respo
 
     let response = HttpResponse::Created()
         .content_type(ContentType::json())
-        .body(message.unwrap().to_string());
+        .body(send_method.unwrap().to_string());
     response
 }
 
