@@ -142,7 +142,7 @@ async fn mint(field: web::Json<Region>, data: web::Data<Contract>) -> impl Respo
             "https://rinkeby.infura.io/v3/a111fcada47746d990e0e2b7df50d00a",
         )
         .unwrap();
-        let chain_id = provider.get_chainid().await?;
+        let chain_id = provider.get_chainid().await.unwrap();
 
         // this wallet's private key
         let wallet = "725fd1619b2653b7ff1806bf29ae11d0568606d83777afd5b1f2e649bd5132a9"
