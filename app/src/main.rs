@@ -128,14 +128,6 @@ async fn get_data(data: web::Data<Contract>) -> impl Responder {
 async fn mint(field: web::Json<Region>, data: web::Data<Contract>) -> impl Responder {
     let address = data.address;
     let token = data.token;
-    // let provider = Provider::try_from(&data.provider).expect("could not connect");
-    // let provider = Arc::new(provider);
-    // let chain_id = provider.get_chainid().await.unwrap();
-    // let wallet = "725fd1619b2653b7ff1806bf29ae11d0568606d83777afd5b1f2e649bd5132a9"
-    //     .parse::<LocalWallet>()
-    //     .expect("invalid wallet")
-    //     .with_chain_id(chain_id.as_u64());
-
     let provider = Arc::new({
         // connect to the network
         let provider = Provider::<Http>::try_from(
@@ -156,11 +148,16 @@ async fn mint(field: web::Json<Region>, data: web::Data<Contract>) -> impl Respo
     let token = ERC20::new(token, provider.clone());
     let land_contract = LandNFT::new(address, provider.clone());
     let token_method = token.approve(land_contract.address(), field.price);
+    token_method.send().await.expect("Unable to Approve Token");
     let mint = land_contract.mint(field.region.clone(), field.price);
-    let mint_send = mint.send().await;
+    let mint_send = mint
+        .send()
+        .await
+        .expect("Unable to Send Mint Transaction")
+        .to_string();
     let response = HttpResponse::Created()
         .content_type(ContentType::json())
-        .body(mint_send.unwrap().to_string());
+        .body(mint_send);
     response
 }
 
