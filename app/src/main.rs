@@ -128,36 +128,32 @@ async fn get_data(data: web::Data<Contract>) -> impl Responder {
 async fn mint(field: web::Json<Region>, data: web::Data<Contract>) -> impl Responder {
     let address = data.address;
     let token = data.token;
-    let provider = Provider::try_from(&data.provider).expect("could not connect");
-    let provider = Arc::new(provider);
-    let chain_id = provider.get_chainid().await.unwrap();
-    let wallet = "..key"
-        .parse::<LocalWallet>()
-        .expect("invalid wallet")
-        .with_chain_id(chain_id.as_u64());
+    let provider = Arc::new({
+        // connect to the network
+        let provider = Provider::try_from(&data.provider).unwrap();
+        let chain_id = provider.get_chainid().await;
+
+        // this wallet's private key
+        let wallet = "d518574e456daf683bdfd4f85666b3a4de3eac9a014e675347a556fc365c9557"
+            .parse::<LocalWallet>()
+            .unwrap()
+            .with_chain_id(chain_id.expect("msg").as_u64());
+
+        SignerMiddleware::new(provider, wallet)
+    });
 
     let token = ERC20::new(token, provider.clone());
     let land_contract = LandNFT::new(address, provider.clone());
     let token_method = token.approve(land_contract.address(), field.price);
 
-    let data = token_method.tx.data().unwrap();
-
-    println!("{}", data.to_string());
-
-    let tx = TransactionRequest::new()
-        .data(data.clone())
-        .to(token.address())
-        .from(wallet.address());
-
-    let resulat = provider.send_transaction(tx, None).await;
-
+    token_method.send().await;
     let method = land_contract.mint(field.region.clone(), field.price);
 
     let send_method = method.send().await;
 
     let response = HttpResponse::Created()
         .content_type(ContentType::json())
-        .body(resulat.unwrap().to_string());
+        .body(send_method.expect("error").to_string());
     response
 }
 
