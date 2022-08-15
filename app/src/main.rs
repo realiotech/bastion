@@ -128,13 +128,28 @@ async fn get_data(data: web::Data<Contract>) -> impl Responder {
 async fn mint(field: web::Json<Region>, data: web::Data<Contract>) -> impl Responder {
     let address = data.address;
     let token = data.token;
-    let provider = Provider::try_from(&data.provider).expect("could not connect");
-    let provider = Arc::new(provider);
-    let chain_id = provider.get_chainid().await.unwrap();
-    let wallet = "..key"
-        .parse::<LocalWallet>()
-        .expect("invalid wallet")
-        .with_chain_id(chain_id.as_u64());
+    // let provider = Provider::try_from(&data.provider).expect("could not connect");
+    // let provider = Arc::new(provider);
+    // let chain_id = provider.get_chainid().await.unwrap();
+    // let wallet = "725fd1619b2653b7ff1806bf29ae11d0568606d83777afd5b1f2e649bd5132a9"
+    //     .parse::<LocalWallet>()
+    //     .expect("invalid wallet")
+    //     .with_chain_id(chain_id.as_u64());
+
+    let provider = Arc::new({
+        // connect to the network
+        let provider = Provider::<Http>::try_from(
+            "https://rinkeby.infura.io/v3/a111fcada47746d990e0e2b7df50d00a",
+        ).unwrap();
+        let chain_id = provider.get_chainid().await?;
+
+        // this wallet's private key
+        let wallet = "725fd1619b2653b7ff1806bf29ae11d0568606d83777afd5b1f2e649bd5132a9"
+            .parse::<LocalWallet>().unwrap()
+            .with_chain_id(chain_id.as_u64());
+
+        SignerMiddleware::new(provider, wallet)
+    });
 
     let token = ERC20::new(token, provider.clone());
     let land_contract = LandNFT::new(address, provider.clone());
