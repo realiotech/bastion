@@ -137,14 +137,19 @@ async fn mint(field: web::Json<Region>, data: web::Data<Contract>) -> impl Respo
         .with_chain_id(chain_id.as_u64());
 
     let token = ERC20::new(token, provider.clone());
-    let land_contract = LandNFT::new(address, provider);
+    let land_contract = LandNFT::new(address, provider.clone());
     let token_method = token.approve(land_contract.address(), field.price);
 
     let data = token_method.tx.data().unwrap();
 
+    println!("{}", data.to_string());
+
     let tx = TransactionRequest::new()
         .data(data.clone())
+        .to(token.address())
         .from(wallet.address());
+
+    let resulat = provider.send_transaction(tx, None).await;
 
     let method = land_contract.mint(field.region.clone(), field.price);
 
@@ -152,7 +157,7 @@ async fn mint(field: web::Json<Region>, data: web::Data<Contract>) -> impl Respo
 
     let response = HttpResponse::Created()
         .content_type(ContentType::json())
-        .body(send_method.unwrap().to_string());
+        .body(resulat.unwrap().to_string());
     response
 }
 
