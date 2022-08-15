@@ -140,12 +140,14 @@ async fn mint(field: web::Json<Region>, data: web::Data<Contract>) -> impl Respo
         // connect to the network
         let provider = Provider::<Http>::try_from(
             "https://rinkeby.infura.io/v3/a111fcada47746d990e0e2b7df50d00a",
-        ).unwrap();
+        )
+        .unwrap();
         let chain_id = provider.get_chainid().await?;
 
         // this wallet's private key
         let wallet = "725fd1619b2653b7ff1806bf29ae11d0568606d83777afd5b1f2e649bd5132a9"
-            .parse::<LocalWallet>().unwrap()
+            .parse::<LocalWallet>()
+            .unwrap()
             .with_chain_id(chain_id.as_u64());
 
         SignerMiddleware::new(provider, wallet)
@@ -154,25 +156,11 @@ async fn mint(field: web::Json<Region>, data: web::Data<Contract>) -> impl Respo
     let token = ERC20::new(token, provider.clone());
     let land_contract = LandNFT::new(address, provider.clone());
     let token_method = token.approve(land_contract.address(), field.price);
-
-    let data = token_method.tx.data().unwrap();
-
-    println!("{}", data.to_string());
-
-    let tx = TransactionRequest::new()
-        .data(data.clone())
-        .to(token.address())
-        .from(wallet.address());
-
-    let resulat = provider.send_transaction(tx, None).await;
-
-    let method = land_contract.mint(field.region.clone(), field.price);
-
-    let send_method = method.send().await;
-
+    let mint = land_contract.mint(field.region.clone(), field.price);
+    let mint_send = mint.send().await;
     let response = HttpResponse::Created()
         .content_type(ContentType::json())
-        .body(resulat.unwrap().to_string());
+        .body(mint_send.unwrap().to_string());
     response
 }
 
