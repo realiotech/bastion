@@ -1,6 +1,6 @@
 use actix_web::dev::{HttpServiceFactory, Server};
 use actix_web::http::header::ContentType;
-use actix_web::{web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 use bindings::erc20::ERC20;
 use bindings::land_bank;
 use bindings::land_nft::LandNFT;
@@ -26,6 +26,7 @@ pub struct Region {
     pub price: U256,
 }
 
+#[post("/mint")]
 async fn mint(field: web::Json<Region>) -> impl Responder {
     let wallet_address = "0x27a1876A09581E02E583E002E42EC1322abE9655".parse::<Address>();
 
@@ -45,7 +46,7 @@ async fn mint(field: web::Json<Region>) -> impl Responder {
         let chain_id = provider.get_chainid().await;
 
         // this wallet's private key
-        let wallet = "<Key>"
+        let wallet = "<key>"
             .parse::<LocalWallet>()
             .unwrap()
             .with_chain_id(chain_id.expect("msg").as_u64());
@@ -64,16 +65,6 @@ async fn mint(field: web::Json<Region>) -> impl Responder {
 
     let tx = buy_land.send().await.unwrap();
 
-    // deploy new landbank
-    // let land_contract = LandNFT::deploy(
-    //     provider,
-    //     (
-    //         wallet_address.unwrap().to_string(),
-    //         wallet_address.unwrap().to_string(),
-    //         20000,
-    //     ),
-    // );
-
     // let result = tx.unwrap();
 
     HttpResponse::Ok()
@@ -81,6 +72,7 @@ async fn mint(field: web::Json<Region>) -> impl Responder {
         .body(tx.to_string())
 }
 
+#[get("/total_supply")]
 async fn get_total_supply() -> impl Responder {
     let provider = Arc::new({
         // connect to the network
@@ -109,6 +101,7 @@ async fn get_total_supply() -> impl Responder {
         .body(total_supply.unwrap().to_string())
 }
 
+#[get("/health_check")]
 async fn health_check() -> HttpResponse {
     HttpResponse::Ok().finish()
 }
@@ -116,9 +109,9 @@ async fn health_check() -> HttpResponse {
 pub fn run() -> Result<Server, std::io::Error> {
     let server = HttpServer::new(|| {
         App::new()
-            .route("/health_check", web::get().to(health_check))
-            .route("/total_supply", web::get().to(get_total_supply))
-            .route("mint", web::get().to(mint))
+            .service(get_total_supply)
+            .service(mint)
+            .service(health_check)
     })
     .bind("127.0.0.1:8000")?
     .run();
