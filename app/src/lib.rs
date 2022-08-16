@@ -1,6 +1,7 @@
 use actix_web::dev::{HttpServiceFactory, Server};
 use actix_web::http::header::ContentType;
 use actix_web::{web, App, HttpResponse, HttpServer, Responder};
+use bindings::erc20::ERC20;
 use bindings::land_bank;
 use bindings::land_nft::LandNFT;
 use ethers::prelude::k256::sha2::digest::typenum::private::PrivateAnd;
@@ -19,16 +20,28 @@ pub struct Data {
     pub marketplace_contract: Address,
 }
 
-async fn mint() -> impl Responder {
-    let anvil = Anvil::new()
-        .fork("https://mainnet.infura.io/v3/0a7b42115f6a48c0b2aa5be4aacfd789")
-        .spawn();
+#[derive(Deserialize, Clone)]
+pub struct Region {
+    pub region: Vec<U256>,
+    pub price: U256,
+}
 
+async fn mint(field: web::Json<Region>) -> impl Responder {
     let wallet_address = "0x27a1876A09581E02E583E002E42EC1322abE9655".parse::<Address>();
+
+    let land_address = "0xA536F3E29ACaA2faaf8Ae0F2BAB1F002B7eBB887"
+        .parse::<Address>()
+        .unwrap();
+
+    let token_address = "0x32E0b53B799cC14c455011fE3458306f89aee848"
+        .parse::<Address>()
+        .unwrap();
 
     let provider = Arc::new({
         // connect to the network
-        let provider = Provider::try_from(anvil.endpoint()).unwrap();
+        let provider =
+            Provider::try_from("https://rinkeby.infura.io/v3/0a7b42115f6a48c0b2aa5be4aacfd789")
+                .unwrap();
         let chain_id = provider.get_chainid().await;
 
         // this wallet's private key
@@ -40,23 +53,32 @@ async fn mint() -> impl Responder {
         SignerMiddleware::new(provider, wallet)
     });
 
+    let token = ERC20::new(token_address, provider.clone());
+    let land_contract = LandNFT::new(land_address, provider.clone());
+
+    let approve = token.approve(land_contract.address(), field.price);
+
+    approve.send().await;
+
+    let buy_land = land_contract.mint(field.region.clone(), field.price);
+
+    let tx = buy_land.send().await.unwrap();
+
     // deploy new landbank
-    let land_contract = LandNFT::deploy(
-        provider,
-        (
-            wallet_address.unwrap().to_string(),
-            wallet_address.unwrap().to_string(),
-            20000,
-        ),
-    );
+    // let land_contract = LandNFT::deploy(
+    //     provider,
+    //     (
+    //         wallet_address.unwrap().to_string(),
+    //         wallet_address.unwrap().to_string(),
+    //         20000,
+    //     ),
+    // );
 
-    let contract = land_contract.expect("failed").send().await;
-
-    let result = contract.expect("errir").address();
+    // let result = tx.unwrap();
 
     HttpResponse::Ok()
         .content_type(ContentType::json())
-        .body(result.to_string())
+        .body(tx.to_string())
 }
 
 async fn get_total_supply() -> impl Responder {
