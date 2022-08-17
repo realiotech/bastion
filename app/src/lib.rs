@@ -15,6 +15,7 @@ use ethers::{prelude::*, providers::Provider, types::Address};
 use serde::{Deserialize, Serialize};
 use std::ops::Add;
 use std::sync::Arc;
+use std::{thread, time};
 pub struct Data {
     pub land_contract: Address,
     pub marketplace_contract: Address,
@@ -28,8 +29,6 @@ pub struct Region {
 
 #[post("/mint")]
 async fn mint(field: web::Json<Region>) -> impl Responder {
-    let wallet_address = "0x27a1876A09581E02E583E002E42EC1322abE9655".parse::<Address>();
-
     let land_address = "0xA536F3E29ACaA2faaf8Ae0F2BAB1F002B7eBB887"
         .parse::<Address>()
         .unwrap();
@@ -46,7 +45,7 @@ async fn mint(field: web::Json<Region>) -> impl Responder {
         let chain_id = provider.get_chainid().await;
 
         // this wallet's private key
-        let wallet = "d518574e456daf683bdfd4f85666b3a4de3eac9a014e675347a556fc365c9557"
+        let wallet = "<Key>"
             .parse::<LocalWallet>()
             .expect("Unable to derive wallet")
             .with_chain_id(chain_id.expect("msg").as_u64());
@@ -82,9 +81,9 @@ async fn mint(field: web::Json<Region>) -> impl Responder {
 
     let approve = token.approve(land_contract.address(), price_u256);
 
-    let approve_send = approve.call().await.unwrap();
+    approve.send().await.unwrap();
 
-    println!(" Approval Receipt {:?}", approve_send);
+    thread::sleep(time::Duration::from_secs(20));
 
     let buy_land = land_contract.mint(region_u256, price_u256);
 
