@@ -1,7 +1,7 @@
 use actix_web::dev::{HttpServiceFactory, Server};
 use actix_web::http::header::ContentType;
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
-use bindings::erc20::ERC20;
+use bindings::erc20::{BalanceOfCall, ERC20};
 use bindings::land_bank;
 use bindings::land_nft::LandNFT;
 use ethers::prelude::k256::sha2::digest::typenum::private::PrivateAnd;
@@ -22,8 +22,8 @@ pub struct Data {
 
 #[derive(Deserialize, Clone)]
 pub struct Region {
-    pub region: Vec<U256>,
-    pub price: U256,
+    pub region: Vec<u128>,
+    pub price: u128,
 }
 
 #[post("/mint")]
@@ -46,9 +46,9 @@ async fn mint(field: web::Json<Region>) -> impl Responder {
         let chain_id = provider.get_chainid().await;
 
         // this wallet's private key
-        let wallet = "<key>"
+        let wallet = "d518574e456daf683bdfd4f85666b3a4de3eac9a014e675347a556fc365c9557"
             .parse::<LocalWallet>()
-            .unwrap()
+            .expect("Unable to derive wallet")
             .with_chain_id(chain_id.expect("msg").as_u64());
 
         SignerMiddleware::new(provider, wallet)
@@ -57,11 +57,36 @@ async fn mint(field: web::Json<Region>) -> impl Responder {
     let token = ERC20::new(token_address, provider.clone());
     let land_contract = LandNFT::new(land_address, provider.clone());
 
-    let approve = token.approve(land_contract.address(), field.price);
+    let rio_address = "0x32e0b53b799cc14c455011fe3458306f89aee848"
+        .parse::<Address>()
+        .unwrap();
 
-    approve.send().await;
+    let rio = ERC20::new(rio_address, provider.clone());
 
-    let buy_land = land_contract.mint(field.region.clone(), field.price);
+    let wallet_address = "0x27a1876A09581E02E583E002E42EC1322abE9655"
+        .parse::<Address>()
+        .unwrap();
+    let balance = rio.balance_of(wallet_address).call().await.unwrap();
+    let price = land_contract.price().call().await.unwrap();
+    let price_u256 = U256::from(field.price);
+    let region_u256 = field.region.iter().map(|x| U256::from(*x)).collect();
+
+    println!(
+        "Wallet Balance is {:?} 
+                \n Price is {:?} 
+                \n Price of from json {:?}
+                \n Region Vec<u128> {:?}
+                \n Region Vec<U256> {:?}",
+        balance, price, price_u256, field.region, region_u256
+    );
+
+    let approve = token.approve(land_contract.address(), price_u256);
+
+    let approve_send = approve.call().await.unwrap();
+
+    println!(" Approval Receipt {:?}", approve_send);
+
+    let buy_land = land_contract.mint(region_u256, price_u256);
 
     let tx = buy_land.send().await.unwrap();
 
@@ -92,7 +117,11 @@ async fn get_total_supply() -> impl Responder {
     let address = "0x7382507777ec4b2bc80Ea2b06F43f8A410fbbaa0"
         .parse::<Address>()
         .unwrap();
-    let land_contract = LandNFT::new(address, provider);
+    let land_contract = LandNFT::new(address, provider.clone());
+
+    // let rio_address= "0x32e0b53b799cc14c455011fe3458306f89aee848".parse::()<Address>().unwrap();
+
+    // let balance = BalanceOfCall("0x27a1876A09581E02E583E002E42EC1322abE9655");
 
     let total_supply = land_contract.total_supply().call().await;
 
