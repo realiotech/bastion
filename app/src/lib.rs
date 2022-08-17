@@ -7,7 +7,6 @@ use actix_web::http::header::ContentType;
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 use bindings::erc20::{BalanceOfCall, ERC20};
 use bindings::land_nft::LandNFT;
-use dotenv::dotenv;
 use ethers::prelude::k256::sha2::digest::typenum::private::PrivateAnd;
 use ethers::providers::test_provider::TestProvider;
 use ethers::providers::{self, PendingTransaction};
@@ -17,8 +16,8 @@ use ethers::utils::hex;
 use ethers::utils::Anvil;
 use ethers::{prelude::*, providers::Provider, types::Address};
 use serde::{Deserialize, Serialize};
-use std::net::TcpListener;
 use std::env;
+use std::net::TcpListener;
 use std::ops::Add;
 use std::sync::{Arc, Mutex};
 use std::{thread, time};
@@ -168,9 +167,12 @@ async fn mint(field: web::Json<Region>) -> impl Responder {
             Provider::try_from("https://rinkeby.infura.io/v3/0a7b42115f6a48c0b2aa5be4aacfd789")
                 .unwrap();
         let chain_id = provider.get_chainid().await;
+        let env_key = env::var("PRIVATE_KEY").expect("error");
+        let key = env_key.as_str();
+        println!("{}", key);
 
         // this wallet's private key
-        let wallet = "<Key>"
+        let wallet = key
             .parse::<LocalWallet>()
             .expect("Unable to derive wallet")
             .with_chain_id(chain_id.expect("msg").as_u64());
@@ -259,10 +261,8 @@ async fn health_check() -> HttpResponse {
     HttpResponse::Ok().finish()
 }
 
-pub fn run() -> Result<Server, std::io::Error> {
+pub fn run(listener: TcpListener) -> Result<Server, std::io::Error> {
     dotenv().ok();
-    let key = &env::var("PRIVATE_KEY").expect("error").to_string();
-    println!("{}", key);
     let server = HttpServer::new(move || {
         App::new()
             // .app_data(app_state.clone())
@@ -271,6 +271,7 @@ pub fn run() -> Result<Server, std::io::Error> {
             .service(get_user_balance)
             .service(set_land_bank)
             .service(set_dev_fund)
+            .service(mint)
     })
     .listen(listener)?
     .run();
