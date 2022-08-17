@@ -13,3 +13,13 @@ tokio = { version = "1.17.0", features = ["macros"] }
 actix-web = "4.1.0"
 serde = {version = "1.0.140", features = ["derive"]}
 serde_json = "1.0.82"
+dotenv = "0.15.0"
+env_logger = "0.9.0"
+reqwest = "0.11.11"
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+path = "src/main.rs"
+name = "realioverse_contracts"

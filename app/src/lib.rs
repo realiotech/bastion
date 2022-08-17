@@ -1,3 +1,7 @@
+extern crate dotenv;
+use actix_web::middleware::Logger;
+use dotenv::dotenv;
+
 use actix_web::dev::{HttpServiceFactory, Server};
 use actix_web::http::header::ContentType;
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
@@ -13,6 +17,7 @@ use ethers::utils::hex;
 use ethers::utils::Anvil;
 use ethers::{prelude::*, providers::Provider, types::Address};
 use serde::{Deserialize, Serialize};
+use std::net::TcpListener;
 use std::ops::Add;
 use std::sync::Arc;
 pub struct Data {
@@ -135,14 +140,29 @@ async fn health_check() -> HttpResponse {
     HttpResponse::Ok().finish()
 }
 
-pub fn run() -> Result<Server, std::io::Error> {
+// pub fn run() -> Result<Server, std::io::Error> {
+//     let server = HttpServer::new(|| {
+//         App::new()
+//             .service(get_total_supply)
+//             .service(mint)
+//             .service(health_check)
+//     })
+//     .bind("127.0.0.1:8000")?
+//     .run();
+
+//     Ok(server)
+// }
+
+pub fn run(listener: TcpListener) -> Result<Server, std::io::Error> {
+    dotenv().ok();
     let server = HttpServer::new(|| {
         App::new()
+            .wrap(Logger::default())
             .service(get_total_supply)
-            .service(mint)
             .service(health_check)
+            .service(mint)
     })
-    .bind("127.0.0.1:8000")?
+    .listen(listener)?
     .run();
 
     Ok(server)
