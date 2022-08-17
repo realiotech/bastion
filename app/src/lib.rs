@@ -6,8 +6,8 @@ use actix_web::dev::{HttpServiceFactory, Server};
 use actix_web::http::header::ContentType;
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 use bindings::erc20::{BalanceOfCall, ERC20};
-use bindings::land_bank;
 use bindings::land_nft::LandNFT;
+use dotenv::dotenv;
 use ethers::prelude::k256::sha2::digest::typenum::private::PrivateAnd;
 use ethers::providers::test_provider::TestProvider;
 use ethers::providers::{self, PendingTransaction};
@@ -18,18 +18,138 @@ use ethers::utils::Anvil;
 use ethers::{prelude::*, providers::Provider, types::Address};
 use serde::{Deserialize, Serialize};
 use std::net::TcpListener;
+use std::env;
 use std::ops::Add;
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 use std::{thread, time};
-pub struct Data {
-    pub land_contract: Address,
-    pub marketplace_contract: Address,
-}
 
 #[derive(Deserialize, Clone)]
 pub struct Region {
     pub region: Vec<u128>,
     pub price: u128,
+}
+#[derive(Deserialize, Clone)]
+pub struct User {
+    pub address: Address,
+}
+
+#[derive(Deserialize, Serialize)]
+pub struct Data {
+    pub token: String,
+    pub land_contract: String,
+    pub rpc_url: String,
+    pub key: String,
+}
+#[derive(Deserialize, Serialize)]
+struct AppState {
+    datas: Mutex<Data>,
+}
+
+#[derive(Deserialize, Clone)]
+pub struct LandBank {
+    pub bank: Address,
+}
+
+#[derive(Deserialize, Clone)]
+pub struct DevFund {
+    pub dev: Address,
+}
+
+#[get("/balance_of")]
+async fn get_user_balance(user: web::Json<User>) -> impl Responder {
+    let address = user.address;
+
+    let land_address = "0xA536F3E29ACaA2faaf8Ae0F2BAB1F002B7eBB887"
+        .parse::<Address>()
+        .unwrap();
+
+    let provider = Arc::new({
+        // connect to the network
+        let provider =
+            Provider::try_from("https://rinkeby.infura.io/v3/0a7b42115f6a48c0b2aa5be4aacfd789")
+                .unwrap();
+        let chain_id = provider.get_chainid().await;
+
+        // this wallet's private key
+        let wallet = "<key>"
+            .parse::<LocalWallet>()
+            .expect("Unable to derive wallet")
+            .with_chain_id(chain_id.expect("msg").as_u64());
+
+        SignerMiddleware::new(provider, wallet)
+    });
+
+    let land_contract = LandNFT::new(land_address, provider);
+
+    let balanceOf = land_contract.balance_of(address);
+
+    let result = balanceOf.call().await;
+
+    HttpResponse::Ok()
+        .content_type(ContentType::json())
+        .body(result.unwrap().to_string())
+}
+
+#[post("/set_bank")]
+async fn set_land_bank(data: web::Json<DevFund>) -> impl Responder {
+    let new_landBank = data.dev;
+    let land_address = "0xA536F3E29ACaA2faaf8Ae0F2BAB1F002B7eBB887"
+        .parse::<Address>()
+        .unwrap();
+    let provider = Arc::new({
+        // connect to the network
+        let provider =
+            Provider::try_from("https://rinkeby.infura.io/v3/0a7b42115f6a48c0b2aa5be4aacfd789")
+                .unwrap();
+        let chain_id = provider.get_chainid().await;
+
+        // this wallet's private key
+        let wallet = "<key>"
+            .parse::<LocalWallet>()
+            .expect("Unable to derive wallet")
+            .with_chain_id(chain_id.expect("msg").as_u64());
+
+        SignerMiddleware::new(provider, wallet)
+    });
+    let land_contract = LandNFT::new(land_address, provider.clone());
+
+    let setter = land_contract.set_dev_fund(new_landBank);
+
+    let tx = setter.send().await.unwrap();
+    HttpResponse::Ok()
+        .content_type(ContentType::json())
+        .body(tx.to_string())
+}
+
+#[post("/set_dev")]
+async fn set_dev_fund(bank: web::Json<LandBank>) -> impl Responder {
+    let new_landBank = bank.bank;
+    let land_address = "0xA536F3E29ACaA2faaf8Ae0F2BAB1F002B7eBB887"
+        .parse::<Address>()
+        .unwrap();
+    let provider = Arc::new({
+        // connect to the network
+        let provider =
+            Provider::try_from("https://rinkeby.infura.io/v3/0a7b42115f6a48c0b2aa5be4aacfd789")
+                .unwrap();
+        let chain_id = provider.get_chainid().await;
+
+        // this wallet's private key
+        let wallet = "<key>"
+            .parse::<LocalWallet>()
+            .expect("Unable to derive wallet")
+            .with_chain_id(chain_id.expect("msg").as_u64());
+
+        SignerMiddleware::new(provider, wallet)
+    });
+    let land_contract = LandNFT::new(land_address, provider.clone());
+
+    let setter = land_contract.set_land_bank(new_landBank);
+
+    let tx = setter.send().await.unwrap();
+    HttpResponse::Ok()
+        .content_type(ContentType::json())
+        .body(tx.to_string())
 }
 
 #[post("/mint")]
@@ -139,27 +259,18 @@ async fn health_check() -> HttpResponse {
     HttpResponse::Ok().finish()
 }
 
-// pub fn run() -> Result<Server, std::io::Error> {
-//     let server = HttpServer::new(|| {
-//         App::new()
-//             .service(get_total_supply)
-//             .service(mint)
-//             .service(health_check)
-//     })
-//     .bind("127.0.0.1:8000")?
-//     .run();
-
-//     Ok(server)
-// }
-
-pub fn run(listener: TcpListener) -> Result<Server, std::io::Error> {
+pub fn run() -> Result<Server, std::io::Error> {
     dotenv().ok();
-    let server = HttpServer::new(|| {
+    let key = &env::var("PRIVATE_KEY").expect("error").to_string();
+    println!("{}", key);
+    let server = HttpServer::new(move || {
         App::new()
-            .wrap(Logger::default())
+            // .app_data(app_state.clone())
             .service(get_total_supply)
             .service(health_check)
-            .service(mint)
+            .service(get_user_balance)
+            .service(set_land_bank)
+            .service(set_dev_fund)
     })
     .listen(listener)?
     .run();
