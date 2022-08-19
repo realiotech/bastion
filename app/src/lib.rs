@@ -1,6 +1,4 @@
 extern crate dotenv;
-use actix_web::middleware::Logger;
-// use dotenv::dotenv;
 
 use actix_web::dev::{HttpServiceFactory, Server};
 use actix_web::http::header::ContentType;
@@ -9,9 +7,6 @@ use bindings::erc20::{BalanceOfCall, ERC20};
 use bindings::land_nft::LandNFT;
 use dotenv::dotenv;
 use ethers::prelude::k256::ecdsa::SigningKey;
-use ethers::prelude::k256::sha2::digest::typenum::private::PrivateAnd;
-use ethers::providers::test_provider::TestProvider;
-use ethers::providers::{self, PendingTransaction};
 use ethers::signers::LocalWallet;
 use ethers::types::{H256, U256};
 use ethers::utils::hex;
@@ -20,7 +15,6 @@ use ethers::{prelude::*, providers::Provider, types::Address};
 use serde::{Deserialize, Serialize};
 use std::env;
 use std::net::TcpListener;
-use std::ops::Add;
 use std::sync::{Arc, Mutex};
 use std::{thread, time};
 
@@ -35,15 +29,16 @@ pub struct User {
 }
 
 #[derive(Deserialize, Serialize)]
-pub struct Data {
+pub struct DataState {
     pub token: String,
     pub land_contract: String,
     pub rpc_url: String,
     pub key: String,
 }
+
 #[derive(Deserialize, Serialize)]
 struct AppState {
-    datas: Mutex<Data>,
+    datas: Mutex<DataState>,
 }
 
 #[derive(Deserialize, Clone)]
@@ -188,9 +183,15 @@ async fn health_check() -> HttpResponse {
 
 pub fn run(listener: TcpListener) -> Result<Server, std::io::Error> {
     dotenv().ok();
+    let app_state = web::Data::new(DataState {
+        key: String::from(env::var("RPC_URL").expect("error")),
+        token: String::from(env::var("TOKEN_ADDRESS").expect("error")),
+        rpc_url: String::from(env::var("RPC_URL").expect("error")),
+        land_contract: String::from(env::var("LAND_CONTRACT").expect("error")),
+    });
     let server = HttpServer::new(move || {
         App::new()
-            // .app_data(app_state.clone())
+            .app_data(app_state.clone())
             .service(get_total_supply)
             .service(health_check)
             .service(get_user_balance)
