@@ -130,28 +130,28 @@ async fn set_dev_fund(bank: web::Json<LandBank>) -> impl Responder {
 
 #[post("/mint")]
 async fn mint(field: web::Json<Region>) -> impl Responder {
-    let rio_address = "0x32e0b53b799cc14c455011fe3458306f89aee848"
-        .parse::<Address>()
-        .unwrap();
+    // let rio_address = "0x32e0b53b799cc14c455011fe3458306f89aee848"
+    //     .parse::<Address>()
+    //     .unwrap();
 
-    let rio = ERC20::new(rio_address, enable_provider().await);
+    // let rio = ERC20::new(rio_address, enable_provider().await);
 
-    let wallet_address = "0x27a1876A09581E02E583E002E42EC1322abE9655"
-        .parse::<Address>()
-        .unwrap();
-    let balance = rio.balance_of(wallet_address).call().await.unwrap();
-    let price = land_contract().await.price().call().await.unwrap();
+    // let wallet_address = "0x27a1876A09581E02E583E002E42EC1322abE9655"
+    //     .parse::<Address>()
+    //     .unwrap();
+    // let balance = rio.balance_of(wallet_address).call().await.unwrap();
+    // let price = land_contract().await.price().call().await.unwrap();
     let price_u256 = U256::from(field.price);
     let region_u256 = field.region.iter().map(|x| U256::from(*x)).collect();
 
-    println!(
-        "Wallet Balance is {:?} 
-                \n Price is {:?} 
-                \n Price of from json {:?}
-                \n Region Vec<u128> {:?}
-                \n Region Vec<U256> {:?}",
-        balance, price, price_u256, field.region, region_u256
-    );
+    // println!(
+    //     "Wallet Balance is {:?}
+    //             \n Price is {:?}
+    //             \n Price of from json {:?}
+    //             \n Region Vec<u128> {:?}
+    //             \n Region Vec<U256> {:?}",
+    //     balance, price, price_u256, field.region, region_u256
+    // );
 
     let approve = token()
         .await
