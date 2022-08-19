@@ -57,17 +57,14 @@ pub struct DevFund {
 }
 
 async fn enable_provider() -> Arc<SignerMiddleware<Provider<Http>, Wallet<SigningKey>>> {
-    dotenv().ok();
     let provider = Arc::new({
         // connect to the network
         let provider =
-            Provider::try_from("https://rinkeby.infura.io/v3/0a7b42115f6a48c0b2aa5be4aacfd789")
-                .unwrap();
+            Provider::try_from(String::from(env::var("RPC_URL").expect("error"))).unwrap();
         let chain_id = provider.get_chainid().await;
 
         // this wallet's private key
-        let wallet = env::var("PRIVATE_KEY")
-            .expect("error")
+        let wallet = String::from(env::var("PRIVATE_KEY").expect("error"))
             .parse::<LocalWallet>()
             .expect("Unable to derive wallet")
             .with_chain_id(chain_id.expect("msg").as_u64());
@@ -78,7 +75,7 @@ async fn enable_provider() -> Arc<SignerMiddleware<Provider<Http>, Wallet<Signin
 }
 
 async fn land_contract() -> LandNFT<SignerMiddleware<Provider<Http>, Wallet<SigningKey>>> {
-    let land_address = "0xA536F3E29ACaA2faaf8Ae0F2BAB1F002B7eBB887"
+    let land_address = String::from(env::var("LAND_CONTRACT").expect("error"))
         .parse::<Address>()
         .unwrap();
     let land_contract = LandNFT::new(land_address, enable_provider().await);
@@ -87,7 +84,7 @@ async fn land_contract() -> LandNFT<SignerMiddleware<Provider<Http>, Wallet<Sign
 }
 
 async fn token() -> ERC20<SignerMiddleware<Provider<Http>, Wallet<SigningKey>>> {
-    let token_address = "0x32E0b53B799cC14c455011fE3458306f89aee848"
+    let token_address = String::from(env::var("TOKEN_ADDRESS").expect("error"))
         .parse::<Address>()
         .unwrap();
 
@@ -190,6 +187,7 @@ async fn health_check() -> HttpResponse {
 }
 
 pub fn run(listener: TcpListener) -> Result<Server, std::io::Error> {
+    dotenv().ok();
     let server = HttpServer::new(move || {
         App::new()
             // .app_data(app_state.clone())
