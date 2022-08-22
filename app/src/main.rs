@@ -11,14 +11,15 @@ use std::sync::{Arc, Mutex};
 async fn main() -> std::io::Result<()> {
     dotenv().ok();
     env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
-    let listener = TcpListener::bind("127.0.0.1:8000").expect("failed to bind port");
+    let listener = TcpListener::bind("0.0.0.0:8000").expect("failed to bind port");
     run(listener, enable_provider().await)?.await
 }
 
 async fn enable_provider() -> Arc<SignerMiddleware<Provider<Http>, Wallet<SigningKey>>> {
+    dotenv().ok();
     let provider = Arc::new({
-        let provider =
-            Provider::try_from(String::from(env::var("RPC_URL").expect("error"))).unwrap();
+        // connect to the network
+        let provider = Provider::try_from(String::from(env::var("RPC_URL").unwrap())).unwrap();
         let chain_id = provider.get_chainid().await;
 
         // this wallet's private key

@@ -16,6 +16,10 @@ RUN cargo build --release
 FROM debian:bullseye-slim
 WORKDIR /app
 EXPOSE 8000
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ca-certificates
+
+RUN update-ca-certificates
 COPY --from=builder /app/target/release/realioverse_contracts /usr/local/bin
 
 ENTRYPOINT [ "/usr/local/bin/realioverse_contracts" ]
