@@ -132,9 +132,9 @@ pub fn run(
         .unwrap();
     let token = ERC20::new(token_address, provider.clone());
     let app_state = web::Data::new(DataState {
-        token: token,
-        land_contract: land_contract,
-        provider: provider.clone(),
+        token,
+        land_contract,
+        provider,
     });
     let server = HttpServer::new(move || {
         App::new()
