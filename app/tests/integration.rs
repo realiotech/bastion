@@ -25,7 +25,7 @@ async fn spawn_app() -> String {
 
 async fn enable_provider() -> Arc<SignerMiddleware<Provider<Http>, Wallet<SigningKey>>> {
     let anvil = Anvil::new().spawn();
-    
+
     Arc::new({
         let provider = Provider::<Http>::try_from(anvil.endpoint())
             .expect("Unable to Create Provider")
@@ -33,7 +33,8 @@ async fn enable_provider() -> Arc<SignerMiddleware<Provider<Http>, Wallet<Signin
         let chain_id = provider.get_chainid().await;
 
         // this wallet's private key
-        let wallet = env::var("PRIVATE_KEY").expect("error")
+        let wallet = env::var("PRIVATE_KEY")
+            .expect("error")
             .parse::<LocalWallet>()
             .expect("Unable to derive wallet")
             .with_chain_id(chain_id.expect("msg").as_u64());

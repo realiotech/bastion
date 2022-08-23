@@ -16,7 +16,6 @@ async fn main() -> std::io::Result<()> {
 }
 
 async fn enable_provider() -> Arc<SignerMiddleware<Provider<Http>, Wallet<SigningKey>>> {
-    
     Arc::new({
         // connect to the network
         let provider = Provider::try_from(env::var("RPC_URL").unwrap()).unwrap();
