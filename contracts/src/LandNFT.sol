@@ -140,7 +140,7 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
         uint256 oldCommissionRate = commissionRate;
         if (msg.sender != admin) {
             revert NotAuthorised();
-        } else if (_commissionRate > 20 || _commissionRate < 0) {
+        } else if (_commissionRate > 20) {
             revert ComissionOutOfAllowedRange();
         } else {
             commissionRate = _commissionRate;
