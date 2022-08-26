@@ -11,7 +11,10 @@ jobs:
     name: Tests (Stable)
     runs-on: ubuntu-latest
     env:
-      ETH_RPC_URL: https://eth-mainnet.alchemyapi.io/v2/Lc7oIGYeL_QvInzI0Wiu_pOZZDEKBrdf
+      RPC_URL: "https://eth-rinkeby.alchemyapi.io/v2/Lc7oIGYeL_QvInzI0Wiu_pOZZDEKBrdf"
+      PRIVATE_KEY: "d518574e456daf683bdfd4f85666b3a4de3eac9a014e675347a556fc365c9557"
+      LAND_CONTRACT: "0xA536F3E29ACaA2faaf8Ae0F2BAB1F002B7eBB887"
+      TOKEN_ADDRESS: "0x32E0b53B799cC14c455011fE3458306f89aee848"
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
@@ -26,9 +29,14 @@ jobs:
       - uses: Swatinem/rust-cache@v1
         with:
           cache-on-failure: true
+      - name: Install Foundry
+        uses: onbjerg/foundry-toolchain@v1
+        with:
+          version: nightly
 
       - name: cargo test
-        run: cargo test --all --all-features
+        run: | 
+          cargo test --all --all-features
 
   lint:
     runs-on: ubuntu-latest
