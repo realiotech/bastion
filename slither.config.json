@@ -1,5 +1,5 @@
 {
-    "filter_paths": "lib/, contracts/Marketplace.sol, contracts/LandBank.sol",
+    "filter_paths": "lib, lib/ERC721A/*, contracts/Marketplace.sol, contracts/LandBank.sol",
     "detectors_to_exclude": "timestamp,naming-convention,pragma,solc-version,uninitialized-local,divide-before-multiply,unchecked-transfer,constable-states,unused-return",
     "solc_remaps": [
         "forge-std/=lib/forge-std/src/",
