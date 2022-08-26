@@ -24,10 +24,8 @@ async fn spawn_app() -> String {
 }
 
 async fn enable_provider() -> Arc<SignerMiddleware<Provider<Http>, Wallet<SigningKey>>> {
-    let anvil = Anvil::new().spawn();
-
     Arc::new({
-        let provider = Provider::<Http>::try_from(anvil.endpoint())
+        let provider = Provider::<Http>::try_from(env::var("RPC_URL").expect("error"))
             .expect("Unable to Create Provider")
             .interval(Duration::from_millis(10u64));
         let chain_id = provider.get_chainid().await;
