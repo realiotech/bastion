@@ -38,7 +38,7 @@ jobs:
       - name: cargo test
         run: |
           anvil -f $RPC_URL &
-          sleep 120
+          sleep 10
           cargo test --all --all-features
 
   lint:
