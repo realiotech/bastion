@@ -7,7 +7,6 @@ use ethers::{
     prelude::{k256::ecdsa::SigningKey, SignerMiddleware},
     providers::{Http, Provider},
     signers::Wallet,
-    utils::Anvil,
 };
 use reqwest::Client;
 use std::env;
@@ -25,7 +24,7 @@ async fn spawn_app() -> String {
 
 async fn enable_provider() -> Arc<SignerMiddleware<Provider<Http>, Wallet<SigningKey>>> {
     Arc::new({
-        let provider = Provider::<Http>::try_from(env::var("RPC_URL").expect("error"))
+        let provider = Provider::<Http>::try_from(env::var("TEST_RPC_URL").expect("error"))
             .expect("Unable to Create Provider")
             .interval(Duration::from_millis(10u64));
         let chain_id = provider.get_chainid().await;
@@ -92,65 +91,51 @@ async fn mint_works() {
     let address = spawn_app().await;
 
     let client = Client::new();
-    // curl -v POST "http://127.0.0.1:8000/mint" -H 'Accept: application/json' -H 'Content-Type: application/json' -d '{
 
-    //     "region": [2],
-    //     "price": 2000000000000000000
-    //     }'
-    // let body = r# {
+    let address_user = r#"{
+        "address": "0x27a1876A09581E02E583E002E42EC1322abE9655"
+    }"#;
 
-    //         // "region": [2],
-    //         // "price": 2000000000000000000
-    //         // }'
-    //     r#
-
-    let response = client
-        .get(&format!("{}/health_check", &address))
+    // get total mint
+    let balance_before = client
+        .get(&format!("{}/balance_of", &address))
         .header("Content-Type", "application/json")
         .header("Accept", "application/json")
-        // .body()
+        .body(address_user)
+        .send()
+        .await
+        .expect("failed to execute request");
+
+    let result_before = balance_before.text().await.unwrap();
+
+    let body = r#"{
+        "price": 20000000000000000000,
+        "region": [14]
+    }"#;
+    // mint a new land
+    let response = client
+        .post(&format!("{}/mint", &address))
+        .header("Content-Type", "application/json")
+        .header("Accept", "application/json")
+        .body(body)
         .send()
         .await
         .expect("Failed to execute request");
 
     assert!(response.status().is_success());
-    assert_eq!(Some(0), response.content_length());
+
+    // get new supply
+    let new_supply = client
+        .get(&format!("{}/balance_of", &address))
+        .header("Content-Type", "application/json")
+        .header("Accept", "application/json")
+        .body(address_user)
+        .send()
+        .await
+        .expect("failed to execute request");
+
+    let new_supply_result = new_supply.text().await.unwrap();
+
+    assert!(new_supply_result.parse::<u32>().unwrap() == result_before.parse::<u32>().unwrap() + 1);
+    // assert!(new_supply.text().await.unwrap()) == u32(total_result + 1));
 }
-
-// curl -v POST "http://127.0.0.1:8000/mint" -H 'Accept: application/json' -H 'Content-Type: application/json' -d '{
-
-//     "region": ["0xae0b5f5221983e3e82f0eb91f7345e7848dec067d9dc6a0d2eed5a41245d97f3"],
-//     "price": "0xae0b5f5221983e3e82f0eb91f7345e7848dec067d9dc6a0d2eed5a41245d97f3"
-//     }'
-
-//     curl -v POST "http://127.0.0.1:8000/mint" -H 'Accept: application/json' -H 'Content-Type: application/json' -d '{
-
-//         "region": ["0xae0b5f5221983e3e82f0eb91f7345e7848dec067d9dc6a0d2eed5a41245d97f3"],
-//         "price": "0xae0b5f5221983e3e82f0eb91f7345e7848dec067d9dc6a0d2eed5a41245d97f3"
-//         }'
-
-//     curl -v POST "http://127.0.0.1:8000/mint" -H 'Accept: application/json' -H 'Content-Type: application/json' -d '{
-
-//         "region": ["0"],
-//         "price": "200"
-//         }'
-
-//     curl -v POST "http://127.0.0.1:8000/mint" -H 'Accept: application/json' -H 'Content-Type: application/json' -d '{
-
-//         "region": [2],
-//         "price": 2000000000000000000
-//         }'
-
-//     curl -v POST "http://127.0.0.1:8000/balance_of" -H 'Accept: application/json' -H 'Content-Type: application/json' -d '{
-
-//         "address": "0x27a1876A09581E02E583E002E42EC1322abE9655"
-//         }'
-
-// 0x27a1876A09581E02E583E002E42EC1322abE9655
-
-//          curl -v POST "http://127.0.0.1:8000/total_supply"
-
-//          91000000000000000000000
-//          2000000000000000000
-
-//          curl -v POST "http://127.0.0.1:8000/total_supply"
