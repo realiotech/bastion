@@ -24,22 +24,21 @@ async fn spawn_app() -> String {
 }
 
 async fn enable_provider() -> Arc<SignerMiddleware<Provider<Http>, Wallet<SigningKey>>> {
-    let anvil = Anvil::new().spawn();
-    let provider = Arc::new({
-        let provider = Provider::<Http>::try_from(anvil.endpoint())
+    Arc::new({
+        let provider = Provider::<Http>::try_from(env::var("RPC_URL").expect("error"))
             .expect("Unable to Create Provider")
             .interval(Duration::from_millis(10u64));
         let chain_id = provider.get_chainid().await;
 
         // this wallet's private key
-        let wallet = String::from(env::var("PRIVATE_KEY").expect("error"))
+        let wallet = env::var("PRIVATE_KEY")
+            .expect("error")
             .parse::<LocalWallet>()
             .expect("Unable to derive wallet")
             .with_chain_id(chain_id.expect("msg").as_u64());
 
         SignerMiddleware::new(provider, wallet)
-    });
-    provider
+    })
 }
 
 #[tokio::test]
