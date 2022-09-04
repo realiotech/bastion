@@ -4,7 +4,12 @@ pragma solidity >=0.8.15;
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {ReentrancyGuard} from "@rari-capital/solmate/src/utils/ReentrancyGuard.sol";
 import {ILandNFT} from "./interfaces/ILandNft.sol";
+
 import "./interfaces/ILandBank.sol";
+
+error InsufficientRio();
+error InvalidLand();
+error coolDown();
 
 contract LandBank is ReentrancyGuard {
     // RIO token address
@@ -13,6 +18,18 @@ contract LandBank is ReentrancyGuard {
 
     address public owner;
     address public landNft;
+    address public devFund;
+
+    uint256 public landPrice;
+
+    mapping(uint256 => uint256) timelapse;
+
+    event LandSold(
+        address _seller,
+        uint256[] landId,
+        uint256 amount,
+        uint256 at
+    );
 
     constructor(address _marketplace, address _landNft) {
         require(
@@ -25,29 +42,68 @@ contract LandBank is ReentrancyGuard {
 
     // receive() external payable {}
 
-    function buyLandFromBank(address _buyer, uint256 tokenId)
-        external
-        nonReentrant
-    {
-        require(owner == msg.sender, "Only owner contract can run transaction");
-        ILandNFT(landNft).transferFrom(address(this), _buyer, tokenId);
+    // function buyLandFromBank(address _buyer, uint256 tokenId)
+    //     external
+    //     nonReentrant
+    // {
+    //     require(owner == msg.sender, "Only owner contract can run transaction");
+    //     ILandNFT(landNft).transferFrom(address(this), _buyer, tokenId);
+    // }
+
+    // function sellLandToBank(address _seller, uint256 _tokenId)
+    //     external
+    //     nonReentrant
+    // {
+    //     require(owner == msg.sender, "Only owner contract can run transaction");
+    //     uint256 amountToSend;
+    //     unchecked {
+    //         amountToSend =
+    //             ILandNFT(landNft).totalTileNum() *
+    //             ILandNFT(landNft).getLength(_tokenId);
+    //     }
+    //     IERC20(RIO_TOKEN).transfer(
+    //         _seller,
+    //         (IERC20(RIO_TOKEN).balanceOf(address(this)) / amountToSend)
+    //     );
+    // }
+    function buyLandFromBank(uint256[] memory _tokenIds) external nonReentrant {
+        uint256 i;
+        uint256 numberOfPx = _tokenIds.length;
+        uint256 amountToSend = numberOfPx * landPrice;
+        if (IERC20(RIO_TOKEN).balanceOf(msg.sender) < amountToSend) {
+            revert InsufficientRio();
+        }
+        IERC20(RIO_TOKEN).transferFrom(msg.sender, address(this), amountToSend);
+        for (i; i < numberOfPx; i++) {
+            ILandNFT(landNft).transferFrom(
+                msg.sender,
+                address(this),
+                _tokenIds[i]
+            );
+        }
     }
 
-    function sellLandToBank(address _seller, uint256 _tokenId)
-        external
-        nonReentrant
-    {
-        require(owner == msg.sender, "Only owner contract can run transaction");
+    function sellLandToBank(uint256[] memory _tokenIds) external nonReentrant {
+        uint256 numberOfPx = _tokenIds.length;
         uint256 amountToSend;
+        uint256 i;
         unchecked {
             amountToSend =
-                ILandNFT(landNft).totalTileNum() *
-                ILandNFT(landNft).getLength(_tokenId);
+                (IERC20(RIO_TOKEN).balanceOf(address(this)) /
+                    ILandNFT(landNft).totalTileNum()) *
+                numberOfPx;
         }
-        IERC20(RIO_TOKEN).transfer(
-            _seller,
-            (IERC20(RIO_TOKEN).balanceOf(address(this)) / amountToSend)
-        );
+
+        for (i; i < numberOfPx; i++) {
+            ILandNFT(landNft).transferFrom(
+                msg.sender,
+                address(this),
+                _tokenIds[i]
+            );
+            timelapse[_tokenIds[i]] = block.timestamp;
+        }
+        IERC20(RIO_TOKEN).transfer(msg.sender, amountToSend);
+        emit LandSold(msg.sender, _tokenIds, amountToSend, block.timestamp);
     }
 
     // function withdraw(address _beneficiary, uint256 _amount) external {

@@ -10,7 +10,7 @@ contract DeploymentLandNFT is Script {
 
     function run() external {
         vm.startBroadcast();
-        new LandNFT(dev, dev, price);
+        new LandNFT(dev, price);
         vm.stopBroadcast();
     }
 }

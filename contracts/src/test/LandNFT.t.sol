@@ -41,7 +41,8 @@ contract LandNFTTest is Test {
         vm.label(landBank, "landBank");
         vm.label(brokeDude, "brokeDude");
         vm.label(ethDude, "ethDude");
-        landNFT = new LandNFT(devFund, landBank, price);
+        landNFT = new LandNFT(devFund, price);
+        landNFT.setLandBank(payable(landBank));
     }
 
     function testInitialization() public {
