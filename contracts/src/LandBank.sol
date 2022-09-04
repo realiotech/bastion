@@ -7,6 +7,7 @@ import {ILandNFT} from "./interfaces/ILandNft.sol";
 
 import "./interfaces/ILandBank.sol";
 import "./interfaces/IUniswapV2Router.sol";
+import "./interfaces/IUniswapV2Pair.sol";
 
 error InsufficientRio();
 error InvalidLand();
@@ -18,6 +19,8 @@ contract LandBank is ReentrancyGuard {
     address private constant RIO_TOKEN =
         0xf21661D0D1d76d3ECb8e1B9F1c923DBfffAe4097;
     address public constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+    address private constant UNISWAP_V2_PAIR =
+        0x0b85B3000BEf3E26e01428D1b525A532eA7513b8;
 
     address public owner;
     address public landNft;
@@ -52,43 +55,54 @@ contract LandBank is ReentrancyGuard {
         landPrice = _price;
     }
 
-    function buyLandFromBank(uint256[] memory _tokenIds) external nonReentrant {
+    /**
+    @notice msg.sender can buy land directly from LandBank contract
+    @param _tokenIds array of land user would like to buy
+    todo getPrice for landNFT allow , how the price is determined 
+    */
+    function buyLandFromBank(uint256[] memory _tokenIds)
+        external
+        payable
+        nonReentrant
+    {
         uint256 i;
         uint256 numberOfPx = _tokenIds.length;
         uint256 amountToSend = numberOfPx * landPrice;
         address[] memory path = new address[](2);
         path[0] = address(RIO_TOKEN);
         path[1] = address(WETH);
-
-        // Approve the Uniswap Router contract
-
         for (i; i < _tokenIds.length; i++) {
             if (timelapse[_tokenIds[i]] + 5 days > block.timestamp) {
                 revert coolDown();
             }
         }
-        if (IERC20(RIO_TOKEN).balanceOf(msg.sender) < amountToSend) {
-            revert InsufficientRio();
-        }
-        // Transfer the amount of RIO to the contract
-        bool success = IERC20(RIO_TOKEN).transferFrom(
-            msg.sender,
-            address(this),
-            amountToSend
-        );
-        if (!success) {
-            revert FailedTransfer();
-        }
-        uint256 amountIn = (amountToSend * 20) / 100;
-        uint256 amountOutMin = getAmountOutMin(amountIn, path);
-        IERC20(RIO_TOKEN).approve(UNISWAP_V2_ROUTER, amountIn);
-        IUniswapV2Router(UNISWAP_V2_ROUTER).swapExactTokensForETH(
-            amountIn,
-            amountOutMin,
-            path,
-            owner,
-            block.timestamp
-        );
+        uint256 minAmountRio = getTokenPrice(amountToSend);
+        // Approve the Uniswap Router contract
+        if (amountToSend > 0 || msg.value == 0) {
+            if (IERC20(RIO_TOKEN).balanceOf(msg.sender) < minAmountRio) {
+                revert InsufficientRio();
+            }
+            // Transfer the amount of RIO to the contract
+            bool success = IERC20(RIO_TOKEN).transferFrom(
+                msg.sender,
+                address(this),
+                amountToSend
+            );
+            if (!success) {
+                revert FailedTransfer();
+            }
+            uint256 amountIn = (amountToSend * 20) / 100;
+            uint256 amountOutMin = getAmountOutMin(amountIn, path);
+            IERC20(RIO_TOKEN).approve(UNISWAP_V2_ROUTER, amountIn);
+            IUniswapV2Router(UNISWAP_V2_ROUTER).swapExactTokensForETH(
+                amountIn,
+                amountOutMin,
+                path,
+                owner,
+                block.timestamp
+            );
+        } else if (msg.value > 0 || msg.value > amountToSend) {}
+        // transfer land to buyer
         for (i; i < numberOfPx; i++) {
             ILandNFT(landNft).transferFrom(
                 address(this),
@@ -98,6 +112,11 @@ contract LandBank is ReentrancyGuard {
         }
     }
 
+    /**
+    @notice msg.sender can buy land directly from LandBank contract
+    @param _tokenIds array of land user would like to buy
+    todo getPrice for landNFT allow , how the price is determined 
+    */
     function sellLandToBank(uint256[] memory _tokenIds) external nonReentrant {
         uint256 numberOfPx = _tokenIds.length;
         uint256 amountToSend;
@@ -141,4 +160,13 @@ contract LandBank is ReentrancyGuard {
             .getAmountsOut(_amountIn, path);
         return amountOutMins[path.length - 1];
     }
+
+    // calculate price based on pair reserves
+    function getTokenPrice(uint256 amount) public view returns (uint256) {
+        IUniswapV2Pair pair = IUniswapV2Pair(UNISWAP_V2_PAIR);
+        (uint256 Res0, uint256 Res1, ) = pair.getReserves();
+        return ((amount * Res1) / Res0);
+    }
+
+    receive() external payable {}
 }

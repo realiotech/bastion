@@ -42,7 +42,7 @@ contract LandBankTest is Test {
         landBank = new LandBank(admin, address(landNFT));
         landNFT.setLandBank(payable(address(landBank)));
         vm.prank(admin);
-        landBank.setPrice(2000e18);
+        landBank.setPrice(200e18);
     }
 
     function test_initialization() public {
