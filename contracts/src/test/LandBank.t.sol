@@ -41,6 +41,8 @@ contract LandBankTest is Test {
         // landNFT = new LandNFT(devFund, price);
         landBank = new LandBank(admin, address(landNFT));
         landNFT.setLandBank(payable(address(landBank)));
+        vm.prank(admin);
+        landBank.setPrice(2000e18);
     }
 
     function test_initialization() public {
@@ -74,7 +76,7 @@ contract LandBankTest is Test {
         assert(address(devFund).balance > oldDevBalance);
     }
 
-    function test_sell_to_land() public {
+    function test_sell_to_bank() public {
         mint_utils();
         // vm.startPrank(rioWhale);
         ILandNFT(address(landNFT)).approve(address(landBank), 0);
@@ -85,5 +87,20 @@ contract LandBankTest is Test {
             ILandNFT(address(landNFT)).ownerOf(tokenId[0]),
             address(landBank)
         );
+    }
+
+    function test_buy_from_bank() public {
+        mint_utils();
+        uint256 oldBalance = address(admin).balance;
+        ILandNFT(address(landNFT)).approve(address(landBank), 0);
+        uint256[] memory tokenId = new uint256[](1);
+        tokenId[0] = 0;
+        landBank.sellLandToBank(tokenId);
+        IERC20(RIO_TOKEN).approve(address(landBank), 2**256 - 1);
+        vm.expectRevert(coolDown.selector);
+        landBank.buyLandFromBank(tokenId);
+        vm.warp(block.timestamp + 7 days);
+        landBank.buyLandFromBank(tokenId);
+        assert(address(admin).balance > oldBalance);
     }
 }

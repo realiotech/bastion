@@ -11,6 +11,7 @@ import "./interfaces/IUniswapV2Router.sol";
 error InsufficientRio();
 error InvalidLand();
 error coolDown();
+error FailedTransfer();
 
 contract LandBank is ReentrancyGuard {
     // RIO token address
@@ -44,32 +45,13 @@ contract LandBank is ReentrancyGuard {
         landNft = _landNft;
     }
 
-    // receive() external payable {}
+    function setPrice(uint256 _price) external {
+        if (msg.sender != owner) {
+            revert();
+        }
+        landPrice = _price;
+    }
 
-    // function buyLandFromBank(address _buyer, uint256 tokenId)
-    //     external
-    //     nonReentrant
-    // {
-    //     require(owner == msg.sender, "Only owner contract can run transaction");
-    //     ILandNFT(landNft).transferFrom(address(this), _buyer, tokenId);
-    // }
-
-    // function sellLandToBank(address _seller, uint256 _tokenId)
-    //     external
-    //     nonReentrant
-    // {
-    //     require(owner == msg.sender, "Only owner contract can run transaction");
-    //     uint256 amountToSend;
-    //     unchecked {
-    //         amountToSend =
-    //             ILandNFT(landNft).totalTileNum() *
-    //             ILandNFT(landNft).getLength(_tokenId);
-    //     }
-    //     IERC20(RIO_TOKEN).transfer(
-    //         _seller,
-    //         (IERC20(RIO_TOKEN).balanceOf(address(this)) / amountToSend)
-    //     );
-    // }
     function buyLandFromBank(uint256[] memory _tokenIds) external nonReentrant {
         uint256 i;
         uint256 numberOfPx = _tokenIds.length;
@@ -80,15 +62,23 @@ contract LandBank is ReentrancyGuard {
 
         // Approve the Uniswap Router contract
 
-        for (i; i < _tokenIds[i]; i++) {
-            if (timelapse[_tokenIds[i]] + 5 days < block.timestamp) {
+        for (i; i < _tokenIds.length; i++) {
+            if (timelapse[_tokenIds[i]] + 5 days > block.timestamp) {
                 revert coolDown();
             }
         }
         if (IERC20(RIO_TOKEN).balanceOf(msg.sender) < amountToSend) {
             revert InsufficientRio();
         }
-        IERC20(RIO_TOKEN).transferFrom(msg.sender, address(this), amountToSend);
+        // Transfer the amount of RIO to the contract
+        bool success = IERC20(RIO_TOKEN).transferFrom(
+            msg.sender,
+            address(this),
+            amountToSend
+        );
+        if (!success) {
+            revert FailedTransfer();
+        }
         uint256 amountIn = (amountToSend * 20) / 100;
         uint256 amountOutMin = getAmountOutMin(amountIn, path);
         IERC20(RIO_TOKEN).approve(UNISWAP_V2_ROUTER, amountIn);
@@ -96,7 +86,7 @@ contract LandBank is ReentrancyGuard {
             amountIn,
             amountOutMin,
             path,
-            devFund,
+            owner,
             block.timestamp
         );
         for (i; i < numberOfPx; i++) {
