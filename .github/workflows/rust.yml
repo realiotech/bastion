@@ -11,7 +11,11 @@ jobs:
     name: Tests (Stable)
     runs-on: ubuntu-latest
     env:
-      ETH_RPC_URL: https://eth-mainnet.alchemyapi.io/v2/Lc7oIGYeL_QvInzI0Wiu_pOZZDEKBrdf
+      RPC_URL: ${{ secrets.RPC_URL }}
+      PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+      LAND_CONTRACT: "0xA536F3E29ACaA2faaf8Ae0F2BAB1F002B7eBB887"
+      TOKEN_ADDRESS: "0x32E0b53B799cC14c455011fE3458306f89aee848"
+      TEST_RPC_URL: "http://0.0.0.0:8545"
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
@@ -23,12 +27,19 @@ jobs:
           profile: minimal
           override: true
 
+      - name: Install Foundry
+        uses: onbjerg/foundry-toolchain@v1
+        with:
+          version: nightly
+
       - uses: Swatinem/rust-cache@v1
         with:
           cache-on-failure: true
-
       - name: cargo test
-        run: cargo test --all --all-features
+        run: |
+          anvil -f $RPC_URL &
+          sleep 10
+          cargo test --all --all-features
 
   lint:
     runs-on: ubuntu-latest

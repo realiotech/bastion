@@ -38,11 +38,15 @@ contract LandBank is ReentrancyGuard {
         nonReentrant
     {
         require(owner == msg.sender, "Only owner contract can run transaction");
+        uint256 amountToSend;
+        unchecked {
+            amountToSend =
+                ILandNFT(landNft).totalTileNum() *
+                ILandNFT(landNft).getLength(_tokenId);
+        }
         IERC20(RIO_TOKEN).transfer(
             _seller,
-            (IERC20(RIO_TOKEN).balanceOf(address(this)) /
-                ILandNFT(landNft).totalTileNum()) *
-                ILandNFT(landNft).getLength(_tokenId)
+            (IERC20(RIO_TOKEN).balanceOf(address(this)) / amountToSend)
         );
     }
 
