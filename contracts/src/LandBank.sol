@@ -10,6 +10,7 @@ import "./interfaces/IUniswapV2Router.sol";
 import "./interfaces/IUniswapV2Pair.sol";
 
 error InsufficientRio();
+error InsufficientEthBalance();
 error InvalidLand();
 error coolDown();
 error FailedTransfer();
@@ -28,7 +29,7 @@ contract LandBank is ReentrancyGuard {
     address private constant UNISWAP_V2_ROUTER =
         0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;
 
-    uint256 public landPrice;
+    // uint256 public landPrice;
 
     mapping(uint256 => uint256) timelapse;
 
@@ -39,20 +40,20 @@ contract LandBank is ReentrancyGuard {
         uint256 at
     );
 
-    constructor(address _marketplace, address _landNft) {
+    event LandBought(
+        address _buyer,
+        uint256[] landId,
+        uint256 amount,
+        uint256 at
+    );
+
+    constructor(address _devFund, address _landNft) {
         require(
-            _marketplace != address(0) && _landNft != address(0),
+            _devFund != address(0) && _landNft != address(0),
             "can't set zero address"
         );
-        owner = _marketplace;
+        devFund = _devFund;
         landNft = _landNft;
-    }
-
-    function setPrice(uint256 _price) external {
-        if (msg.sender != owner) {
-            revert();
-        }
-        landPrice = _price;
     }
 
     /**
@@ -65,21 +66,21 @@ contract LandBank is ReentrancyGuard {
         payable
         nonReentrant
     {
-        uint256 i;
         uint256 numberOfPx = _tokenIds.length;
-        uint256 amountToSend = numberOfPx * landPrice;
-        address[] memory path = new address[](2);
-        path[0] = address(RIO_TOKEN);
-        path[1] = address(WETH);
+        uint256 amountToSend = numberOfPx * getPrice();
+        uint256 i;
         for (i; i < _tokenIds.length; i++) {
             if (timelapse[_tokenIds[i]] + 5 days > block.timestamp) {
                 revert coolDown();
             }
         }
-        uint256 minAmountRio = getTokenPrice(amountToSend);
+        // uint256 minAmountRio = getTokenPrice(amountToSend);
         // Approve the Uniswap Router contract
-        if (amountToSend > 0 || msg.value == 0) {
-            if (IERC20(RIO_TOKEN).balanceOf(msg.sender) < minAmountRio) {
+        address[] memory path = new address[](2);
+        path[0] = address(RIO_TOKEN);
+        path[1] = address(WETH);
+        if (msg.value == 0) {
+            if (IERC20(RIO_TOKEN).balanceOf(msg.sender) < amountToSend) {
                 revert InsufficientRio();
             }
             // Transfer the amount of RIO to the contract
@@ -91,25 +92,46 @@ contract LandBank is ReentrancyGuard {
             if (!success) {
                 revert FailedTransfer();
             }
-            uint256 amountIn = (amountToSend * 20) / 100;
+            uint256 amountIn = (amountToSend * 10) / 100;
             uint256 amountOutMin = getAmountOutMin(amountIn, path);
             IERC20(RIO_TOKEN).approve(UNISWAP_V2_ROUTER, amountIn);
             IUniswapV2Router(UNISWAP_V2_ROUTER).swapExactTokensForETH(
                 amountIn,
                 amountOutMin,
                 path,
-                owner,
+                devFund,
                 block.timestamp
             );
-        } else if (msg.value > 0 || msg.value > amountToSend) {}
-        // transfer land to buyer
-        for (i; i < numberOfPx; i++) {
-            ILandNFT(landNft).transferFrom(
+        } else if (
+            msg.value > 0 || IERC20(RIO_TOKEN).balanceOf(msg.sender) == 0
+        ) {
+            uint256 minAmount = getAmountOutMin(amountToSend, path);
+            if (msg.value < minAmount) {
+                revert InsufficientEthBalance();
+            }
+            // 10% of funds are sent to the dev address
+            payable(devFund).transfer(msg.value / 10);
+            // swap rest of funds 90 % to RIO token
+            uint256 amountIn = (msg.value * 9) / 10;
+            address[] memory new_path = new address[](2);
+            new_path[0] = address(WETH);
+            new_path[1] = address(RIO_TOKEN);
+            uint256 amountOutMin = getAmountOutMin(amountIn, path);
+            IUniswapV2Router(UNISWAP_V2_ROUTER).swapExactETHForTokens{
+                value: amountIn
+            }(amountOutMin, new_path, address(this), block.timestamp);
+        }
+
+        for (uint256 j; j < numberOfPx; j++) {
+            ILandNFT(landNft).safeTransferFrom(
                 address(this),
                 msg.sender,
-                _tokenIds[i]
+                _tokenIds[j]
             );
+            timelapse[_tokenIds[j]] = block.timestamp;
         }
+
+        emit LandBought(msg.sender, _tokenIds, amountToSend, block.timestamp);
     }
 
     /**
@@ -122,10 +144,7 @@ contract LandBank is ReentrancyGuard {
         uint256 amountToSend;
         uint256 i;
         unchecked {
-            amountToSend =
-                (IERC20(RIO_TOKEN).balanceOf(address(this)) /
-                    ILandNFT(landNft).totalTileNum()) *
-                numberOfPx;
+            amountToSend = getPrice() * numberOfPx;
         }
 
         for (i; i < numberOfPx; i++) {
@@ -140,17 +159,6 @@ contract LandBank is ReentrancyGuard {
         emit LandSold(msg.sender, _tokenIds, amountToSend, block.timestamp);
     }
 
-    // function withdraw(address _beneficiary, uint256 _amount) external {
-    //     require(
-    //         owner == msg.sender,
-    //         "Only owner contract can call withdraw function"
-    //     );
-    //     require(
-    //         _amount <= IERC20(RIO_TOKEN).balanceOf(address(this)),
-    //         "Too large amount"
-    //     );
-    //     IERC20(RIO_TOKEN).transfer(_beneficiary, _amount);
-    // }
     function getAmountOutMin(uint256 _amountIn, address[] memory path)
         public
         view
@@ -162,10 +170,25 @@ contract LandBank is ReentrancyGuard {
     }
 
     // calculate price based on pair reserves
+    // reserve 0 = reserveEth, reserve 1 = reserveRio
     function getTokenPrice(uint256 amount) public view returns (uint256) {
         IUniswapV2Pair pair = IUniswapV2Pair(UNISWAP_V2_PAIR);
         (uint256 Res0, uint256 Res1, ) = pair.getReserves();
         return ((amount * Res1) / Res0);
+    }
+
+    /**
+     * getPrice function determines the price landBank value for pixel
+     * price = total LandBank Holding / Number of pixel circulating
+     */
+    function getPrice() public returns (uint256) {
+        uint256 holding = IERC20(RIO_TOKEN).balanceOf(address(this));
+        uint256 PIXEL_SUPPLY = ILandNFT(landNft).totalTileNum();
+        uint256 landPrice;
+        unchecked {
+            landPrice = holding / PIXEL_SUPPLY;
+        }
+        return landPrice;
     }
 
     receive() external payable {}

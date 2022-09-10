@@ -25,7 +25,7 @@ contract LandNFTTest is Test {
         0xf21661D0D1d76d3ECb8e1B9F1c923DBfffAe4097;
     address private constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
     uint256 public constant FEE_MULTIPLIER = (97 / uint256(100));
-    uint256 public price = 0.01 ether;
+    uint256 public price = 0.04 ether;
 
     LandNFT landNFT;
     Utilities internal utils;
@@ -145,9 +145,9 @@ contract LandNFTTest is Test {
         regions[1] = 5;
         regions[2] = 6;
         uint256 newRioAmount = 1 * 10**18;
-        IERC20(RIO_TOKEN).approve(address(landNFT), newRioAmount);
+        IERC20(RIO_TOKEN).approve(address(landNFT), 2**256 - 1);
         vm.expectRevert(InsufficientBalance.selector);
-        landNFT.mint(regions, rioAmount);
+        landNFT.mint(regions, newRioAmount);
     }
 
     function testSafeMintWithETH() public {

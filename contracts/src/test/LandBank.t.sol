@@ -37,12 +37,12 @@ contract LandBankTest is Test {
         address payable[] memory users = utils.createUsers(4);
         admin = users[1];
         devFund = users[2];
+        ethDude = users[3];
         landNFT = new LandNFT(devFund, price);
         // landNFT = new LandNFT(devFund, price);
         landBank = new LandBank(admin, address(landNFT));
         landNFT.setLandBank(payable(address(landBank)));
         vm.prank(admin);
-        landBank.setPrice(200e18);
     }
 
     function test_initialization() public {
@@ -83,13 +83,10 @@ contract LandBankTest is Test {
         uint256[] memory tokenId = new uint256[](1);
         tokenId[0] = 0;
         landBank.sellLandToBank(tokenId);
-        assertEq(
-            ILandNFT(address(landNFT)).ownerOf(tokenId[0]),
-            address(landBank)
-        );
+        assertEq(ILandNFT(address(landNFT)).ownerOf(0), address(landBank));
     }
 
-    function test_buy_from_bank() public {
+    function test_buy_from_bank_rio() public {
         mint_utils();
         uint256 oldBalance = address(admin).balance;
         ILandNFT(address(landNFT)).approve(address(landBank), 0);
@@ -102,5 +99,39 @@ contract LandBankTest is Test {
         vm.warp(block.timestamp + 7 days);
         landBank.buyLandFromBank(tokenId);
         assert(address(admin).balance > oldBalance);
+        console2.log(landBank.getPrice());
+    }
+
+    function test_buy_from_bank_eth() public {
+        mint_utils();
+        uint256 oldBalance = address(admin).balance;
+        ILandNFT(address(landNFT)).approve(address(landBank), 0);
+        uint256[] memory tokenId = new uint256[](1);
+        tokenId[0] = 0;
+        landBank.sellLandToBank(tokenId);
+        vm.stopPrank();
+        // prank ethdude
+        vm.startPrank(ethDude);
+        IERC20(RIO_TOKEN).approve(address(landBank), 2**256 - 1);
+        vm.expectRevert(coolDown.selector);
+        landBank.buyLandFromBank(tokenId);
+        // get minimum price
+        address[] memory path = new address[](2);
+        path[0] = address(RIO_TOKEN);
+        path[1] = address(WETH);
+        uint256 Price = landBank.getPrice();
+        uint256 minAmount = landBank.getAmountOutMin(
+            Price * tokenId.length,
+            path
+        );
+        console2.log(minAmount);
+        vm.warp(block.timestamp + 7 days);
+        vm.expectRevert(InsufficientEthBalance.selector);
+        landBank.buyLandFromBank{value: minAmount - 1}(tokenId);
+        // buy now with full amount
+        landBank.buyLandFromBank{value: minAmount}(tokenId);
+        assert(address(admin).balance > oldBalance);
+        // check if owner is eth dude
+        assertEq(landNFT.ownerOf(tokenId[0]), ethDude);
     }
 }

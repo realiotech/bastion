@@ -307,10 +307,11 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
     }
 
     // calculate price based on pair reserves
+    // reserve 0 = reserveEth, reserve 1 = reserveRio
     function getTokenPrice(uint256 amount) public view returns (uint256) {
         IUniswapV2Pair pair = IUniswapV2Pair(UNISWAP_V2_PAIR);
         (uint256 Res0, uint256 Res1, ) = pair.getReserves();
-        return ((amount * Res0) / Res1);
+        return ((amount * Res1) / Res0);
     }
 
     /// @notice Returns a token URI
