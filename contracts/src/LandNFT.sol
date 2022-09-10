@@ -76,6 +76,18 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
     event ContractUnpaused(bool indexed paused);
     event LandSold(address indexed buyer, uint256[] indexed region);
 
+    struct Coordinate {
+        uint256 lat;
+        uint256 long;
+    }
+
+    struct Pixel {
+        Coordinate a;
+        Coordinate b;
+        Coordinate c;
+        Coordinate d;
+    }
+
     //check if the region belongs to somebody.
     // TODO: Check this doesnt make much sense
     modifier notOwned(uint256[] memory region) {
@@ -207,7 +219,7 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
     /// @param rioAmount The amount of RIO to be transferred
     // TODO: what happens if the users sends too much rio?
     // TODO: Should the rio mint and ether mint function be seperate?
-    function mint(uint256[] memory region, uint256 rioAmount)
+    function mint(Pixel[] memory region, uint256 rioAmount)
         external
         payable
         notOwned(region)
