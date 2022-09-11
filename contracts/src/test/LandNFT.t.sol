@@ -109,13 +109,8 @@ contract LandNFTTest is Test {
 
     function testSafeMintWithRio() public {
         vm.startPrank(rioWhale);
-        // uint256[] memory regions = new uint256[](3);
-        // regions[0] = 1;
-        // regions[1] = 2;
-        // regions[2] = 3;
-        // Pixel[] memory regions = new Pixel[](3);
+
         ILandNFT.Pixel[] memory regions = new ILandNFT.Pixel[](3);
-        // ILandNFT.ILandNFT.Coordonate memory ILandNFT.Coordonate;
 
         regions[0] = ILandNFT.Pixel(
             ILandNFT.Coordonate(0, 1),
@@ -261,11 +256,6 @@ contract LandNFTTest is Test {
         vm.expectRevert(InsufficientBalance.selector);
         landNFT.mint{value: cheapSkate}(regions, 0);
     }
-
-    // function testTokenURI() public {
-    //     string memory uri = landNFT.tokenURI(1);
-    //     assertEq(uri, "");
-    // }
 
     receive() external payable {}
 }

@@ -32,18 +32,6 @@ contract LandBankTest is Test {
     LandBank landBank;
     Utilities internal utils;
 
-    // struct ILandNFT.Coordonate {
-    //     uint256 lat;
-    //     uint256 long;
-    // }
-
-    // struct Pixel {
-    //     ILandNFT.Coordonate a;
-    //     ILandNFT.Coordonate b;
-    //     ILandNFT.Coordonate c;
-    //     ILandNFT.Coordonate d;
-    // }
-
     function setUp() public {
         utils = new Utilities();
         address payable[] memory users = utils.createUsers(4);
