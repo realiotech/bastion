@@ -5,6 +5,18 @@ pragma solidity >=0.8.15;
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 interface ILandNFT is IERC721 {
+    struct Coordonate {
+        uint256 lat;
+        uint256 long;
+    }
+
+    struct Pixel {
+        Coordonate a;
+        Coordonate b;
+        Coordonate c;
+        Coordonate d;
+    }
+
     function admin() external returns (address);
 
     function WETH() external returns (address);

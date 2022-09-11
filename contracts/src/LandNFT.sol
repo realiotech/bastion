@@ -11,6 +11,7 @@ import {SafeTransferLib} from "@rari-capital/solmate/src/utils/SafeTransferLib.s
 
 import "./interfaces/IUniswapV2Router.sol";
 import "./interfaces/IUniswapV2Pair.sol";
+import "./interfaces/ILandNft.sol";
 
 error CannotSetAddressZero();
 error NoTilesSelected();
@@ -56,6 +57,9 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
     uint256 public price; // each tile costs 500 RIO
     uint256 public tilesBought; // total supply of tiles
 
+    ILandNFT.Pixel[] pixelsBought;
+
+    // mapping(uint256 => Pixel) pixelId;
     mapping(uint256 => bool) public isOwned;
     mapping(uint256 => address) public firstOwners;
 
@@ -74,7 +78,7 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
     );
     event ContractPaused(bool indexed paused);
     event ContractUnpaused(bool indexed paused);
-    event LandSold(address indexed buyer, uint256[] indexed region);
+    event LandSold(address indexed buyer, ILandNFT.Pixel[] indexed region);
 
     //check if the region belongs to somebody.
     // TODO: Check this doesnt make much sense
@@ -90,6 +94,39 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
             if (isOwned[region[i]]) {
                 ownerStatus = true;
                 break;
+            }
+        }
+        if (ownerStatus) {
+            revert RegionAlreadyOwned();
+        }
+        _;
+    }
+
+    //todo check pixel intersect logic
+    modifier notOwnedPixel(ILandNFT.Pixel[] memory region) {
+        if (region.length == 0) {
+            revert NoTilesSelected();
+        }
+        bool ownerStatus;
+        for (uint256 i; i < region.length; i++) {
+            ILandNFT.Pixel memory pixel = region[i];
+            ILandNFT.Coordonate memory _topL = pixel.a;
+            ILandNFT.Coordonate memory _topR = pixel.b;
+            ILandNFT.Coordonate memory _botR = pixel.c;
+            ILandNFT.Coordonate memory _botL = pixel.d;
+            for (uint256 j; j < pixelsBought.length; j++) {
+                ILandNFT.Coordonate memory topL = pixelsBought[j].a;
+                ILandNFT.Coordonate memory topR = pixelsBought[j].b;
+                ILandNFT.Coordonate memory botR = pixelsBought[j].c;
+                ILandNFT.Coordonate memory botL = pixelsBought[j].d;
+
+                if (
+                    (_topR.lat <= botL.lat || _botL.lat >= topR.lat) ||
+                    (_topR.long <= botL.long || _botL.long >= topR.long)
+                ) {
+                    ownerStatus = true;
+                    break;
+                }
             }
         }
         if (ownerStatus) {
@@ -204,10 +241,11 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
     /// @param rioAmount The amount of RIO to be transferred
     // TODO: what happens if the users sends too much rio?
     // TODO: Should the rio mint and ether mint function be seperate?
-    function mint(uint256[] memory region, uint256 rioAmount)
+    function mint(ILandNFT.Pixel[] memory region, uint256 rioAmount)
         external
         payable
-        notOwned(region)
+        // REVIEW logic notOwned
+        notOwnedPixel(region)
         whenNotPaused
     {
         if (totalSupply() >= MAX_TILE_NUM) {
@@ -216,9 +254,11 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
         // number of tiles to be mints
         uint256 numberOfTiles = region.length;
         // Loop through the number of tiles and mark them as owned
-        for (uint256 i; i < numberOfTiles; i++) {
-            isOwned[region[i]] = true;
-        }
+        // update owned logic
+
+        // for (uint256 i; i < numberOfTiles; i++) {
+        //     isOwned[region[i]] = true;
+        // }
         if (rioAmount > 0 || msg.value == 0) {
             address[] memory path = new address[](2);
             path[0] = address(RIO_TOKEN);

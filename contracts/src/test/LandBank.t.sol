@@ -32,6 +32,18 @@ contract LandBankTest is Test {
     LandBank landBank;
     Utilities internal utils;
 
+    // struct ILandNFT.Coordonate {
+    //     uint256 lat;
+    //     uint256 long;
+    // }
+
+    // struct Pixel {
+    //     ILandNFT.Coordonate a;
+    //     ILandNFT.Coordonate b;
+    //     ILandNFT.Coordonate c;
+    //     ILandNFT.Coordonate d;
+    // }
+
     function setUp() public {
         utils = new Utilities();
         address payable[] memory users = utils.createUsers(4);
@@ -51,10 +63,27 @@ contract LandBankTest is Test {
 
     function mint_utils() public returns (uint256 rioAmount) {
         vm.startPrank(rioWhale);
-        uint256[] memory regions = new uint256[](3);
-        regions[0] = 1;
-        regions[1] = 2;
-        regions[2] = 3;
+        ILandNFT.Pixel[] memory regions = new ILandNFT.Pixel[](3);
+        // ILandNFT.ILandNFT.Coordonate memory ILandNFT.Coordonate;
+
+        regions[0] = ILandNFT.Pixel(
+            ILandNFT.Coordonate(0, 1),
+            ILandNFT.Coordonate(1, 2),
+            ILandNFT.Coordonate(4, 5),
+            ILandNFT.Coordonate(5, 6)
+        );
+        regions[1] = ILandNFT.Pixel(
+            ILandNFT.Coordonate(100, 2),
+            ILandNFT.Coordonate(30, 59),
+            ILandNFT.Coordonate(34, 84),
+            ILandNFT.Coordonate(45, 648)
+        );
+        regions[2] = ILandNFT.Pixel(
+            ILandNFT.Coordonate(103, 23),
+            ILandNFT.Coordonate(330, 594),
+            ILandNFT.Coordonate(324, 834),
+            ILandNFT.Coordonate(453, 6448)
+        );
         address[] memory path = new address[](2);
         path[0] = address(WETH);
         path[1] = address(RIO_TOKEN);
