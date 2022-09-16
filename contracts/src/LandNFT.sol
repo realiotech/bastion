@@ -34,16 +34,11 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
     // RIO token address
     address private constant RIO_TOKEN =
         0xf21661D0D1d76d3ECb8e1B9F1c923DBfffAe4097;
-    // address private constant RIO_TOKEN =
-    //     0x32E0b53B799cC14c455011fE3458306f89aee848;
     address public constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
-    // address public constant WETH = 0xc778417E063141139Fce010982780140Aa0cD5Ab;
     address private constant UNISWAP_V2_ROUTER =
         0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;
     address private constant UNISWAP_V2_PAIR =
         0x0b85B3000BEf3E26e01428D1b525A532eA7513b8;
-    // address private constant UNISWAP_V2_PAIR =
-    //     0xA0778c95D8FE33FC1a2191F8afF72e85acA0258d;
     // admin : can set all parameters
     address public admin;
     // store all funds by ETH
@@ -62,6 +57,7 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
     // mapping(uint256 => Pixel) pixelId;
     mapping(uint256 => bool) public isOwned;
     mapping(uint256 => address) public firstOwners;
+    mapping(uint256 => ILandNFT.Pixel) pixelsId;
 
     event AdminChanged(address indexed newAdmin, address indexed oldAdmin);
     event DevFundChanged(
@@ -94,39 +90,6 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
             if (isOwned[region[i]]) {
                 ownerStatus = true;
                 break;
-            }
-        }
-        if (ownerStatus) {
-            revert RegionAlreadyOwned();
-        }
-        _;
-    }
-
-    //todo check pixel intersect logic
-    modifier notOwnedPixel(ILandNFT.Pixel[] memory region) {
-        if (region.length == 0) {
-            revert NoTilesSelected();
-        }
-        bool ownerStatus;
-        for (uint256 i; i < region.length; i++) {
-            ILandNFT.Pixel memory pixel = region[i];
-            ILandNFT.Coordonate memory _topL = pixel.a;
-            ILandNFT.Coordonate memory _topR = pixel.b;
-            ILandNFT.Coordonate memory _botR = pixel.c;
-            ILandNFT.Coordonate memory _botL = pixel.d;
-            for (uint256 j; j < pixelsBought.length; j++) {
-                ILandNFT.Coordonate memory topL = pixelsBought[j].a;
-                ILandNFT.Coordonate memory topR = pixelsBought[j].b;
-                ILandNFT.Coordonate memory botR = pixelsBought[j].c;
-                ILandNFT.Coordonate memory botL = pixelsBought[j].d;
-
-                if (
-                    (_topR.lat <= botL.lat || _botL.lat >= topR.lat) ||
-                    (_topR.long <= botL.long || _botL.long >= topR.long)
-                ) {
-                    ownerStatus = true;
-                    break;
-                }
             }
         }
         if (ownerStatus) {
@@ -245,7 +208,7 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
         external
         payable
         // REVIEW logic notOwned
-        notOwnedPixel(region)
+        // notOwnedPixel(region)
         whenNotPaused
     {
         if (totalSupply() >= MAX_TILE_NUM) {

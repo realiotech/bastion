@@ -2,6 +2,7 @@
 pragma solidity >=0.8.15;
 
 import "../LandNFT.sol";
+import "../LandBank.sol";
 import "forge-std/Script.sol";
 
 contract DeploymentLandNFT is Script {
@@ -10,7 +11,9 @@ contract DeploymentLandNFT is Script {
 
     function run() external {
         vm.startBroadcast();
-        new LandNFT(dev, price);
+        LandNFT nft = new LandNFT(dev, price);
+        LandBank bank = new LandBank(dev, address(nft));
+        nft.setLandBank(payable(address(bank)));
         vm.stopBroadcast();
     }
 }
