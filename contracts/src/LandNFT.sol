@@ -12,17 +12,7 @@ import {SafeTransferLib} from "@rari-capital/solmate/src/utils/SafeTransferLib.s
 import "./interfaces/IUniswapV2Router.sol";
 import "./interfaces/IUniswapV2Pair.sol";
 import "./interfaces/ILandNft.sol";
-
-error CannotSetAddressZero();
-error NoTilesSelected();
-error RegionAlreadyOwned();
-error NotAuthorised();
-error ComissionOutOfAllowedRange();
-error InsufficientBalance();
-error InvalidToken();
-error NonExistentTokenURI();
-error TransferFailed();
-error MaxTilesReached();
+import "./errors.sol";
 
 /// @title The Realioverse Land NFT
 /// @author Samuel Dare (samuel@realio.fund)

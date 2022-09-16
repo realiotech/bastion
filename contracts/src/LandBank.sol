@@ -8,12 +8,7 @@ import {ILandNFT} from "./interfaces/ILandNft.sol";
 import "./interfaces/ILandBank.sol";
 import "./interfaces/IUniswapV2Router.sol";
 import "./interfaces/IUniswapV2Pair.sol";
-
-error InsufficientRio();
-error InsufficientEthBalance();
-error InvalidLand();
-error coolDown();
-error FailedTransfer();
+import "./errors.sol";
 
 contract LandBank is ReentrancyGuard {
     // RIO token address
