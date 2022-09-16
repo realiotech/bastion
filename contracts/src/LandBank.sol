@@ -15,16 +15,12 @@ contract LandBank is ReentrancyGuard {
     address private constant RIO_TOKEN =
         0xf21661D0D1d76d3ECb8e1B9F1c923DBfffAe4097;
     address public constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
-    address private constant UNISWAP_V2_PAIR =
-        0x0b85B3000BEf3E26e01428D1b525A532eA7513b8;
 
     address public owner;
     address public landNft;
     address public devFund;
     address private constant UNISWAP_V2_ROUTER =
         0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;
-
-    // uint256 public landPrice;
 
     mapping(uint256 => uint256) timelapse;
 
