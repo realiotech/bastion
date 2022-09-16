@@ -63,8 +63,8 @@ contract LandBank is ReentrancyGuard {
     {
         uint256 numberOfPx = _tokenIds.length;
         uint256 amountToSend = numberOfPx * getPrice();
-        uint256 i;
-        for (i; i < _tokenIds.length; i++) {
+
+        for (uint256 i; i < _tokenIds.length; i++) {
             if (timelapse[_tokenIds[i]] + 5 days > block.timestamp) {
                 revert coolDown();
             }
@@ -136,12 +136,12 @@ contract LandBank is ReentrancyGuard {
     function sellLandToBank(uint256[] memory _tokenIds) external nonReentrant {
         uint256 numberOfPx = _tokenIds.length;
         uint256 amountToSend;
-        uint256 i;
+
         unchecked {
             amountToSend = getPrice() * numberOfPx;
         }
 
-        for (i; i < numberOfPx; i++) {
+        for (uint256 i; i < numberOfPx; i++) {
             ILandNFT(landNft).transferFrom(
                 msg.sender,
                 address(this),
