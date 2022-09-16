@@ -1,5 +1,5 @@
 [package]
-name = "bindings"
+name = "foundry-contracts"
 version = "0.0.1"
 edition = "2021"
 

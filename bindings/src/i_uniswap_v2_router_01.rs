@@ -421,11 +421,11 @@ pub mod i_uniswap_v2_router_01 {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethcall(name = "WETH", abi = "WETH()")]
     pub struct WethCall;
@@ -433,11 +433,11 @@ pub mod i_uniswap_v2_router_01 {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethcall(
         name = "addLiquidity",
@@ -457,11 +457,11 @@ pub mod i_uniswap_v2_router_01 {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethcall(
         name = "addLiquidityETH",
@@ -479,11 +479,11 @@ pub mod i_uniswap_v2_router_01 {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethcall(name = "factory", abi = "factory()")]
     pub struct FactoryCall;
@@ -491,11 +491,11 @@ pub mod i_uniswap_v2_router_01 {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethcall(name = "getAmountIn", abi = "getAmountIn(uint256,uint256,uint256)")]
     pub struct GetAmountInCall {
@@ -507,11 +507,11 @@ pub mod i_uniswap_v2_router_01 {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethcall(name = "getAmountOut", abi = "getAmountOut(uint256,uint256,uint256)")]
     pub struct GetAmountOutCall {
@@ -523,11 +523,11 @@ pub mod i_uniswap_v2_router_01 {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethcall(name = "getAmountsIn", abi = "getAmountsIn(uint256,address[])")]
     pub struct GetAmountsInCall {
@@ -538,11 +538,11 @@ pub mod i_uniswap_v2_router_01 {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethcall(name = "getAmountsOut", abi = "getAmountsOut(uint256,address[])")]
     pub struct GetAmountsOutCall {
@@ -553,11 +553,11 @@ pub mod i_uniswap_v2_router_01 {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethcall(name = "quote", abi = "quote(uint256,uint256,uint256)")]
     pub struct QuoteCall {
@@ -569,11 +569,11 @@ pub mod i_uniswap_v2_router_01 {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethcall(
         name = "removeLiquidity",
@@ -592,11 +592,11 @@ pub mod i_uniswap_v2_router_01 {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethcall(
         name = "removeLiquidityETH",
@@ -614,11 +614,11 @@ pub mod i_uniswap_v2_router_01 {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethcall(
         name = "removeLiquidityETHWithPermit",
@@ -640,11 +640,11 @@ pub mod i_uniswap_v2_router_01 {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethcall(
         name = "removeLiquidityWithPermit",
@@ -667,11 +667,11 @@ pub mod i_uniswap_v2_router_01 {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethcall(
         name = "swapETHForExactTokens",
@@ -687,11 +687,11 @@ pub mod i_uniswap_v2_router_01 {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethcall(
         name = "swapExactETHForTokens",
@@ -707,11 +707,11 @@ pub mod i_uniswap_v2_router_01 {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethcall(
         name = "swapExactTokensForETH",
@@ -728,11 +728,11 @@ pub mod i_uniswap_v2_router_01 {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethcall(
         name = "swapExactTokensForTokens",
@@ -749,11 +749,11 @@ pub mod i_uniswap_v2_router_01 {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethcall(
         name = "swapTokensForExactETH",
@@ -770,11 +770,11 @@ pub mod i_uniswap_v2_router_01 {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethcall(
         name = "swapTokensForExactTokens",
@@ -1067,22 +1067,22 @@ pub mod i_uniswap_v2_router_01 {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthAbiType,
         ethers :: contract :: EthAbiCodec,
+        Default,
     )]
     pub struct WethReturn(pub ethers::core::types::Address);
     #[doc = "Container type for all return fields from the `addLiquidity` function with signature `addLiquidity(address,address,uint256,uint256,uint256,uint256,address,uint256)` and selector `[232, 227, 55, 0]`"]
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthAbiType,
         ethers :: contract :: EthAbiCodec,
+        Default,
     )]
     pub struct AddLiquidityReturn {
         pub amount_a: ethers::core::types::U256,
@@ -1093,11 +1093,11 @@ pub mod i_uniswap_v2_router_01 {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthAbiType,
         ethers :: contract :: EthAbiCodec,
+        Default,
     )]
     pub struct AddLiquidityETHReturn {
         pub amount_token: ethers::core::types::U256,
@@ -1108,22 +1108,22 @@ pub mod i_uniswap_v2_router_01 {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthAbiType,
         ethers :: contract :: EthAbiCodec,
+        Default,
     )]
     pub struct FactoryReturn(pub ethers::core::types::Address);
     #[doc = "Container type for all return fields from the `getAmountIn` function with signature `getAmountIn(uint256,uint256,uint256)` and selector `[133, 248, 194, 89]`"]
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthAbiType,
         ethers :: contract :: EthAbiCodec,
+        Default,
     )]
     pub struct GetAmountInReturn {
         pub amount_in: ethers::core::types::U256,
@@ -1132,11 +1132,11 @@ pub mod i_uniswap_v2_router_01 {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthAbiType,
         ethers :: contract :: EthAbiCodec,
+        Default,
     )]
     pub struct GetAmountOutReturn {
         pub amount_out: ethers::core::types::U256,
@@ -1145,11 +1145,11 @@ pub mod i_uniswap_v2_router_01 {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthAbiType,
         ethers :: contract :: EthAbiCodec,
+        Default,
     )]
     pub struct GetAmountsInReturn {
         pub amounts: ::std::vec::Vec<ethers::core::types::U256>,
@@ -1158,11 +1158,11 @@ pub mod i_uniswap_v2_router_01 {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthAbiType,
         ethers :: contract :: EthAbiCodec,
+        Default,
     )]
     pub struct GetAmountsOutReturn {
         pub amounts: ::std::vec::Vec<ethers::core::types::U256>,
@@ -1171,11 +1171,11 @@ pub mod i_uniswap_v2_router_01 {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthAbiType,
         ethers :: contract :: EthAbiCodec,
+        Default,
     )]
     pub struct QuoteReturn {
         pub amount_b: ethers::core::types::U256,
@@ -1184,11 +1184,11 @@ pub mod i_uniswap_v2_router_01 {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthAbiType,
         ethers :: contract :: EthAbiCodec,
+        Default,
     )]
     pub struct RemoveLiquidityReturn {
         pub amount_a: ethers::core::types::U256,
@@ -1198,11 +1198,11 @@ pub mod i_uniswap_v2_router_01 {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthAbiType,
         ethers :: contract :: EthAbiCodec,
+        Default,
     )]
     pub struct RemoveLiquidityETHReturn {
         pub amount_token: ethers::core::types::U256,
@@ -1212,11 +1212,11 @@ pub mod i_uniswap_v2_router_01 {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthAbiType,
         ethers :: contract :: EthAbiCodec,
+        Default,
     )]
     pub struct RemoveLiquidityETHWithPermitReturn {
         pub amount_token: ethers::core::types::U256,
@@ -1226,11 +1226,11 @@ pub mod i_uniswap_v2_router_01 {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthAbiType,
         ethers :: contract :: EthAbiCodec,
+        Default,
     )]
     pub struct RemoveLiquidityWithPermitReturn {
         pub amount_a: ethers::core::types::U256,
@@ -1240,11 +1240,11 @@ pub mod i_uniswap_v2_router_01 {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthAbiType,
         ethers :: contract :: EthAbiCodec,
+        Default,
     )]
     pub struct SwapETHForExactTokensReturn {
         pub amounts: ::std::vec::Vec<ethers::core::types::U256>,
@@ -1253,11 +1253,11 @@ pub mod i_uniswap_v2_router_01 {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthAbiType,
         ethers :: contract :: EthAbiCodec,
+        Default,
     )]
     pub struct SwapExactETHForTokensReturn {
         pub amounts: ::std::vec::Vec<ethers::core::types::U256>,
@@ -1266,11 +1266,11 @@ pub mod i_uniswap_v2_router_01 {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthAbiType,
         ethers :: contract :: EthAbiCodec,
+        Default,
     )]
     pub struct SwapExactTokensForETHReturn {
         pub amounts: ::std::vec::Vec<ethers::core::types::U256>,
@@ -1279,11 +1279,11 @@ pub mod i_uniswap_v2_router_01 {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthAbiType,
         ethers :: contract :: EthAbiCodec,
+        Default,
     )]
     pub struct SwapExactTokensForTokensReturn {
         pub amounts: ::std::vec::Vec<ethers::core::types::U256>,
@@ -1292,11 +1292,11 @@ pub mod i_uniswap_v2_router_01 {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthAbiType,
         ethers :: contract :: EthAbiCodec,
+        Default,
     )]
     pub struct SwapTokensForExactETHReturn {
         pub amounts: ::std::vec::Vec<ethers::core::types::U256>,
@@ -1305,11 +1305,11 @@ pub mod i_uniswap_v2_router_01 {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthAbiType,
         ethers :: contract :: EthAbiCodec,
+        Default,
     )]
     pub struct SwapTokensForExactTokensReturn {
         pub amounts: ::std::vec::Vec<ethers::core::types::U256>,
