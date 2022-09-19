@@ -3,7 +3,7 @@ pragma solidity 0.8.15;
 
 import "forge-std/Test.sol";
 import "../LandBank.sol";
-import "../landNFT.sol";
+import "../LandNFT.sol";
 import {Utilities} from "./utils/Utilities.t.sol";
 import {ILandNFT} from "../interfaces/ILandNft.sol";
 
