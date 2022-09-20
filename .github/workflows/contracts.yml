@@ -88,6 +88,6 @@ jobs:
         run: forge build  
 
       - name: Check bindings are correct
-        run: forge bind --bindings-path ./bindings
+        run: forge bind --bindings-path ./bindings --crate-name bindings
 
     # TODO: Add lints once forge fmt is in
