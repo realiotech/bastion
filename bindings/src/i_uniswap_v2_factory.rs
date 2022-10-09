@@ -72,11 +72,11 @@ pub mod i_uniswap_v2_factory {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethcall(name = "getPair", abi = "getPair(address,address)")]
     pub struct GetPairCall {
@@ -87,11 +87,11 @@ pub mod i_uniswap_v2_factory {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthAbiType,
         ethers :: contract :: EthAbiCodec,
+        Default,
     )]
     pub struct GetPairReturn(pub ethers::core::types::Address);
 }

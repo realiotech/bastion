@@ -78,11 +78,11 @@ pub mod erc721a_ierc721_receiver {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethcall(
         name = "onERC721Received",
@@ -98,11 +98,11 @@ pub mod erc721a_ierc721_receiver {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthAbiType,
         ethers :: contract :: EthAbiCodec,
+        Default,
     )]
     pub struct OnERC721ReceivedReturn(pub [u8; 4]);
 }

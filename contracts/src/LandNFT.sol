@@ -11,17 +11,8 @@ import {SafeTransferLib} from "@rari-capital/solmate/src/utils/SafeTransferLib.s
 
 import "./interfaces/IUniswapV2Router.sol";
 import "./interfaces/IUniswapV2Pair.sol";
-
-error CannotSetAddressZero();
-error NoTilesSelected();
-error RegionAlreadyOwned();
-error NotAuthorised();
-error ComissionOutOfAllowedRange();
-error InsufficientBalance();
-error InvalidToken();
-error NonExistentTokenURI();
-error TransferFailed();
-error MaxTilesReached();
+import "./interfaces/ILandNft.sol";
+import "./errors.sol";
 
 /// @title The Realioverse Land NFT
 /// @author Samuel Dare (samuel@realio.fund)
@@ -31,18 +22,13 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
     using Strings for uint256;
 
     // RIO token address
-    // address private constant RIO_TOKEN =
-    //     0xf21661D0D1d76d3ECb8e1B9F1c923DBfffAe4097;
     address private constant RIO_TOKEN =
-        0x32E0b53B799cC14c455011fE3458306f89aee848;
-    // address public constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
-    address public constant WETH = 0xc778417E063141139Fce010982780140Aa0cD5Ab;
+        0xf21661D0D1d76d3ECb8e1B9F1c923DBfffAe4097;
+    address public constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
     address private constant UNISWAP_V2_ROUTER =
         0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;
-    // address private constant UNISWAP_V2_PAIR =
-    //     0x0b85B3000BEf3E26e01428D1b525A532eA7513b8;
     address private constant UNISWAP_V2_PAIR =
-        0xA0778c95D8FE33FC1a2191F8afF72e85acA0258d;
+        0x0b85B3000BEf3E26e01428D1b525A532eA7513b8;
     // admin : can set all parameters
     address public admin;
     // store all funds by ETH
@@ -56,8 +42,12 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
     uint256 public price; // each tile costs 500 RIO
     uint256 public tilesBought; // total supply of tiles
 
+    ILandNFT.Pixel[] pixelsBought;
+
+    // mapping(uint256 => Pixel) pixelId;
     mapping(uint256 => bool) public isOwned;
     mapping(uint256 => address) public firstOwners;
+    mapping(uint256 => ILandNFT.Pixel) pixelsId;
 
     event AdminChanged(address indexed newAdmin, address indexed oldAdmin);
     event DevFundChanged(
@@ -74,7 +64,7 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
     );
     event ContractPaused(bool indexed paused);
     event ContractUnpaused(bool indexed paused);
-    event LandSold(address indexed buyer, uint256[] indexed region);
+    event LandSold(address indexed buyer, ILandNFT.Pixel[] indexed region);
 
     //check if the region belongs to somebody.
     // TODO: Check this doesnt make much sense
@@ -98,16 +88,13 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
         _;
     }
 
-    constructor(
-        address _devFund,
-        address _landBank,
-        uint256 _price
-    ) ERC721A("RealioVerse", "RVRS") {
-        if (_devFund == address(0) || _landBank == address(0)) {
+    constructor(address _devFund, uint256 _price)
+        ERC721A("RealioVerse", "RVRS")
+    {
+        if (_devFund == address(0)) {
             revert CannotSetAddressZero();
         }
         devFund = _devFund;
-        landBank = _landBank;
         admin = msg.sender;
         commissionRate = 10;
         price = _price;
@@ -207,10 +194,11 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
     /// @param rioAmount The amount of RIO to be transferred
     // TODO: what happens if the users sends too much rio?
     // TODO: Should the rio mint and ether mint function be seperate?
-    function mint(uint256[] memory region, uint256 rioAmount)
+    function mint(ILandNFT.Pixel[] memory region, uint256 rioAmount)
         external
         payable
-        notOwned(region)
+        // REVIEW logic notOwned
+        // notOwnedPixel(region)
         whenNotPaused
     {
         if (totalSupply() >= MAX_TILE_NUM) {
@@ -219,9 +207,11 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
         // number of tiles to be mints
         uint256 numberOfTiles = region.length;
         // Loop through the number of tiles and mark them as owned
-        for (uint256 i; i < numberOfTiles; i++) {
-            isOwned[region[i]] = true;
-        }
+        // update owned logic
+
+        // for (uint256 i; i < numberOfTiles; i++) {
+        //     isOwned[region[i]] = true;
+        // }
         if (rioAmount > 0 || msg.value == 0) {
             address[] memory path = new address[](2);
             path[0] = address(RIO_TOKEN);
@@ -310,6 +300,7 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
     }
 
     // calculate price based on pair reserves
+    // reserve 0 = reserveEth, reserve 1 = reserveRio
     function getTokenPrice(uint256 amount) public view returns (uint256) {
         IUniswapV2Pair pair = IUniswapV2Pair(UNISWAP_V2_PAIR);
         (uint256 Res0, uint256 Res1, ) = pair.getReserves();
@@ -332,6 +323,10 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
             bytes(baseURI).length > 0
                 ? string(abi.encodePacked(baseURI, tokenId.toString()))
                 : "";
+    }
+
+    function totalTileNum() public view returns (uint256) {
+        return tilesBought;
     }
 
     receive() external payable {}
