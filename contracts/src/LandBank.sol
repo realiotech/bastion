@@ -154,6 +154,7 @@ contract LandBank is ReentrancyGuard {
         view
         returns (uint256)
     {
+
         uint256[] memory amountOutMins = IUniswapV2Router(UNISWAP_V2_ROUTER)
             .getAmountsOut(_amountIn, path);
         return amountOutMins[path.length - 1];
@@ -171,6 +172,18 @@ contract LandBank is ReentrancyGuard {
             landPrice = ((holding / PIXEL_SUPPLY) * 12) / 10;
         }
         return landPrice;
+
+        require(owner == msg.sender, "Only owner contract can run transaction");
+        uint256 amountToSend;
+        unchecked {
+            amountToSend =
+                ILandNFT(landNft).totalTileNum() *
+                ILandNFT(landNft).getLength(_tokenId);
+        }
+        IERC20(RIO_TOKEN).transfer(
+            _seller,
+            (IERC20(RIO_TOKEN).balanceOf(address(this)) / amountToSend)
+        );
     }
 
     receive() external payable {}
