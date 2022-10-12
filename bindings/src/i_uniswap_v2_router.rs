@@ -100,11 +100,11 @@ pub mod i_uniswap_v2_router {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethcall(name = "getAmountsOut", abi = "getAmountsOut(uint256,address[])")]
     pub struct GetAmountsOutCall {
@@ -115,11 +115,11 @@ pub mod i_uniswap_v2_router {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethcall(
         name = "swapExactETHForTokens",
@@ -135,11 +135,11 @@ pub mod i_uniswap_v2_router {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethcall(
         name = "swapExactTokensForETH",
@@ -217,11 +217,11 @@ pub mod i_uniswap_v2_router {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthAbiType,
         ethers :: contract :: EthAbiCodec,
+        Default,
     )]
     pub struct GetAmountsOutReturn {
         pub amounts: ::std::vec::Vec<ethers::core::types::U256>,
@@ -230,11 +230,11 @@ pub mod i_uniswap_v2_router {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthAbiType,
         ethers :: contract :: EthAbiCodec,
+        Default,
     )]
     pub struct SwapExactETHForTokensReturn {
         pub amounts: ::std::vec::Vec<ethers::core::types::U256>,

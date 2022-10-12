@@ -89,11 +89,11 @@ pub mod i_land_bank {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethcall(name = "buyLandFromBank", abi = "buyLandFromBank(address,uint256)")]
     pub struct BuyLandFromBankCall {
@@ -104,11 +104,11 @@ pub mod i_land_bank {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethcall(name = "sellLandToBank", abi = "sellLandToBank(address,uint256)")]
     pub struct SellLandToBankCall {
@@ -119,11 +119,11 @@ pub mod i_land_bank {
     #[derive(
         Clone,
         Debug,
-        Default,
         Eq,
         PartialEq,
         ethers :: contract :: EthCall,
         ethers :: contract :: EthDisplay,
+        Default,
     )]
     #[ethcall(name = "withdraw", abi = "withdraw(address,uint256)")]
     pub struct WithdrawCall {
