@@ -39,6 +39,7 @@ contract LandNFTTest is Test {
 
     function setUp() public {
         utils = new Utilities();
+        vm.startPrank(owner);
         address payable[] memory users = utils.createUsers(4);
         devFund = users[0];
         landBank = users[1];
@@ -51,6 +52,7 @@ contract LandNFTTest is Test {
         vm.label(ethDude, "ethDude");
         landNFT = new LandNFT(devFund, price);
         landNFT.setLandBank(payable(landBank));
+        vm.stopPrank();
     }
 
     function testInitialization() public {
