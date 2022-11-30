@@ -16,9 +16,11 @@ pub mod errors {
     use ethers::providers::Middleware;
     #[doc = "errors was auto-generated with ethers-rs Abigen. More information at: https://github.com/gakonst/ethers-rs"]
     use std::sync::Arc;
+    # [rustfmt :: skip] const __ABI : & str = "[]" ;
+    #[doc = r" The parsed JSON-ABI of the contract."]
     pub static ERRORS_ABI: ethers::contract::Lazy<ethers::core::abi::Abi> =
         ethers::contract::Lazy::new(|| {
-            ethers::core::utils::__serde_json::from_str("[]").expect("invalid abi")
+            ethers::core::utils::__serde_json::from_str(__ABI).expect("invalid abi")
         });
     pub struct errors<M>(ethers::contract::Contract<M>);
     impl<M> Clone for errors<M> {
@@ -32,7 +34,7 @@ pub mod errors {
             &self.0
         }
     }
-    impl<M: ethers::providers::Middleware> std::fmt::Debug for errors<M> {
+    impl<M> std::fmt::Debug for errors<M> {
         fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
             f.debug_tuple(stringify!(errors))
                 .field(&self.address())
