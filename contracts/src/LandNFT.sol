@@ -47,10 +47,15 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
 
     ILandNFT.Pixel[] pixelsBought;
 
+    ILandNFT.Pixel[] specialArea;
+
     // mapping(uint256 => Pixel) pixelId;
     mapping(uint256 => bool) public isOwned;
     mapping(uint256 => address) public firstOwners;
-    mapping(uint256 => ILandNFT.Pixel) pixelsId;
+    mapping(uint256 => ILandNFT.Pixel) private pixelsId;
+    mapping(bytes32 => bool) private isSpecialArea;
+    mapping(bytes32 => bool) private areaClaimed;
+    mapping(address => bool) private addressAlreadyClaimed;
 
     event AdminChanged(address indexed newAdmin, address indexed oldAdmin);
     event DevFundChanged(
@@ -87,6 +92,16 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
         }
         if (ownerStatus) {
             revert RegionAlreadyOwned();
+        }
+        _;
+    }
+
+    modifier checkSpecialArea(ILandNFT.Pixel[] memory _region) {
+        uint256 regionLength = _region.length;
+        for (uint256 i; i < regionLength; i++) {
+            bytes32 _hash = keccak256(abi.encode(_region[i]));
+            if (isSpecialArea[_hash]) revert UnauthorizedToMint();
+            // if (isSpecialArea[_hash]) revert UnauthorizedToMint();
         }
         _;
     }
@@ -228,6 +243,7 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
         payable
         // REVIEW logic notOwned
         // notOwnedPixel(region)
+        checkSpecialArea(region)
         whenNotPaused
     {
         if (totalSupply() >= MAX_TILE_NUM) {
