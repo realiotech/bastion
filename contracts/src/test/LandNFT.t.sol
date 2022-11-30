@@ -4,6 +4,7 @@ pragma solidity 0.8.15;
 import "forge-std/Test.sol";
 import "../LandNFT.sol";
 import "../interfaces/ILandNft.sol";
+import "../errors.sol";
 import {Utilities} from "./utils/Utilities.t.sol";
 
 contract LandNFTTest is Test {
@@ -28,11 +29,17 @@ contract LandNFTTest is Test {
     uint256 public constant FEE_MULTIPLIER = (97 / uint256(100));
     uint256 public price = 0.04 ether;
 
+    bytes32 root =
+        0xdba820a8485fdb13bb5afb32a8b3039412279729e48e41702a2d8a4254e0af39;
+
+    address claimer = 0x27a1876A09581E02E583E002E42EC1322abE9655;
+
     LandNFT landNFT;
     Utilities internal utils;
 
     function setUp() public {
         utils = new Utilities();
+        vm.startPrank(owner);
         address payable[] memory users = utils.createUsers(4);
         devFund = users[0];
         landBank = users[1];
@@ -45,6 +52,7 @@ contract LandNFTTest is Test {
         vm.label(ethDude, "ethDude");
         landNFT = new LandNFT(devFund, price);
         landNFT.setLandBank(payable(landBank));
+        vm.stopPrank();
     }
 
     function testInitialization() public {
@@ -255,6 +263,47 @@ contract LandNFTTest is Test {
         );
         vm.expectRevert(InsufficientBalance.selector);
         landNFT.mint{value: cheapSkate}(regions, 0);
+    }
+
+    function testClaimable() public {
+        // set root
+        vm.startPrank(owner);
+        landNFT.setMerkleRoot(root);
+        // set claimable area
+
+        landNFT.setSpecialArea(
+            ILandNFT.Coordonate(103, 23),
+            ILandNFT.Coordonate(330, 594),
+            ILandNFT.Coordonate(324, 834),
+            ILandNFT.Coordonate(453, 6448)
+        );
+        // try to buy region from special area
+        ILandNFT.Pixel[] memory regions = new ILandNFT.Pixel[](3);
+        regions[0] = ILandNFT.Pixel(
+            ILandNFT.Coordonate(103, 23),
+            ILandNFT.Coordonate(330, 594),
+            ILandNFT.Coordonate(324, 834),
+            ILandNFT.Coordonate(453, 6448)
+        );
+        vm.stopPrank();
+        vm.startPrank(rioWhale);
+        uint256 rioAmount = landNFT.getTokenPrice(price * regions.length);
+        IERC20(RIO_TOKEN).approve(address(landNFT), rioAmount);
+        vm.expectRevert(UnauthorizedToMint.selector);
+        landNFT.mint(regions, rioAmount);
+
+        // claim area
+        vm.stopPrank();
+        vm.startPrank(claimer);
+        bytes32[] memory claimableProof = new bytes32[](1);
+        claimableProof[
+            0
+        ] = 0x13990c67529cf7b6e1ce2f91837a0171ca580328486125a9c15aa1b5ed9eaaba;
+        landNFT.claimSpecialArea(claimableProof, regions[0]);
+
+        // revert claimed already
+        vm.expectRevert();
+        landNFT.claimSpecialArea(claimableProof, regions[0]);
     }
 
     receive() external payable {}

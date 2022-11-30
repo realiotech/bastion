@@ -84,7 +84,7 @@ jobs:
 
       - name: Build contracts before checking bindings are correct
         working-directory: contracts
-        run: forge build --root . 
+        run: forge build 
 
       - name: Check bindings are correct
         run: forge bind --bindings-path ./bindings --crate-name bindings

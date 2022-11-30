@@ -8,28 +8,19 @@ import {ILandNFT} from "./interfaces/ILandNft.sol";
 import "./interfaces/ILandBank.sol";
 import "./interfaces/IUniswapV2Router.sol";
 import "./interfaces/IUniswapV2Pair.sol";
-
-error InsufficientRio();
-error InsufficientEthBalance();
-error InvalidLand();
-error coolDown();
-error FailedTransfer();
+import "./errors.sol";
 
 contract LandBank is ReentrancyGuard {
     // RIO token address
     address private constant RIO_TOKEN =
         0xf21661D0D1d76d3ECb8e1B9F1c923DBfffAe4097;
     address public constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
-    address private constant UNISWAP_V2_PAIR =
-        0x0b85B3000BEf3E26e01428D1b525A532eA7513b8;
 
     address public owner;
     address public landNft;
     address public devFund;
     address private constant UNISWAP_V2_ROUTER =
         0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;
-
-    // uint256 public landPrice;
 
     mapping(uint256 => uint256) timelapse;
 
@@ -68,13 +59,12 @@ contract LandBank is ReentrancyGuard {
     {
         uint256 numberOfPx = _tokenIds.length;
         uint256 amountToSend = numberOfPx * getPrice();
-        uint256 i;
-        for (i; i < _tokenIds.length; i++) {
+
+        for (uint256 i; i < _tokenIds.length; i++) {
             if (timelapse[_tokenIds[i]] + 5 days > block.timestamp) {
                 revert coolDown();
             }
         }
-        // uint256 minAmountRio = getTokenPrice(amountToSend);
         // Approve the Uniswap Router contract
         address[] memory path = new address[](2);
         path[0] = address(RIO_TOKEN);
@@ -142,12 +132,12 @@ contract LandBank is ReentrancyGuard {
     function sellLandToBank(uint256[] memory _tokenIds) external nonReentrant {
         uint256 numberOfPx = _tokenIds.length;
         uint256 amountToSend;
-        uint256 i;
+
         unchecked {
             amountToSend = getPrice() * numberOfPx;
         }
 
-        for (i; i < numberOfPx; i++) {
+        for (uint256 i; i < numberOfPx; i++) {
             ILandNFT(landNft).transferFrom(
                 msg.sender,
                 address(this),
@@ -169,14 +159,6 @@ contract LandBank is ReentrancyGuard {
         return amountOutMins[path.length - 1];
     }
 
-    // calculate price based on pair reserves
-    // reserve 0 = reserveEth, reserve 1 = reserveRio
-    function getTokenPrice(uint256 amount) public view returns (uint256) {
-        IUniswapV2Pair pair = IUniswapV2Pair(UNISWAP_V2_PAIR);
-        (uint256 Res0, uint256 Res1, ) = pair.getReserves();
-        return ((amount * Res1) / Res0);
-    }
-
     /**
      * getPrice function determines the price landBank value for pixel
      * price = total LandBank Holding / Number of pixel circulating
@@ -186,7 +168,7 @@ contract LandBank is ReentrancyGuard {
         uint256 PIXEL_SUPPLY = ILandNFT(landNft).totalTileNum();
         uint256 landPrice;
         unchecked {
-            landPrice = holding / PIXEL_SUPPLY;
+            landPrice = ((holding / PIXEL_SUPPLY) * 12) / 10;
         }
         return landPrice;
     }
