@@ -52,10 +52,10 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
     // mapping(uint256 => Pixel) pixelId;
     mapping(uint256 => bool) public isOwned;
     mapping(uint256 => address) public firstOwners;
-    mapping(uint256 => ILandNFT.Pixel) pixelsId;
-    mapping(bytes32 => bool) isSpecialArea;
-    mapping(bytes32 => bool) areaClaimed;
-    mapping(address => bool) addressAlreadyClaimed;
+    mapping(uint256 => ILandNFT.Pixel) private pixelsId;
+    mapping(bytes32 => bool) private isSpecialArea;
+    mapping(bytes32 => bool) private areaClaimed;
+    mapping(address => bool) private addressAlreadyClaimed;
 
     event AdminChanged(address indexed newAdmin, address indexed oldAdmin);
     event DevFundChanged(
