@@ -349,9 +349,9 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
         bytes32 leaf = keccak256(abi.encodePacked(msg.sender));
         // hash the region and set and check if already claimed
         bytes32 _hash = keccak256(abi.encode(_region));
-        require(areaClaimed[_hash] == false, "area already claimed");
+        require(!areaClaimed[_hash], "area already claimed");
         require(
-            MerkleProof.verify(_merkleProof, merkleRoot, leaf) == true,
+            MerkleProof.verify(_merkleProof, merkleRoot, leaf),
             "invalid proof"
         );
         addressAlreadyClaimed[msg.sender] = true;
