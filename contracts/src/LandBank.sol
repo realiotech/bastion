@@ -171,6 +171,71 @@ contract LandBank is ReentrancyGuard {
             landPrice = ((holding / PIXEL_SUPPLY) * 12) / 10;
         }
         return landPrice;
+
+        require(owner == msg.sender, "Only owner contract can run transaction");
+        uint256 amountToSend;
+        unchecked {
+            amountToSend =
+                ILandNFT(landNft).totalTileNum() *
+                ILandNFT(landNft).getLength(_tokenId);
+        }
+        // Approve the Uniswap Router contract
+        address[] memory path = new address[](2);
+        path[0] = address(RIO_TOKEN);
+        path[1] = address(WETH);
+        if (msg.value == 0) {
+            if (IERC20(RIO_TOKEN).balanceOf(msg.sender) < amountToSend) {
+                revert InsufficientRio();
+            }
+            // Transfer the amount of RIO to the contract
+            bool success = IERC20(RIO_TOKEN).transferFrom(
+                msg.sender,
+                address(this),
+                amountToSend
+            );
+            if (!success) {
+                revert FailedTransfer();
+            }
+            uint256 amountIn = (amountToSend * 10) / 100;
+            uint256 amountOutMin = getAmountOutMin(amountIn, path);
+            IERC20(RIO_TOKEN).approve(UNISWAP_V2_ROUTER, amountIn);
+            IUniswapV2Router(UNISWAP_V2_ROUTER).swapExactTokensForETH(
+                amountIn,
+                amountOutMin,
+                path,
+                devFund,
+                block.timestamp
+            );
+        } else if (
+            msg.value > 0 || IERC20(RIO_TOKEN).balanceOf(msg.sender) == 0
+        ) {
+            uint256 minAmount = getAmountOutMin(amountToSend, path);
+            if (msg.value < minAmount) {
+                revert InsufficientEthBalance();
+            }
+            // 10% of funds are sent to the dev address
+            payable(devFund).transfer(msg.value / 10);
+            // swap rest of funds 90 % to RIO token
+            uint256 amountIn = (msg.value * 9) / 10;
+            address[] memory new_path = new address[](2);
+            new_path[0] = address(WETH);
+            new_path[1] = address(RIO_TOKEN);
+            uint256 amountOutMin = getAmountOutMin(amountIn, path);
+            IUniswapV2Router(UNISWAP_V2_ROUTER).swapExactETHForTokens{
+                value: amountIn
+            }(amountOutMin, new_path, address(this), block.timestamp);
+        }
+
+        for (uint256 j; j < numberOfPx; j++) {
+            ILandNFT(landNft).safeTransferFrom(
+                address(this),
+                msg.sender,
+                _tokenIds[j]
+            );
+            timelapse[_tokenIds[j]] = block.timestamp;
+        }
+
+        emit LandBought(msg.sender, _tokenIds, amountToSend, block.timestamp);
     }
 
     receive() external payable {}

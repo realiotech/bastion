@@ -18,12 +18,15 @@ jobs:
           version: nightly
       - run: pwd
       - name: Run tests
-        run: forge test -f $INFURA --gas-report --root .
+        run: |
+          forge config
+          forge test -f $INFURA --gas-report --root .
         env:
           INFURA : ${{secrets.INFURA}}
 
       - name: Run Coverage
-        run: forge coverage --report lcov
+        run: |
+          forge coverage --report lcov
 
       # - name: Upload coverage to Codecov
       #   uses: codecov/codecov-action@v3
@@ -79,12 +82,10 @@ jobs:
           version: nightly
 
       - name: Pull library deps
-        working-directory: contracts
         run: forge update
 
       - name: Build contracts before checking bindings are correct
-        working-directory: contracts
-        run: forge build 
+        run: forge build  
 
       - name: Check bindings are correct
         run: forge bind --bindings-path ./bindings --crate-name bindings

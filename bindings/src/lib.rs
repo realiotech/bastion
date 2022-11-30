@@ -25,7 +25,6 @@ pub mod ierc721;
 pub mod ierc721a;
 pub mod land_bank;
 pub mod land_nft;
-pub mod merkle_proof;
 pub mod mock_rio;
 pub mod ownable;
 pub mod pausable;
