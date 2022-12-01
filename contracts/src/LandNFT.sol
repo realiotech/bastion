@@ -45,14 +45,9 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
     uint256 public rareClaimedPeriod; // period where users are allowed to claimed specific land
     bytes32 public merkleRoot;
 
-    ILandNFT.Pixel[] pixelsBought;
-
-    ILandNFT.Pixel[] specialArea;
-
     // mapping(uint256 => Pixel) pixelId;
     mapping(uint256 => bool) public isOwned;
     mapping(uint256 => address) public firstOwners;
-    mapping(uint256 => ILandNFT.Pixel) private pixelsId;
     mapping(bytes32 => bool) private isSpecialArea;
     mapping(bytes32 => bool) private areaClaimed;
     mapping(address => bool) private addressAlreadyClaimed;
@@ -343,8 +338,7 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
         bytes32[] calldata _merkleProof,
         ILandNFT.Pixel memory _region
     ) external {
-        if (addressAlreadyClaimed[msg.sender] == true)
-            revert AddressAlreadyClaimed();
+        if (addressAlreadyClaimed[msg.sender]) revert AddressAlreadyClaimed();
         // todo encodePacked the region, so the address will have a geo restricted area
         bytes32 leaf = keccak256(abi.encodePacked(msg.sender));
         // hash the region and set and check if already claimed
