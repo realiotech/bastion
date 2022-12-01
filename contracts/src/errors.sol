@@ -16,3 +16,5 @@ error InvalidToken();
 error NonExistentTokenURI();
 error TransferFailed();
 error MaxTilesReached();
+error UnauthorizedToMint();
+error AddressAlreadyClaimed();

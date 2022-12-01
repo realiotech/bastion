@@ -2,6 +2,7 @@
 pragma solidity >=0.8.15;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {MerkleProof} from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import {ERC721A} from "ERC721A/contracts/ERC721A.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
@@ -22,18 +23,13 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
     using Strings for uint256;
 
     // RIO token address
-    // address private constant RIO_TOKEN =
-    //     0xf21661D0D1d76d3ECb8e1B9F1c923DBfffAe4097;
     address private constant RIO_TOKEN =
-        0x32E0b53B799cC14c455011fE3458306f89aee848;
-    // address public constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
-    address public constant WETH = 0xc778417E063141139Fce010982780140Aa0cD5Ab;
+        0xf21661D0D1d76d3ECb8e1B9F1c923DBfffAe4097;
+    address public constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
     address private constant UNISWAP_V2_ROUTER =
         0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;
-    // address private constant UNISWAP_V2_PAIR =
-    //     0x0b85B3000BEf3E26e01428D1b525A532eA7513b8;
     address private constant UNISWAP_V2_PAIR =
-        0xA0778c95D8FE33FC1a2191F8afF72e85acA0258d;
+        0x0b85B3000BEf3E26e01428D1b525A532eA7513b8;
     // admin : can set all parameters
     address public admin;
     // store all funds by ETH
@@ -46,13 +42,15 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
     uint256 public constant MAX_TILE_NUM = 10**10; // we have to set the correct max tile number
     uint256 public price; // each tile costs 500 RIO
     uint256 public tilesBought; // total supply of tiles
-
-    ILandNFT.Pixel[] pixelsBought;
+    uint256 public rareClaimedPeriod; // period where users are allowed to claimed specific land
+    bytes32 public merkleRoot;
 
     // mapping(uint256 => Pixel) pixelId;
     mapping(uint256 => bool) public isOwned;
     mapping(uint256 => address) public firstOwners;
-    mapping(uint256 => ILandNFT.Pixel) pixelsId;
+    mapping(bytes32 => bool) private isSpecialArea;
+    mapping(bytes32 => bool) private areaClaimed;
+    mapping(address => bool) private addressAlreadyClaimed;
 
     event AdminChanged(address indexed newAdmin, address indexed oldAdmin);
     event DevFundChanged(
@@ -89,6 +87,16 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
         }
         if (ownerStatus) {
             revert RegionAlreadyOwned();
+        }
+        _;
+    }
+
+    modifier checkSpecialArea(ILandNFT.Pixel[] memory _region) {
+        uint256 regionLength = _region.length;
+        for (uint256 i; i < regionLength; i++) {
+            bytes32 _hash = keccak256(abi.encode(_region[i]));
+            if (isSpecialArea[_hash]) revert UnauthorizedToMint();
+            // if (isSpecialArea[_hash]) revert UnauthorizedToMint();
         }
         _;
     }
@@ -173,6 +181,32 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
         emit LandBankChanged(landBank, oldLandBank);
     }
 
+    /**
+     *@dev owner can set the root
+     *@param _root root generated
+     */
+    function setMerkleRoot(bytes32 _root) public onlyOwner {
+        merkleRoot = _root;
+    }
+
+    // owner set a specific area in a city with the special tag
+    // this coordonate will be only available for a list addresses
+    function setSpecialArea(
+        ILandNFT.Coordonate memory a,
+        ILandNFT.Coordonate memory b,
+        ILandNFT.Coordonate memory c,
+        ILandNFT.Coordonate memory d
+    ) public onlyOwner {
+        ILandNFT.Pixel memory _specialArea = ILandNFT.Pixel(a, b, c, d);
+        bytes32 _hash = keccak256(abi.encode(_specialArea));
+        // the pixel is determined has a special area only claimable by whitelist address
+        isSpecialArea[_hash] = true;
+    }
+
+    function setBaseURI(string memory _baseURI) public onlyOwner {
+        baseURI = _baseURI;
+    }
+
     /// @notice Pauses the contract
     function pause() external whenNotPaused {
         if (msg.sender != admin) {
@@ -204,6 +238,7 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
         payable
         // REVIEW logic notOwned
         // notOwnedPixel(region)
+        checkSpecialArea(region)
         whenNotPaused
     {
         if (totalSupply() >= MAX_TILE_NUM) {
@@ -292,6 +327,29 @@ contract LandNFT is ERC721A, Ownable, Pausable, ReentrancyGuard {
             tilesBought += numberOfTiles;
             emit LandSold(msg.sender, region);
         }
+    }
+
+    /**
+     *@notice claim ERC721 for special area, whitelist addresses have right access
+     *@param _merkleProof proof provided
+     *@param _region region to claim
+     */
+    function claimSpecialArea(
+        bytes32[] calldata _merkleProof,
+        ILandNFT.Pixel memory _region
+    ) external {
+        if (addressAlreadyClaimed[msg.sender]) revert AddressAlreadyClaimed();
+        // todo encodePacked the region, so the address will have a geo restricted area
+        bytes32 leaf = keccak256(abi.encodePacked(msg.sender));
+        // hash the region and set and check if already claimed
+        bytes32 _hash = keccak256(abi.encode(_region));
+        require(!areaClaimed[_hash], "area already claimed");
+        require(
+            MerkleProof.verify(_merkleProof, merkleRoot, leaf),
+            "invalid proof"
+        );
+        addressAlreadyClaimed[msg.sender] = true;
+        _safeMint(msg.sender, 1);
     }
 
     function getAmountOutMin(uint256 _amountIn, address[] memory path)
